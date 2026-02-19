@@ -1,5 +1,5 @@
 # Use glibc-based Node.js image to support 'deno' package
-FROM node:18
+FROM node:20
 
 # Create app directory
 WORKDIR /app
@@ -19,4 +19,4 @@ RUN npm run build
 EXPOSE 3000 4000
 
 # Start both frontend and backend in production
-CMD npx concurrently "npm run start" "node ./src/lib/email.js"
+CMD ["npx", "concurrently", "npm run start", "node ./src/lib/email.js"]
