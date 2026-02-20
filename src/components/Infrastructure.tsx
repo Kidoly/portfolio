@@ -142,7 +142,7 @@ const Infrastructure = () => {
                     <service.icon className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 text-sm">{service.name}</h4>
+                    <h3 className="font-semibold text-gray-900 text-sm">{service.name}</h3>
                     <p className="text-gray-600 text-xs">{service.description}</p>
                   </div>
                 </div>
@@ -155,9 +155,9 @@ const Infrastructure = () => {
             <div className="grid md:grid-cols-3 gap-6 text-center">
               <div>
                 <Lock className="w-6 h-6 mx-auto mb-2" />
-                <h4 className="font-semibold text-sm mb-1">
+                <h3 className="font-semibold text-sm mb-1">
                   {language === 'fr' ? 'Sécurité' : 'Security'}
-                </h4>
+                </h3>
                 <p className="text-blue-100 text-xs">
                   {language === 'fr' ? 'Chiffrement E2E' : 'E2E Encryption'}
                 </p>
@@ -165,9 +165,9 @@ const Infrastructure = () => {
               
               <div>
                 <Zap className="w-6 h-6 mx-auto mb-2" />
-                <h4 className="font-semibold text-sm mb-1">
+                <h3 className="font-semibold text-sm mb-1">
                   {language === 'fr' ? 'Automatisation' : 'Automation'}
-                </h4>
+                </h3>
                 <p className="text-blue-100 text-xs">
                   {language === 'fr' ? 'Ansible + Semaphore' : 'Ansible + Semaphore'}
                 </p>
@@ -175,9 +175,9 @@ const Infrastructure = () => {
               
               <div>
                 <Monitor className="w-6 h-6 mx-auto mb-2" />
-                <h4 className="font-semibold text-sm mb-1">
+                <h3 className="font-semibold text-sm mb-1">
                   {language === 'fr' ? 'Supervision' : 'Monitoring'}
-                </h4>
+                </h3>
                 <p className="text-blue-100 text-xs">
                   {language === 'fr' ? 'MonitorFlow' : 'MonitorFlow'}
                 </p>

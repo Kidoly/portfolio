@@ -24,7 +24,7 @@ const translations = {
     // Hero Section
     'hero.title': 'Alban Mary',
     'hero.subtitle': 'Student & System and Network Administrator',
-    'hero.description': 'Passionate about systems and networks. Currently in my third year of computer science at EPSI Nantes, specializing in networks with a strong desire to pursue this field further.',
+    'hero.description': 'Passionate about systems and networks. Currently in my fourth year of computer science at EPSI Nantes, specializing in networks with a strong desire to pursue this field further.',
     'hero.viewWork': 'View My Work',
     'hero.downloadResume': 'Download Resume',
 
@@ -32,7 +32,7 @@ const translations = {
     'about.title': 'About',
     'about.subtitle': 'System & Network Administrator & Development Enthusiast',
     'about.learning.title': 'Learning Path',
-    'about.learning.description': 'Currently in my third year of computer science at EPSI, with a primary interest in networks, a field I aim to specialize in.',
+    'about.learning.description': 'Currently in my fourth year of computer science at EPSI, with a primary interest in networks, a field I aim to specialize in.',
     'about.focus.title': 'Professional Focus',
     'about.focus.description': 'Specialized in web development, network infrastructure, and system operations with a strong interest in cybersecurity and automation.',
     'about.innovation.title': 'Innovation Mindset',
@@ -51,7 +51,7 @@ const translations = {
     'about.information.title': 'Information',
     'about.information.name': 'Name:',
     'about.information.age': 'Age:',
-    'about.information.ageValue': '19 years old',
+    'about.information.ageValue': ' 21 years old',
     'about.information.phone': 'Phone:',
     'about.information.email': 'Email:',
 
@@ -176,7 +176,7 @@ const translations = {
     'contact.error': 'Failed to send message. Please try again.',
     'contact.required': 'All fields are required',
     'contact.invalidEmail': 'Please enter a valid email address',
-    'contact.footer': '© 2025 Alban Mary',
+    'contact.footer': '© 2026 Alban Mary',
 
     // Form placeholders
     'form.name.placeholder': 'John Doe',
@@ -206,7 +206,7 @@ const translations = {
     // Hero Section
     'hero.title': 'Alban Mary',
     'hero.subtitle': 'Étudiant & Administrateur Système et Réseaux',
-    'hero.description': 'Passionné par les systèmes et réseaux. Actuellement en troisième année d\'informatique à l\'EPSI Nantes, avec une spécialisation en réseaux et un désir de me spécialiser dans ce domaine.',
+    'hero.description': 'Passionné par les systèmes et réseaux. Actuellement en quatrième année d\'informatique à l\'EPSI Nantes, avec une spécialisation en réseaux et un désir de me spécialiser dans ce domaine.',
     'hero.viewWork': 'Voir Mon Travail',
     'hero.downloadResume': 'Télécharger CV',
     
@@ -214,7 +214,7 @@ const translations = {
     'about.title': 'Présentation',
     'about.subtitle': 'Administrateur Système et Réseaux & Passionné de Développement',
     'about.learning.title': 'Parcours d\'Apprentissage',
-    'about.learning.description': 'Actuellement en troisième année d\'informatique à l\'EPSI, mon intérêt principal se porte sur les réseaux, un domaine dans lequel je souhaite me spécialiser.',
+    'about.learning.description': 'Actuellement en quatrième année d\'informatique à l\'EPSI, mon intérêt principal se porte sur les réseaux, un domaine dans lequel je souhaite me spécialiser.',
     'about.focus.title': 'Focus Professionnel',
     'about.focus.description': 'Spécialisé dans le développement web, l\'infrastructure réseau et les opérations système avec un fort intérêt pour la cybersécurité et l\'automatisation.',
     'about.innovation.title': 'Mentalité d\'Innovation',
@@ -233,7 +233,7 @@ const translations = {
     'about.information.title': 'Informations',
     'about.information.name': 'Nom :',
     'about.information.age': 'Âge : ',
-    'about.information.ageValue': ' 19 ans',
+    'about.information.ageValue': '21 ans',
     'about.information.phone': 'Téléphone :',
     'about.information.email': 'Email :',
 
@@ -359,7 +359,7 @@ const translations = {
     'contact.error': 'Échec de l\'envoi du message. Veuillez réessayer.',
     'contact.required': 'Tous les champs sont requis',
     'contact.invalidEmail': 'Veuillez entrer une adresse email valide',
-    'contact.footer': '© 2025 Alban Mary',
+    'contact.footer': '© 2026 Alban Mary',
     
     // Form placeholders
     'form.name.placeholder': 'Jean Dupont',

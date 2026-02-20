@@ -135,6 +135,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 href="https://www.linkedin.com/in/alban-mary/" 
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="LinkedIn – Alban Mary"
                 className="p-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200"
               >
                 <Linkedin className="w-5 h-5" />
@@ -143,6 +144,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 href="https://github.com/Kidoly" 
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="GitHub – Kidoly"
                 className="p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors duration-200"
               >
                 <Github className="w-5 h-5" />

@@ -14,7 +14,7 @@ const Projects = () => {
       technologies: ['Rust', 'Flutter', 'Next.js'],
       icon: Monitor,
       color: 'blue',
-      image: 'https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg?auto=compress&cs=tinysrgb&w=600',
+      image: '/pexels-photo-1181467.webp',
       highlights: [
         t('projects.monitorflow.achievement1'),
         t('projects.monitorflow.achievement2'),
@@ -28,7 +28,7 @@ const Projects = () => {
       technologies: ['Node.js', 'Python', 'XBOX Controller', 'Websockets'],
       icon: Plane,
       color: 'cyan',
-      image: 'https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&w=600',
+      image: '/pexels-photo-442150.webp',
       highlights: [
         t('projects.drone.achievement1'),
         t('projects.drone.achievement2'),
@@ -42,7 +42,7 @@ const Projects = () => {
       technologies: ['HTML5', 'CSS3', 'Symfony', 'Social Network'],
       icon: Users,
       color: 'teal',
-      image: 'https://images.pexels.com/photos/1148820/pexels-photo-1148820.jpeg?auto=compress&cs=tinysrgb&w=600',
+      image: '/pexels-photo-1148820.webp',
       highlights: [
         t('projects.astraso.achievement1'),
         t('projects.astraso.achievement2'),
@@ -56,7 +56,7 @@ const Projects = () => {
       technologies: ['Cybersecurity', 'Penetration Testing', 'Encryption', 'Security Awareness'],
       icon: Shield,
       color: 'purple',
-      image: 'https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=600',
+      image: '/security-protection-anti-virus-software-60504.webp',
       highlights: [
         t('projects.security.achievement1'),
         t('projects.security.achievement2'),

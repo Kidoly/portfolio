@@ -11,27 +11,28 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.2.0",
     "body-parser": "^2.2.0",
-    "deno": "^2.4.0",
-    "dotenv": "^17.0.1",
-    "express": "^5.1.0",
-    "lucide-react": "^0.574.0",
+    "deno": "^2.6.8",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "lucide-react": "^0.575.0",
     "next": "^16.1.6",
     "node-fetch": "^3.3.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },
   "devDependencies": {
-    "@types/node": "^20.10.5",
-    "@types/react": "^18.2.45",
-    "@types/react-dom": "^18.2.18",
-    "autoprefixer": "^10.4.16",
+    "@types/node": "^25.3.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.4.24",
     "concurrently": "^9.2.1",
     "eslint": "^10.0.0",
     "eslint-config-next": "^16.1.6",
     "postcss": "^8.4.32",
-    "tailwindcss": "^3.4.0",
-    "typescript": "^5.3.3"
+    "tailwindcss": "^4.2.0",
+    "typescript": "^5.9.3"
   },
   "description": "A modern, responsive portfolio website for Alban Mary, Network & System Engineer Apprentice.",
   "main": "next.config.js",

@@ -91,10 +91,10 @@ const Certifications = () => {
           </h3>
           <div className="flex flex-wrap justify-center gap-3">
             {[
-              'WordPress', 'Flutter', 'Git', 'GitHub', 'VS Code', 'Figma',
-              'Wireshark', 'Kali Linux', 'Metasploit', 'Burp Suite',
+              'WordPress', 'Flutter', 'Git', 'VS Code', 'Figma',
+              'Wireshark', 'Linux', 'Burp Suite',
               'VMware', 'VirtualBox', 'Raspberry Pi', 'Arduino',
-              'MongoDB', 'MySQL', 'Redis', 'Elasticsearch'
+              'MongoDB', 'MySQL', 'Redis', 'Proxmox', 'Ansible', 'Terraform', 'Docker', 'Kubernetes', 'CI/CD'
             ].map((tech, index) => (
               <span 
                 key={index} 
@@ -110,7 +110,7 @@ const Certifications = () => {
         <div className="mt-16 bg-gradient-to-r from-blue-600 to-cyan-600 text-white p-8 rounded-xl shadow-lg">
           <div className="text-center">
             <h3 className="text-2xl font-semibold mb-4">
-              {language === 'fr' ? '3 Ans d\'Expérience' : '3 Years of Experience'}
+              {language === 'fr' ? '4 Ans d\'Expérience' : '4 Years of Experience'}
             </h3>
             <p className="text-blue-100 mb-6">
               {language === 'fr' 
