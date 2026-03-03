@@ -17,7 +17,7 @@
   "published": true,
   "publishedAt": "2026-03-03T09:44:22.038Z",
   "updatedAt": "2026-03-03T09:44:22.046Z",
-  "readingTime": "3 min read",
+  "readingTime": "3 min de lecture",
   "locale": "fr",
   "seoTitle": "Proxmox : Template Debian 13 avec Cloud-Init | Alban Mary",
   "seoDescription": "Cette documentation décrit la création d'un template Debian 13 prêt à l'emploi avec Cloud-Init sur un hôte Proxmox VE. Ce template permettra de..."

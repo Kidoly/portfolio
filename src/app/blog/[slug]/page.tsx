@@ -137,6 +137,7 @@ export default async function BlogPostPage({ params }: Props) {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Retour au blog
             </Link>
+            <div className="h-4"></div>
 
             {post.category && (
               <span className="inline-block bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium mb-4">
