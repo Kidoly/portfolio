@@ -97,3 +97,21 @@ export function getPostsByTag(tag: string): BlogPost[] {
 export function getPostsByCategory(category: string): BlogPost[] {
   return getPublishedPosts().filter(p => p.category === category);
 }
+
+export function getRelatedPosts(post: BlogPost, limit = 3): BlogPost[] {
+  const posts = getPublishedPosts().filter(p => p.id !== post.id);
+
+  // Score each post by how many tags they share + same category bonus
+  const scored = posts.map(p => {
+    let score = 0;
+    score += p.tags.filter(t => post.tags.includes(t)).length * 2;
+    if (p.category === post.category) score += 1;
+    return { post: p, score };
+  });
+
+  return scored
+    .filter(s => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map(s => s.post);
+}

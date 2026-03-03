@@ -4,15 +4,18 @@ import { getPublishedPosts, getAllTags, getAllCategories } from '@/lib/blog/post
 import { BlogPostMeta } from '@/lib/blog/types';
 import { Calendar, Clock, Tag, ArrowLeft, Search } from 'lucide-react';
 import BlogListClient from './BlogListClient';
+import BlogNav from '@/components/blog/BlogNav';
 
 export const metadata: Metadata = {
-  title: 'Blog - Alban Mary | Articles Tech & Cybersécurité',
+  title: 'Blog — Articles Tech, Systèmes & Cybersécurité',
   description:
     'Découvrez les articles d\'Alban Mary sur le développement web, l\'administration système, la cybersécurité et les réseaux. Tutoriels, guides et retours d\'expérience.',
-  keywords:
-    'blog, développement web, cybersécurité, réseaux, système, linux, docker, tutoriel, guide',
+  keywords: [
+    'blog tech', 'tutoriel linux', 'guide cybersécurité', 'administration système',
+    'docker', 'proxmox', 'développement web', 'devops', 'réseau',
+  ],
   openGraph: {
-    title: 'Blog - Alban Mary | Articles Tech & Cybersécurité',
+    title: 'Blog — Alban Mary | Articles Tech & Cybersécurité',
     description:
       'Articles sur le développement web, l\'administration système, la cybersécurité et les réseaux.',
     url: 'https://albanmary.com/blog',
@@ -21,26 +24,52 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Blog - Alban Mary',
+    title: 'Blog — Alban Mary',
     description:
       'Articles sur le développement web, la cybersécurité et les réseaux.',
   },
   alternates: {
     canonical: 'https://albanmary.com/blog',
+    types: {
+      'application/rss+xml': [
+        { url: '/blog/feed.xml', title: 'Blog Alban Mary — RSS Feed' },
+      ],
+    },
   },
 };
 
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'Blog',
-  name: 'Blog - Alban Mary',
+  '@type': 'CollectionPage',
+  name: 'Blog — Alban Mary',
   description:
     'Articles sur le développement web, l\'administration système et la cybersécurité',
   url: 'https://albanmary.com/blog',
+  isPartOf: {
+    '@type': 'WebSite',
+    '@id': 'https://albanmary.com/#website',
+  },
   author: {
     '@type': 'Person',
     name: 'Alban Mary',
     url: 'https://albanmary.com',
+  },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Accueil',
+        item: 'https://albanmary.com',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Blog',
+        item: 'https://albanmary.com/blog',
+      },
+    ],
   },
 };
 
@@ -57,7 +86,8 @@ export default function BlogPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <main className="min-h-screen bg-gray-50">
+      <BlogNav />
+      <main className="min-h-screen bg-gray-50 pt-16">
         {/* Hero Banner */}
         <section className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white py-20">
           <div className="container mx-auto px-6">

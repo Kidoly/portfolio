@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Calendar, Clock, Tag, Search, Filter } from 'lucide-react';
 import { BlogPost } from '@/lib/blog/types';
+import PortfolioCTA from '@/components/blog/PortfolioCTA';
 
 interface Props {
   posts: BlogPost[];
@@ -107,6 +108,11 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
               </div>
             </div>
           )}
+          {/* Espace */}
+          <div className="my-6 border-t border-gray-200" />
+          
+          {/* Portfolio CTA */}
+          <PortfolioCTA />
         </aside>
 
         {/* Post Grid */}

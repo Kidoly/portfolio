@@ -1,9 +1,12 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getPostBySlug, getPublishedPosts } from '@/lib/blog/posts';
+import { getPostBySlug, getPublishedPosts, getRelatedPosts } from '@/lib/blog/posts';
 import { markdownToHtml, generateSeoTitle } from '@/lib/blog/markdown';
 import { Calendar, Clock, ArrowLeft, Tag, User } from 'lucide-react';
+import BlogNav from '@/components/blog/BlogNav';
+import AuthorCard from '@/components/blog/AuthorCard';
+import RelatedPosts from '@/components/blog/RelatedPosts';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -25,8 +28,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
-    keywords: post.tags.join(', '),
-    authors: [{ name: post.author }],
+    keywords: post.tags,
+    authors: [{ name: post.author, url: 'https://albanmary.com' }],
     openGraph: {
       title,
       description,
@@ -36,7 +39,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       modifiedTime: post.updatedAt,
       authors: [post.author],
       tags: post.tags,
+      section: post.category,
       siteName: 'Alban Mary',
+      locale: post.locale === 'en' ? 'en_US' : 'fr_FR',
       images: post.coverImage
         ? [{ url: post.coverImage, width: 1200, height: 630, alt: post.title }]
         : [],
@@ -46,9 +51,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
       images: post.coverImage ? [post.coverImage] : [],
+      creator: '@kidoly',
     },
     alternates: {
       canonical: post.canonicalUrl || `https://albanmary.com/blog/${post.slug}`,
+    },
+    other: {
+      'article:published_time': post.publishedAt || '',
+      'article:modified_time': post.updatedAt,
+      'article:author': post.author,
+      'article:section': post.category || '',
+      'article:tag': post.tags.join(','),
     },
   };
 }
@@ -62,14 +75,17 @@ export default async function BlogPostPage({ params }: Props) {
   }
 
   const contentHtml = await markdownToHtml(post.content);
+  const relatedPosts = getRelatedPosts(post, 3);
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
+    '@id': `https://albanmary.com/blog/${post.slug}`,
     headline: post.title,
     description: post.description,
     author: {
       '@type': 'Person',
+      '@id': 'https://albanmary.com/#person',
       name: post.author,
       url: 'https://albanmary.com',
     },
@@ -79,15 +95,27 @@ export default async function BlogPostPage({ params }: Props) {
       '@type': 'WebPage',
       '@id': `https://albanmary.com/blog/${post.slug}`,
     },
-    image: post.coverImage || 'https://albanmary.com/og-image.jpg',
+    image: post.coverImage || 'https://albanmary.com/opengraph-image',
+    thumbnailUrl: post.coverImage || 'https://albanmary.com/opengraph-image',
     publisher: {
       '@type': 'Person',
+      '@id': 'https://albanmary.com/#person',
       name: 'Alban Mary',
       url: 'https://albanmary.com',
     },
     keywords: post.tags.join(', '),
     wordCount: post.content.split(/\s+/).length,
+    articleSection: post.category || 'General',
     inLanguage: post.locale,
+    isPartOf: {
+      '@type': 'WebSite',
+      '@id': 'https://albanmary.com/#website',
+    },
+    isAccessibleForFree: true,
+    copyrightHolder: {
+      '@type': 'Person',
+      name: 'Alban Mary',
+    },
   };
 
   // BreadcrumbList for SEO
@@ -126,7 +154,8 @@ export default async function BlogPostPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <main className="min-h-screen bg-gray-50">
+      <BlogNav />
+      <main className="min-h-screen bg-gray-50 pt-16">
         {/* Header */}
         <header className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white py-16">
           <div className="container mx-auto px-6 max-w-4xl">
@@ -214,16 +243,11 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
           )}
 
-          {/* Navigation */}
-          <div className="mt-12 pt-8 border-t border-gray-200">
-            <Link
-              href="/blog"
-              className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Voir tous les articles
-            </Link>
-          </div>
+          {/* Author Card — Portfolio CTA */}
+          <AuthorCard />
+
+          {/* Related Posts */}
+          <RelatedPosts posts={relatedPosts} />
         </article>
       </main>
     </>
