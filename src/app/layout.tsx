@@ -38,6 +38,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://albanmary.com',
   },
+  icons: {
+    icon: '/icon.svg',
+  },
   other: {
     'theme-color': '#1e40af',
     'msapplication-TileColor': '#1e40af',
