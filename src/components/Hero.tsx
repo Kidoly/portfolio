@@ -59,6 +59,12 @@ const Hero = () => {
             {t('hero.viewWork')}
           </button>
           <a 
+            href="/blog/" 
+            className="px-8 py-4 bg-cyan-600 hover:bg-cyan-700 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-cyan-500/25"
+          >
+            {t('hero.blog')}
+          </a>
+          <a 
             href="/Alban_Mary_CV.pdf" 
             target="_blank" 
             rel="noopener noreferrer"

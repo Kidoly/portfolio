@@ -26,6 +26,7 @@ const translations = {
     'hero.subtitle': 'Student & System and Network Administrator',
     'hero.description': 'Passionate about systems and networks. Currently in my fourth year of computer science at EPSI Nantes, specializing in networks with a strong desire to pursue this field further.',
     'hero.viewWork': 'View My Work',
+    'hero.blog': 'Read My Blog',
     'hero.downloadResume': 'Download Resume',
 
     // About Section
@@ -208,6 +209,7 @@ const translations = {
     'hero.subtitle': 'Étudiant & Administrateur Système et Réseaux',
     'hero.description': 'Passionné par les systèmes et réseaux. Actuellement en quatrième année d\'informatique à l\'EPSI Nantes, avec une spécialisation en réseaux et un désir de me spécialiser dans ce domaine.',
     'hero.viewWork': 'Voir Mon Travail',
+    'hero.blog': 'Lire Mon Blog',
     'hero.downloadResume': 'Télécharger CV',
     
     // About Section

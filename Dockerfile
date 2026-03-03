@@ -1,35 +1,33 @@
-# Use glibc-based Node.js image to support 'deno' package
-
 # ---- Build Stage ----
-FROM node:20 AS builder
+FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Install ALL dependencies (including devDeps needed to build)
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
-# Copy source and build
 COPY . .
 RUN npm run build
 
 # ---- Production Stage ----
-FROM node:20 AS runner
+FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Install production dependencies only
-COPY package*.json ./
-RUN npm install --omit=dev
-
-# Copy built output and runtime files from builder
-COPY --from=builder /app/.next ./.next
+# Copy standalone server (includes all needed node_modules)
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.js ./next.config.js
-COPY --from=builder /app/src/lib ./src/lib
 
-# Expose ports for Next.js and Express server
+# Copy email backend
+COPY --from=builder /app/src/lib/email.js ./src/lib/email.js
+
+# Install only concurrently for running both processes
+RUN npm install --no-save concurrently
+
+# Create content directory for blog posts
+RUN mkdir -p content/blog
+
 EXPOSE 3000 4000
 
-# Start both frontend and backend in production
-CMD ["node_modules/.bin/concurrently", "npm run start", "node ./src/lib/email.js"]
+CMD ["npx", "concurrently", "node server.js", "node src/lib/email.js"]

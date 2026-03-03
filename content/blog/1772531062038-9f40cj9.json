@@ -1,0 +1,24 @@
+{
+  "id": "1772531062038-9f40cj9",
+  "slug": "proxmox-template-debian-13-avec-cloud-init",
+  "title": "Proxmox : Template Debian 13 avec Cloud-Init",
+  "description": "Cette documentation décrit la création d'un template Debian 13 prêt à l'emploi avec Cloud-Init sur un hôte Proxmox VE. Ce template permettra de...",
+  "content": "# Proxmox : Template Debian 13 avec Cloud-Init\n\n## ✨ Objectif\n\nCette documentation décrit la création d'un template Debian 13 prêt à l'emploi avec **Cloud-Init** sur un hôte **Proxmox VE**. Ce template permettra de déployer rapidement des VM configurables via Cloud-Init (hostname, IP, clés SSH...) et intégrables à des outils comme Terraform ou OpenTofu.\n\n---\n\n## 🚀 Création du template\n\n### 1. Connexion à l'hôte Proxmox\n\n```bash\nssh root@pvehost\n```\n\n### 2. Téléchargement de l'image Cloud Debian 13\n\n```bash\nwget https://cloud.debian.org/images/cloud/trixie/latest/debian-13-generic-amd64.qcow2\n```\n\n### 3. Ajout de qemu-guest-agent\n\n```bash\napt install -y libguestfs-tools\nvirt-customize -a debian-13-generic-amd64.qcow2 --install qemu-guest-agent\n```\n\n### 4. Création d'une VM de base (ID 10000)\n\n```bash\nqm create 10000 --name debian13-cloudinit --net0 virtio,bridge=vmbr0 --scsihw virtio-scsi-single\n```\n\nQue fait cette commande ?\n- Crée une VM avec l'ID 10000.\n- Nomme la VM \"debian13-cloudinit\".\n- Configure le réseau avec une interface VirtIO sur le bridge vmbr0.\n- Utilise un contrôleur SCSI VirtIO pour les disques.\n\n> Je vous déconseille d'utiliser le même bridge que votre Proxmox, car cela peut causer des conflits réseau. Utilisez plutôt un bridge dédié pour vos VMs. \n{.is-warning}\n\n### 5. Ajout du disque principal depuis l'image cloud\n\n```bash\nqm set 10000 --scsi0 local:0,iothread=1,backup=off,format=qcow2,import-from=/root/debian-13-generic-amd64.qcow2\nqm disk resize 10000 scsi0 10G\n```\n\nQue fait cette commande ?\n- Ajoute le disque principal à la VM depuis l'image téléchargée.\n- Redimensionne le disque à 10 Go pour laisser de la place pour les données.\n- Utilise le format QCOW2 pour une meilleure gestion des snapshots et de l'espace disque.\n<br>\n\n### 6. Configuration du boot, CPU et RAM\n\n```bash\nqm set 10000 --boot order=scsi0\nqm set 10000 --cpu host --cores 1 --memory 2048\n```\nQue fait cette commande ?\n- Définit le disque SCSI comme disque de boot principal.\n- Configure la VM pour utiliser le CPU de l'hôte avec 1 cœur.\n- Alloue 2 Go de RAM à la VM.\n\n\n<br>\n\n### 7. Ajout du disque Cloud-Init et activation de l'agent\n\n```bash\nqm set 10000 --ide2 local:cloudinit\nqm set 10000 --agent enabled=1\n```\nQue fait cette commande ?\n- Ajoute un disque Cloud-Init pour la configuration dynamique de la VM.\n- Active l'agent QEMU pour permettre la communication entre la VM et l'hôte Proxmox.{.is-info}\n\n<br>\n\n### 8. Configuration des options Cloud-Init (dans l'interface Web)\n\nLes paramètres Cloud-Init (utilisateur, IP, hostname, clé SSH...) sont à ajuster depuis la WebUI de Proxmox dans les options de la VM.\n<br>\n\n### 9. Conversion en template\n\n```bash\nqm template 10000\n```\n> Convertit la VM en template réutilisable.\n{.is-info}\n\n## 📁 Utilisation du template\n\n### 1. Clonage\n\nCloner le template en VM via l'interface graphique ou via CLI :\n\n```bash\nqm clone 10000 110 --name vm-test --full true\n```\n\n### 2. Configuration Cloud-Init (via GUI ou CLI)\n\nModifier les paramètres utilisateur, IP, hostname, clé SSH selon les besoins.\n\n### 3. Démarrage de la VM et connexion\n\nDémarrer la VM, récupérer son IP, puis se connecter vous :\n\n```bash\nssh admin@10.1.30.31\n```\n\n\n## Conclusion\n\nVous disposez maintenant d'un template Debian 13 cloud-init pleinement fonctionnel, prêt à être cloné et personnalisé pour tout usage automatisé dans votre infrastructure.\n",
+  "author": "Alban Mary",
+  "tags": [
+    "proxmox",
+    "terraform",
+    "cloud-init",
+    "debian",
+    "ssh",
+    "backup"
+  ],
+  "category": "Virtualisation",
+  "published": true,
+  "publishedAt": "2026-03-03T09:44:22.038Z",
+  "updatedAt": "2026-03-03T09:44:22.046Z",
+  "readingTime": "3 min read",
+  "locale": "fr",
+  "seoTitle": "Proxmox : Template Debian 13 avec Cloud-Init | Alban Mary",
+  "seoDescription": "Cette documentation décrit la création d'un template Debian 13 prêt à l'emploi avec Cloud-Init sur un hôte Proxmox VE. Ce template permettra de..."
+}

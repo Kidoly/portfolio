@@ -1,0 +1,35 @@
+services:
+  portfolio:
+    image: kidoly/portfolio:latest
+    # build: .
+    container_name: portfolio
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "4000:4000"
+    env_file:
+      - .env.local
+    volumes:
+      - blog-data:/app/content/blog
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      
+  watchtower:
+    image: nickfedor/watchtower:latest
+    container_name: watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      # Check every 5 minutes (300s).
+      - WATCHTOWER_POLL_INTERVAL=300
+      # Remove old images after updating
+      - WATCHTOWER_CLEANUP=true
+      # Only update containers that have the enable label
+      - WATCHTOWER_LABEL_ENABLE=true
+
+volumes:
+  blog-data:
