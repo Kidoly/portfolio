@@ -35,7 +35,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         throw new Error('Please enter a valid email address');
       }
 
-      const response = await fetch('http://localhost:4000/send-email', {
+      const response = await fetch('/api/send-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -112,10 +112,6 @@ const handleSubmit = async (e: React.FormEvent) => {
               <div className="flex items-center space-x-4">
                 <div className="p-3 bg-cyan-600/20 rounded-lg backdrop-blur-sm border border-cyan-400/30">
                   <Phone className="w-5 h-5 text-cyan-300" />
-                </div>
-                <div>
-                  <p className="font-medium">{t('contact.phone')}</p>
-                  <p className="text-blue-100">+33 7 50 04 96 13</p>
                 </div>
               </div>
 

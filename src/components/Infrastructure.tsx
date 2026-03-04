@@ -26,10 +26,10 @@ const Infrastructure = () => {
       color: 'orange'
     },
     {
-      name: 'Gitea',
+      name: 'Gitlab',
       description: language === 'fr'
-        ? 'Dépôts Git'
-        : 'Git repositories',
+        ? 'Dépôts Git, CI/CD et registre de conteneurs'
+        : 'Git repositories, CI/CD and container registry',
       icon: GitBranch,
       color: 'green'
     },
@@ -109,7 +109,7 @@ const Infrastructure = () => {
               </div>
             </div>
             <div className="text-center p-4 bg-white rounded-lg shadow-sm border border-gray-200">
-              <div className="text-2xl font-bold text-green-600 mb-1">24/7</div>
+              <div className="text-2xl font-bold text-green-600 mb-1">99.99%</div>
               <div className="text-xs text-gray-600">
                 {language === 'fr' ? 'Uptime' : 'Uptime'}
               </div>
@@ -169,7 +169,7 @@ const Infrastructure = () => {
                   {language === 'fr' ? 'Automatisation' : 'Automation'}
                 </h3>
                 <p className="text-blue-100 text-xs">
-                  {language === 'fr' ? 'Ansible + Semaphore' : 'Ansible + Semaphore'}
+                  {language === 'fr' ? 'Ansible + AWX' : 'Ansible + AWX'}
                 </p>
               </div>
               

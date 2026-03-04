@@ -110,7 +110,7 @@ const Certifications = () => {
         <div className="mt-16 bg-gradient-to-r from-blue-600 to-cyan-600 text-white p-8 rounded-xl shadow-lg">
           <div className="text-center">
             <h3 className="text-2xl font-semibold mb-4">
-              {language === 'fr' ? '4 Ans d\'Expérience' : '4 Years of Experience'}
+              {language === 'fr' ? '4 ans d\'expérience' : '4 Years of Experience'}
             </h3>
             <p className="text-blue-100 mb-6">
               {language === 'fr' 
