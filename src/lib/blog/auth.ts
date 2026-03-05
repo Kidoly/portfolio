@@ -17,9 +17,15 @@ export function isAuthentikEnabled(): boolean {
   return !!(AUTHENTIK_URL && AUTHENTIK_CLIENT_ID && AUTHENTIK_CLIENT_SECRET);
 }
 
-/** Build the redirect URI from the request origin (works on localhost + production) */
-export function buildRedirectUri(requestUrl: string): string {
-  const url = new URL(requestUrl);
+/** Build the redirect URI from the request headers (works behind reverse proxy + localhost) */
+export function buildRedirectUri(request: { headers: Headers; url: string }): string {
+  const host = request.headers.get('x-forwarded-host') || request.headers.get('host');
+  const proto = request.headers.get('x-forwarded-proto') || 'http';
+  if (host) {
+    return `${proto}://${host}/api/admin/auth/callback`;
+  }
+  // Fallback to request.url (local dev without proxy)
+  const url = new URL(request.url);
   return `${url.origin}/api/admin/auth/callback`;
 }
 

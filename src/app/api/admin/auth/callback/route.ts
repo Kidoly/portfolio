@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Exchange code for tokens (redirect_uri must match the one used in the authorize request)
-  const redirectUri = buildRedirectUri(request.url);
+  const redirectUri = buildRedirectUri(request);
   const tokens = await exchangeAuthentikCode(code, redirectUri);
   if (!tokens) {
     return NextResponse.redirect(new URL('/admin?error=token_exchange', request.url));

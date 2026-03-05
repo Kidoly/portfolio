@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
 
   // Generate a random state for CSRF protection
   const state = crypto.randomUUID();
-  const redirectUri = buildRedirectUri(request.url);
+  const redirectUri = buildRedirectUri(request);
 
   const authUrl = getAuthentikAuthUrl(state, redirectUri);
 
