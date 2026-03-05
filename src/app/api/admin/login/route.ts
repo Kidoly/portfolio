@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyCredentials, createToken } from '@/lib/blog/auth';
+import { verifyCredentials, createToken, isAuthentikEnabled } from '@/lib/blog/auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,14 +14,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    const token = await createToken(username);
+    const token = await createToken({
+      username,
+      name: username,
+      role: 'admin',
+      provider: 'local',
+    });
 
     const response = NextResponse.json({ success: true });
     response.cookies.set('admin_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 86400, // 24 hours
+      sameSite: 'lax',
+      maxAge: 86400,
       path: '/',
     });
 
@@ -29,4 +34,9 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
+}
+
+// Return Authentik status so the login UI knows whether to show the button
+export async function GET() {
+  return NextResponse.json({ authentik: isAuthentikEnabled() });
 }

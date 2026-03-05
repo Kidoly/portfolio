@@ -10,19 +10,29 @@ import {
   LogOut,
   Menu,
   X,
+  User,
 } from 'lucide-react';
+
+interface UserInfo {
+  name: string;
+  email?: string;
+  provider: 'local' | 'authentik';
+}
 
 export default function AdminLayoutClient({ children }: { children: ReactNode }) {
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
+  const [user, setUser] = useState<UserInfo | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
     fetch('/api/admin/me')
-      .then((res) => {
+      .then(async (res) => {
         if (res.ok) {
+          const data = await res.json();
           setAuthenticated(true);
+          setUser({ name: data.name, email: data.email, provider: data.provider });
         } else {
           setAuthenticated(false);
         }
@@ -112,6 +122,19 @@ export default function AdminLayoutClient({ children }: { children: ReactNode })
             })}
           </nav>
           <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-800">
+            {user && (
+              <div className="flex items-center gap-3 px-4 py-2.5 mb-2">
+                <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-bold">
+                  {user.name?.charAt(0).toUpperCase() || <User className="w-4 h-4" />}
+                </div>
+                <div className="overflow-hidden">
+                  <p className="text-sm font-medium text-white truncate">{user.name}</p>
+                  <p className="text-xs text-slate-400 truncate">
+                    {user.provider === 'authentik' ? 'via Authentik' : 'Local'}
+                  </p>
+                </div>
+              </div>
+            )}
             <button
               onClick={handleLogout}
               className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-red-600/20 hover:text-red-400 transition w-full"

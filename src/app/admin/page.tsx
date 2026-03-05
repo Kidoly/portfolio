@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { FileText, Eye, EyeOff, RefreshCw, Plus, Lock } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { FileText, Eye, EyeOff, RefreshCw, Plus, Lock, Shield } from 'lucide-react';
 
 // Login form shown when not authenticated
 function LoginForm() {
@@ -10,7 +10,30 @@ function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [authentikEnabled, setAuthentikEnabled] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    // Check if Authentik SSO is available
+    fetch('/api/admin/login')
+      .then((res) => res.json())
+      .then((data) => setAuthentikEnabled(data.authentik === true))
+      .catch(() => {});
+
+    // Check for OAuth error from redirect
+    const oauthError = searchParams.get('error');
+    if (oauthError) {
+      const messages: Record<string, string> = {
+        auth_denied: 'Authentification refusée par Authentik',
+        missing_params: 'Paramètres OAuth manquants',
+        invalid_state: 'Session OAuth invalide, réessayez',
+        token_exchange: 'Erreur lors de l\'échange de token',
+        user_info: 'Impossible de récupérer vos informations',
+      };
+      setError(messages[oauthError] || 'Erreur d\'authentification');
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,6 +71,31 @@ function LoginForm() {
           <p className="text-gray-500 mt-2">Connectez-vous pour gérer vos articles</p>
         </div>
 
+        {error && (
+          <p className="text-red-500 text-sm bg-red-50 p-3 rounded-lg mb-4">{error}</p>
+        )}
+
+        {/* Authentik SSO Button */}
+        {authentikEnabled && (
+          <>
+            <a
+              href="/api/admin/auth/authentik"
+              className="w-full flex items-center justify-center gap-2 bg-orange-600 text-white py-2.5 rounded-lg font-medium hover:bg-orange-700 transition mb-4"
+            >
+              <Shield className="w-5 h-5" />
+              Se connecter avec Authentik
+            </a>
+            <div className="relative mb-4">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-3 bg-white text-gray-400">ou</span>
+              </div>
+            </div>
+          </>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -73,10 +121,6 @@ function LoginForm() {
               required
             />
           </div>
-
-          {error && (
-            <p className="text-red-500 text-sm bg-red-50 p-3 rounded-lg">{error}</p>
-          )}
 
           <button
             type="submit"

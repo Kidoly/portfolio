@@ -12,5 +12,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ authenticated: false }, { status: 401 });
   }
 
-  return NextResponse.json({ authenticated: true, username: payload.username });
+  return NextResponse.json({
+    authenticated: true,
+    username: payload.username,
+    name: payload.name,
+    email: payload.email || null,
+    role: payload.role,
+    provider: payload.provider,
+  });
 }

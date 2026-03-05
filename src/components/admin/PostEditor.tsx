@@ -22,9 +22,10 @@ interface Props {
   post?: BlogPost;
   onSave: (data: Partial<BlogPost>) => Promise<void>;
   saving: boolean;
+  authorName?: string;
 }
 
-export default function PostEditor({ post, onSave, saving }: Props) {
+export default function PostEditor({ post, onSave, saving, authorName }: Props) {
   const [title, setTitle] = useState(post?.title || '');
   const [slug, setSlug] = useState(post?.slug || '');
   const [content, setContent] = useState(post?.content || '');
@@ -89,6 +90,7 @@ export default function PostEditor({ post, onSave, saving }: Props) {
       seoTitle: seoTitle || undefined,
       seoDescription: seoDescription || undefined,
       canonicalUrl: canonicalUrl || undefined,
+      ...(authorName && !post ? { author: authorName } : {}),
     });
   };
 
