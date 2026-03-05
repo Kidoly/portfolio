@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Linkedin, Github, Send, MessageCircle, CheckCircle, AlertCircle } from 'lucide-react';
+import { Mail, MapPin, Linkedin, Github, Send, MessageCircle, CheckCircle, AlertCircle } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const Contact = () => {

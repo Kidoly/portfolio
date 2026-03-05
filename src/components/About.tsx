@@ -77,7 +77,6 @@ const About = () => {
                   <div className="space-y-2 text-sm">
                     <p><span className="font-medium">{t('about.information.name')}</span> Alban MARY</p>
                     <p><span className="font-medium">{t('about.information.age')}</span>{t('about.information.ageValue')}</p>
-                    <p><span className="font-medium">{t('about.information.phone')}</span> +33 7 50 04 96 13</p>
                     <p><span className="font-medium">{t('about.information.email')}</span> alban.mary1@gmail.com</p>
                   </div>
                 </div>

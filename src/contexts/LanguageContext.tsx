@@ -53,7 +53,6 @@ const translations = {
     'about.information.name': 'Name:',
     'about.information.age': 'Age:',
     'about.information.ageValue': ' 21 years old',
-    'about.information.phone': 'Phone:',
     'about.information.email': 'Email:',
 
     // Experience Section
@@ -235,7 +234,6 @@ const translations = {
     'about.information.name': 'Nom :',
     'about.information.age': 'Âge : ',
     'about.information.ageValue': '21 ans',
-    'about.information.phone': 'Téléphone :',
     'about.information.email': 'Email :',
 
     // Experience Section
