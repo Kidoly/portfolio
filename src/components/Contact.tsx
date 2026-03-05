@@ -51,7 +51,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
       setSubmitStatus({
         type: 'success',
-        message: 'Thank you for your message! I\'ll get back to you within 24-48 hours.'
+        message: t('contact.success'),
       });
 
       setFormData({ name: '', email: '', subject: '', message: '' });
@@ -60,7 +60,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       console.error('Error sending email:', error);
       setSubmitStatus({
         type: 'error',
-        message: error instanceof Error ? error.message : 'Failed to send message. Please try again.'
+        message: t('contact.error'),
       });
     } finally {
       setIsSubmitting(false);
@@ -106,12 +106,6 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <div>
                   <p className="font-medium">{t('contact.email')}</p>
                   <p className="text-blue-100">alban.mary1@gmail.com</p>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-4">
-                <div className="p-3 bg-cyan-600/20 rounded-lg backdrop-blur-sm border border-cyan-400/30">
-                  <Phone className="w-5 h-5 text-cyan-300" />
                 </div>
               </div>
 
