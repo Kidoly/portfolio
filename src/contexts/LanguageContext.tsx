@@ -271,7 +271,7 @@ const translations = {
     'experiences.troublanc.achievements.3': 'Amélioration de l\'expérience utilisateur du site web',
     'experiences.troublanc.achievements.4': 'Intégration de nouvelles fonctionnalités et optimisation des performances du site web',
 
-    'experiences.kereisweb.title': 'Webdesigner/Employé Administratif chez Kereis',
+    'experiences.kereisweb.title': 'Webdesigner / Employé Administratif chez Kereis',
     'experiences.kereisweb.company': 'Kereis',
     'experiences.kereisweb.period': 'Juil 2023 - Sept 2023',
     'experiences.kereisweb.description': 'Création d\'un site interne de partage de documents et refonte de documents clients.',
