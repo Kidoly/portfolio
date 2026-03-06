@@ -8,6 +8,9 @@ services:
       - "3000:3000"
     env_file:
       - .env.local
+    environment:
+      # REQUIRED: Public URL of your site (used for OAuth redirects in Docker)
+      - SITE_URL=https://yourdomain.com
     volumes:
       - blog-data:/app/content/blog
     healthcheck:

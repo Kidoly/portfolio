@@ -17,31 +17,36 @@ export function isAuthentikEnabled(): boolean {
   return !!(AUTHENTIK_URL && AUTHENTIK_CLIENT_ID && AUTHENTIK_CLIENT_SECRET);
 }
 
-/** Build the redirect URI — works behind reverse proxies and inside Docker */
-export function buildRedirectUri(request: { headers: Headers; url: string }): string {
+/** Resolve the public-facing base URL — works behind reverse proxies and inside Docker */
+export function buildBaseUrl(request: { headers: Headers; url: string }): string {
   // 1. Explicit SITE_URL env var (most reliable for Docker)
   const siteUrl = process.env.SITE_URL;
   if (siteUrl) {
-    return `${siteUrl.replace(/\/$/, '')}/api/admin/auth/callback`;
+    return siteUrl.replace(/\/$/, '');
   }
 
   // 2. Reverse proxy headers (X-Forwarded-Host)
   const forwardedHost = request.headers.get('x-forwarded-host');
   if (forwardedHost) {
     const proto = request.headers.get('x-forwarded-proto') || 'https';
-    return `${proto}://${forwardedHost}/api/admin/auth/callback`;
+    return `${proto}://${forwardedHost}`;
   }
 
   // 3. Host header (works on localhost without proxy)
   const host = request.headers.get('host');
   if (host) {
     const proto = request.headers.get('x-forwarded-proto') || 'http';
-    return `${proto}://${host}/api/admin/auth/callback`;
+    return `${proto}://${host}`;
   }
 
   // 4. Last resort: request.url
   const url = new URL(request.url);
-  return `${url.origin}/api/admin/auth/callback`;
+  return url.origin;
+}
+
+/** Build the redirect URI — works behind reverse proxies and inside Docker */
+export function buildRedirectUri(request: { headers: Headers; url: string }): string {
+  return `${buildBaseUrl(request)}/api/admin/auth/callback`;
 }
 
 export function getAuthentikAuthUrl(state: string, redirectUri: string): string {
