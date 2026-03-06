@@ -76,7 +76,14 @@ const About = () => {
                   <h4 className="font-semibold text-gray-900 mb-2">{t('about.information.title')}</h4>
                   <div className="space-y-2 text-sm">
                     <p><span className="font-medium">{t('about.information.name')}</span> Alban MARY</p>
-                    <p><span className="font-medium">{t('about.information.age')}</span>{t('about.information.ageValue')}</p>
+                    <p><span className="font-medium">{t('about.information.age')}</span> {(() => {
+                      const birth = new Date(2004, 10, 15);
+                      const now = new Date();
+                      let age = now.getFullYear() - birth.getFullYear();
+                      const m = now.getMonth() - birth.getMonth();
+                      if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) age--;
+                      return age;
+                    })()}{t('about.information.ageSuffix')}</p>
                     <p><span className="font-medium">{t('about.information.email')}</span> alban.mary1@gmail.com</p>
                   </div>
                 </div>

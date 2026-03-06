@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Calendar, Clock, Tag, Search, Filter } from 'lucide-react';
 import { BlogPost } from '@/lib/blog/types';
 import PortfolioCTA from '@/components/blog/PortfolioCTA';
@@ -141,11 +142,13 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
                   className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group"
                 >
                   {post.coverImage && (
-                    <div className="h-48 overflow-hidden">
-                      <img
+                    <div className="relative h-48 overflow-hidden">
+                      <Image
                         src={post.coverImage}
                         alt={post.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
                   )}

@@ -5,6 +5,7 @@ import remarkRehype from 'remark-rehype';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeStringify from 'rehype-stringify';
 import readingTime from 'reading-time';
+import sanitizeHtml from 'sanitize-html';
 
 /**
  * Pre-process Wiki.js-style callout blocks before markdown parsing.
@@ -79,7 +80,45 @@ export async function markdownToHtml(markdown: string): Promise<string> {
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(preprocessed);
 
-  return result.toString();
+  return sanitizeHtml(result.toString(), {
+    allowedTags: [
+      // Structure
+      'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+      'p', 'div', 'span', 'br', 'hr',
+      'blockquote', 'pre', 'code',
+      // Lists
+      'ul', 'ol', 'li',
+      // Tables
+      'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td',
+      // Inline
+      'a', 'strong', 'em', 'b', 'i', 'u', 's', 'del', 'ins',
+      'sub', 'sup', 'mark', 'abbr', 'kbd',
+      // Media
+      'img', 'figure', 'figcaption', 'picture', 'source', 'video',
+      // Callouts (SVG icons)
+      'svg', 'path', 'circle', 'polyline', 'line', 'rect',
+      // Details/Summary
+      'details', 'summary',
+    ],
+    allowedAttributes: {
+      '*': ['class', 'id'],
+      'a': ['href', 'title', 'target', 'rel'],
+      'img': ['src', 'alt', 'title', 'width', 'height', 'loading'],
+      'td': ['align', 'colspan', 'rowspan'],
+      'th': ['align', 'colspan', 'rowspan'],
+      'code': ['class'],
+      'span': ['class'],
+      'source': ['src', 'type', 'srcset', 'sizes'],
+      'video': ['src', 'controls', 'width', 'height', 'poster'],
+      'svg': ['xmlns', 'width', 'height', 'viewBox', 'fill', 'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin'],
+      'path': ['d', 'fill', 'stroke'],
+      'circle': ['cx', 'cy', 'r'],
+      'polyline': ['points'],
+      'line': ['x1', 'y1', 'x2', 'y2'],
+      'rect': ['x', 'y', 'width', 'height', 'rx', 'ry'],
+    },
+    allowedSchemes: ['http', 'https', 'mailto'],
+  });
 }
 
 export function getReadingTime(content: string): string {

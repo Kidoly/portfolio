@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react';
+import Image from 'next/image';
 import { ExternalLink, Github, Monitor, Plane, Users, Shield } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -100,9 +101,11 @@ const Projects = () => {
           {projects.map((project, index) => (
             <div key={index} className={`bg-white rounded-xl shadow-lg overflow-hidden border-2 ${getBorderColor(project.color)} hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2`}>
               <div className="relative">
-                <img 
+                <Image 
                   src={project.image} 
                   alt={project.title}
+                  width={600}
+                  height={192}
                   className="w-full h-48 object-cover"
                 />
                 <div className={`absolute top-4 left-4 p-3 rounded-lg ${getColorClasses(project.color)}`}>

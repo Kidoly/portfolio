@@ -14,6 +14,8 @@ const Contact = () => {
     message: ''
   });
 
+  const [acceptTerms, setAcceptTerms] = useState(false);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{
     type: 'success' | 'error' | null;
@@ -40,7 +42,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, confirm_terms: acceptTerms }),
       });
 
       const result = await response.json();
@@ -230,6 +232,20 @@ const handleSubmit = async (e: React.FormEvent) => {
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder={t('form.message.placeholder')}
                 />
+              </div>
+
+              <div className="absolute opacity-0 -z-10 pointer-events-none" aria-hidden="true" tabIndex={-1}>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="confirm_terms"
+                    checked={acceptTerms}
+                    onChange={(e) => setAcceptTerms(e.target.checked)}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                  I agree to the terms
+                </label>
               </div>
 
               <button

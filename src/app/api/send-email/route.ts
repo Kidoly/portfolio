@@ -16,7 +16,11 @@ const transporter = nodemailer.createTransport({
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, subject, message } = await request.json();
+    const { name, email, subject, message, confirm_terms } = await request.json();
+
+    if (confirm_terms) {
+      return NextResponse.json({ success: true, message: 'Email envoyé avec succès.' });
+    }
 
     // Validation
     if (!name || !email || !subject || !message) {

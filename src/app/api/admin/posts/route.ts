@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getAllPosts, savePost, generateSlug, generateId } from '@/lib/blog/posts';
 import { getReadingTime } from '@/lib/blog/markdown';
 import { authGuard } from '@/lib/blog/api-auth';
@@ -46,6 +47,12 @@ export async function POST(request: NextRequest) {
     };
 
     const saved = savePost(post);
+
+    revalidatePath('/blog');
+    if (saved.published) {
+      revalidatePath(`/blog/${saved.slug}`);
+    }
+
     return NextResponse.json(saved, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to create post' }, { status: 500 });

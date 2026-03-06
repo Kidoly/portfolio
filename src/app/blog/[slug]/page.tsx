@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getPostBySlug, getPublishedPosts, getRelatedPosts } from '@/lib/blog/posts';
 import { markdownToHtml, generateSeoTitle } from '@/lib/blog/markdown';
 import { Calendar, Clock, ArrowLeft, Tag, User } from 'lucide-react';
@@ -12,7 +13,12 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const posts = getPublishedPosts();
+  return posts.map((post) => ({ slug: post.slug }));
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -208,11 +214,16 @@ export default async function BlogPostPage({ params }: Props) {
         {/* Cover Image */}
         {post.coverImage && (
           <div className="container mx-auto px-6 max-w-4xl -mt-8">
-            <img
-              src={post.coverImage}
-              alt={post.title}
-              className="w-full h-64 md:h-96 object-cover rounded-xl shadow-lg"
-            />
+            <div className="relative w-full h-64 md:h-96">
+              <Image
+                src={post.coverImage}
+                alt={post.title}
+                fill
+                sizes="(max-width: 768px) 100vw, 896px"
+                priority
+                className="object-cover rounded-xl shadow-lg"
+              />
+            </div>
           </div>
         )}
 

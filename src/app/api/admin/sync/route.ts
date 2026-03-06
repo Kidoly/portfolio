@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { syncFromWiki } from '@/lib/blog/wiki-sync';
 import { authGuard } from '@/lib/blog/api-auth';
 
@@ -9,6 +10,10 @@ export async function POST(request: NextRequest) {
 
   try {
     const result = await syncFromWiki();
+
+    revalidatePath('/blog');
+    revalidatePath('/blog/[slug]', 'page');
+
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(

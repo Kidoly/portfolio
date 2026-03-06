@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getPostById, savePost, deletePost, generateSlug } from '@/lib/blog/posts';
 import { getReadingTime } from '@/lib/blog/markdown';
 import { authGuard } from '@/lib/blog/api-auth';
@@ -61,6 +62,10 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     const saved = savePost(post);
+
+    revalidatePath('/blog');
+    revalidatePath(`/blog/${saved.slug}`);
+
     return NextResponse.json(saved);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update post' }, { status: 500 });
@@ -77,6 +82,8 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   if (!success) {
     return NextResponse.json({ error: 'Post not found' }, { status: 404 });
   }
+
+  revalidatePath('/blog');
 
   return NextResponse.json({ success: true });
 }

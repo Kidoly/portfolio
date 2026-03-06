@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
 import { BlogPost } from '@/lib/blog/types';
 
@@ -22,11 +23,13 @@ export default function RelatedPosts({ posts }: Props) {
             className="group bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
           >
             {post.coverImage && (
-              <div className="h-36 overflow-hidden">
-                <img
+              <div className="relative h-36 overflow-hidden">
+                <Image
                   src={post.coverImage}
                   alt={post.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
             )}
