@@ -188,7 +188,7 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
                         ))}
                       </div>
                       {post.readingTime && (
-                        <span className="flex items-center gap-1 text-xs text-gray-400">
+                        <span className="flex items-center gap-1 text-xs text-gray-600">
                           <Clock className="w-3 h-3" />
                           {post.readingTime}
                         </span>

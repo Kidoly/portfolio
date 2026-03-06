@@ -67,6 +67,7 @@ export default function BlogNav() {
         {/* Mobile toggle */}
         <button
           onClick={() => setOpen(!open)}
+          aria-label={open ? 'Close menu' : 'Open menu'}
           className={`md:hidden transition ${
             scrolled ? 'text-gray-900' : 'text-white'
           }`}
