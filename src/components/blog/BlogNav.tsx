@@ -22,9 +22,7 @@ export default function BlogNav() {
         {/* Logo / Home */}
         <Link
           href="/"
-          className={`font-bold text-lg transition ${
-            scrolled ? 'text-gray-900' : 'text-white'
-          }`}
+          className="font-bold text-lg transition text-gray-900"
         >
           Alban Mary
         </Link>
@@ -33,25 +31,19 @@ export default function BlogNav() {
         <div className="hidden md:flex items-center gap-6">
           <Link
             href="/blog/"
-            className={`text-sm font-medium transition hover:text-blue-500 ${
-              scrolled ? 'text-gray-600' : 'text-blue-200'
-            }`}
+            className="text-sm font-medium transition hover:text-blue-500 text-gray-600"
           >
             Articles
           </Link>
           <Link
             href="/#projects"
-            className={`text-sm font-medium transition hover:text-blue-500 ${
-              scrolled ? 'text-gray-600' : 'text-blue-200'
-            }`}
+            className="text-sm font-medium transition hover:text-blue-500 text-gray-600"
           >
             Projets
           </Link>
           <Link
             href="/#certifications"
-            className={`text-sm font-medium transition hover:text-blue-500 ${
-              scrolled ? 'text-gray-600' : 'text-blue-200'
-            }`}
+            className="text-sm font-medium transition hover:text-blue-500 text-gray-600"
           >
             Certifications
           </Link>
