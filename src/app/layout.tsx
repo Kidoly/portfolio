@@ -68,9 +68,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: '16x16 32x32 48x48', type: 'image/x-icon' },
-      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', type: 'image/x-icon' },
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon.svg', type: 'image/svg+xml', sizes: 'any' },
     ],
+    shortcut: '/favicon.ico',
     apple: '/apple-touch-icon.png',
   },
   manifest: '/manifest.json',
