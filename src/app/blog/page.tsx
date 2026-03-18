@@ -38,9 +38,9 @@ export const metadata: Metadata = {
   },
 };
 
-const jsonLd = {
+const jsonLdBase = {
   '@context': 'https://schema.org',
-  '@type': 'CollectionPage',
+  '@type': ['CollectionPage', 'ItemList'],
   name: 'Blog — Alban Mary',
   description:
     'Articles sur le développement web, l\'administration système et la cybersécurité',
@@ -79,6 +79,25 @@ export default function BlogPage() {
   const posts = getPublishedPosts();
   const tags = getAllTags();
   const categories = getAllCategories();
+
+  const jsonLd = {
+    ...jsonLdBase,
+    itemListElement: posts.map((post, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'BlogPosting',
+        url: `https://albanmary.com/blog/${post.slug}`,
+        name: post.title,
+        description: post.description,
+        datePublished: post.publishedAt,
+        author: {
+          '@type': 'Person',
+          name: post.author
+        }
+      }
+    }))
+  };
 
   return (
     <>

@@ -48,15 +48,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       section: post.category,
       siteName: 'Alban Mary',
       locale: post.locale === 'en' ? 'en_US' : 'fr_FR',
-      images: post.coverImage
-        ? [{ url: post.coverImage, width: 1200, height: 630, alt: post.title }]
-        : [],
+      ...(post.coverImage && {
+        images: [{ url: post.coverImage, width: 1200, height: 630, alt: post.title }]
+      }),
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: post.coverImage ? [post.coverImage] : [],
+      ...(post.coverImage && { images: [post.coverImage] }),
       creator: '@kidoly',
     },
     alternates: {
