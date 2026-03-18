@@ -107,6 +107,9 @@ const Projects = () => {
                   width={600}
                   height={192}
                   className="w-full h-48 object-cover"
+                  style={{ width: 'auto', height: 'auto' }}
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  priority={index === 0}
                 />
                 <div className={`absolute top-4 left-4 p-3 rounded-lg ${getColorClasses(project.color)}`}>
                   <project.icon className="w-6 h-6" />

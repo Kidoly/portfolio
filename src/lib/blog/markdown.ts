@@ -82,7 +82,7 @@ export async function markdownToHtml(markdown: string): Promise<string> {
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(preprocessed);
 
-  return sanitizeHtml(result.toString(), {
+  let sanitized = sanitizeHtml(result.toString(), {
     allowedTags: [
       // Structure
       'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
@@ -121,6 +121,14 @@ export async function markdownToHtml(markdown: string): Promise<string> {
     },
     allowedSchemes: ['http', 'https', 'mailto'],
   });
+
+  // Wrap pre > code blocks with data-code attribute for client-side copy button handling
+  sanitized = sanitized.replace(
+    /<pre><code class="language-([^"]*)">/g,
+    '<pre><code data-language="$1" class="language-$1">'
+  );
+
+  return sanitized;
 }
 
 export function getReadingTime(content: string): string {

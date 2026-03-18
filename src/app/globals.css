@@ -93,6 +93,7 @@ code.hljs {
 
 /* --- Code block container styling --- */
 .blog-content pre {
+  position: relative;
   background: #0d1117;
   border: 1px solid #21262d;
   border-radius: 0.75rem;

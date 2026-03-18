@@ -8,6 +8,9 @@ import { Calendar, Clock, ArrowLeft, Tag, User } from 'lucide-react';
 import BlogNav from '@/components/blog/BlogNav';
 import AuthorCard from '@/components/blog/AuthorCard';
 import RelatedPosts from '@/components/blog/RelatedPosts';
+import TableOfContents from '@/components/blog/TableOfContents';
+import CommentsSection from '@/components/blog/CommentsSection';
+import CodeBlockCopyButtons from '@/components/blog/CodeBlockCopyButtons';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -228,11 +231,19 @@ export default async function BlogPostPage({ params }: Props) {
         )}
 
         {/* Article Content */}
-        <article className="container mx-auto px-6 max-w-4xl py-12">
-          <div
-            className="blog-content"
-            dangerouslySetInnerHTML={{ __html: contentHtml }}
-          />
+        <article className="container mx-auto px-6 max-w-6xl py-12 grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Table of Contents - Sticky Sidebar */}
+          <div className="lg:col-span-1">
+            <TableOfContents />
+          </div>
+
+          {/* Main Content */}
+          <div className="lg:col-span-3">
+            <CodeBlockCopyButtons />
+            <div
+              className="blog-content"
+              dangerouslySetInnerHTML={{ __html: contentHtml }}
+            />
 
           {/* Tags */}
           {post.tags.length > 0 && (
@@ -257,8 +268,15 @@ export default async function BlogPostPage({ params }: Props) {
           {/* Author Card — Portfolio CTA */}
           <AuthorCard />
 
+          {/* Comments Section */}
+          <section className="mt-12 pt-8 border-t border-gray-200">
+            <h2 className="text-2xl font-bold mb-6">Commentaires</h2>
+            <CommentsSection />
+          </section>
+
           {/* Related Posts */}
           <RelatedPosts posts={relatedPosts} />
+          </div>
         </article>
       </main>
     </>
