@@ -133,6 +133,9 @@ code.hljs {
   flex-shrink: 0;
   margin-top: 0.1rem;
 }
+.callout-icon svg {
+  overflow: visible;
+}
 .callout-content {
   flex: 1;
   min-width: 0;
