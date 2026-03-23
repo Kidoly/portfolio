@@ -1,0 +1,22 @@
+[
+  {
+    "id": "1774273710655-f51u4d7",
+    "postSlug": "test-slug",
+    "authorName": "Test",
+    "content": "Hello",
+    "status": "pending",
+    "createdAt": "2026-03-23T13:48:30.655Z",
+    "updatedAt": "2026-03-23T13:48:30.655Z",
+    "ip": "::1"
+  },
+  {
+    "id": "1774273736615-4jqe65e",
+    "postSlug": "proxmox-template-debian-13-avec-cloud-init",
+    "authorName": "aaa",
+    "content": "aa",
+    "status": "pending",
+    "createdAt": "2026-03-23T13:48:56.615Z",
+    "updatedAt": "2026-03-23T13:48:56.615Z",
+    "ip": "::1"
+  }
+]

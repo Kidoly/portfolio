@@ -100,14 +100,13 @@ const Projects = () => {
         <div className="grid md:grid-cols-2 gap-8">
           {projects.map((project, index) => (
             <div key={index} className={`bg-white rounded-xl shadow-lg overflow-hidden border-2 ${getBorderColor(project.color)} hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2`}>
-              <div className="relative">
+              <div className="relative h-48 w-full">
                 <Image 
                   src={project.image} 
                   alt={project.title}
-                  width={600}
-                  height={192}
-                  className="w-full h-48 object-cover"
-                  style={{ width: 'auto', height: 'auto' }}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
                   loading={index === 0 ? 'eager' : 'lazy'}
                   priority={index === 0}
                 />

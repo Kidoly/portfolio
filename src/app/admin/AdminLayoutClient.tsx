@@ -6,6 +6,7 @@ import Link from 'next/link';
 import {
   LayoutDashboard,
   FileText,
+  MessageSquare,
   RefreshCw,
   LogOut,
   Menu,
@@ -68,6 +69,7 @@ export default function AdminLayoutClient({ children }: { children: ReactNode })
   const navItems = [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/admin/posts', label: 'Articles', icon: FileText },
+    { href: '/admin/comments', label: 'Commentaires', icon: MessageSquare },
     { href: '/admin/sync', label: 'Wiki Sync', icon: RefreshCw },
   ];
 

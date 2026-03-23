@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FileText, Eye, EyeOff, RefreshCw, Plus, Lock, Shield } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 
 // Login form shown when not authenticated
 function LoginForm() {
@@ -142,6 +143,7 @@ function Dashboard() {
     published: number;
     drafts: number;
   } | null>(null);
+  const [pendingComments, setPendingComments] = useState<number>(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -153,6 +155,13 @@ function Dashboard() {
           published: posts.filter((p: any) => p.published).length,
           drafts: posts.filter((p: any) => !p.published).length,
         });
+      })
+      .catch(() => {});
+
+    fetch('/api/admin/comments')
+      .then((res) => (res.ok ? res.json() : []))
+      .then((comments) => {
+        setPendingComments(comments.filter((c: any) => c.status === 'pending').length);
       })
       .catch(() => {});
   }, []);
@@ -209,6 +218,16 @@ function Dashboard() {
           <h3 className="font-semibold text-gray-900 mb-1">Gérer les articles</h3>
           <p className="text-sm text-gray-500">
             Créer, modifier et publier vos articles de blog
+          </p>
+        </button>
+        <button
+          onClick={() => router.push('/admin/comments')}
+          className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition text-left"
+        >
+          <MessageSquare className="w-8 h-8 text-emerald-600 mb-3" />
+          <h3 className="font-semibold text-gray-900 mb-1">Modérer les commentaires</h3>
+          <p className="text-sm text-gray-500">
+            {pendingComments} commentaire(s) en attente de validation
           </p>
         </button>
         <button

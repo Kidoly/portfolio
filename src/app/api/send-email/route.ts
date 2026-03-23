@@ -31,7 +31,9 @@ const transporter = nodemailer.createTransport({
 export async function POST(request: NextRequest) {
   try {
     // Rate Limiting
-    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    const realIp = request.headers.get('x-real-ip');
+    const ip = forwardedFor?.split(',')[0]?.trim() || realIp || 'unknown';
     const now = Date.now();
     
     if (ip !== 'unknown') {
