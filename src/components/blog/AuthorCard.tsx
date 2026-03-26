@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { Briefcase, Github, Linkedin, ArrowRight } from 'lucide-react';
+import { Briefcase, ArrowRight } from 'lucide-react';
+import { FaGithub, FaLinkedin } from 'react-icons/fa';
 
 export default function AuthorCard() {
   return (
@@ -31,7 +32,7 @@ export default function AuthorCard() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-white/10 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-white/20 transition"
             >
-              <Github className="w-4 h-4" />
+              <FaGithub className="w-4 h-4" />
               GitHub
             </Link>
             <Link
@@ -40,7 +41,7 @@ export default function AuthorCard() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-white/10 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-white/20 transition"
             >
-              <Linkedin className="w-4 h-4" />
+              <FaLinkedin className="w-4 h-4" />
               LinkedIn
             </Link>
           </div>

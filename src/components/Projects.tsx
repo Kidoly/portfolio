@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { ExternalLink, Github, Monitor, Plane, Users, Shield } from 'lucide-react';
+import { ExternalLink, Monitor, Plane, Users, Shield } from 'lucide-react';
+import { FaGithub } from 'react-icons/fa';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const Projects = () => {
@@ -150,7 +151,7 @@ const Projects = () => {
                       rel="noopener noreferrer"
                       className="flex-1 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 flex items-center justify-center gap-2"
                     >
-                      <Github className="w-4 h-4" />
+                      <FaGithub className="w-4 h-4" />
                       {t('projects.viewCode')}
                     </a>
                   )}

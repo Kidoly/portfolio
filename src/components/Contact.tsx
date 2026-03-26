@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useState } from 'react';
-import { Mail, MapPin, Linkedin, Github, Send, MessageCircle, CheckCircle, AlertCircle } from 'lucide-react';
+import { Mail, MapPin, Send, MessageCircle, CheckCircle, AlertCircle } from 'lucide-react';
+import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const Contact = () => {
@@ -130,7 +131,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 aria-label="LinkedIn – Alban Mary"
                 className="p-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200"
               >
-                <Linkedin className="w-5 h-5" />
+                <FaLinkedin className="w-5 h-5" />
               </a>
               <a 
                 href="https://github.com/Kidoly" 
@@ -139,7 +140,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 aria-label="GitHub – Kidoly"
                 className="p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors duration-200"
               >
-                <Github className="w-5 h-5" />
+                <FaGithub className="w-5 h-5" />
               </a>
             </div>
           </div>
