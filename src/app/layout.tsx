@@ -2,8 +2,6 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import Providers from './providers'
-import PlausibleAnalytics from '@/components/PlausibleAnalytics'
-
 const inter = Inter({ subsets: ['latin'], display: 'swap' })
 
 const SITE_URL = 'https://albanmary.com';
@@ -159,7 +157,6 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <PlausibleAnalytics />
         <Providers>
           {children}
         </Providers>
