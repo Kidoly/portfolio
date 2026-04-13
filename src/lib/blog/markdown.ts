@@ -49,7 +49,13 @@ function preprocessCallouts(md: string): string {
 
       const icon = calloutIcons[type] || calloutIcons.info;
 
-      return `<div class="callout callout-${type}"><div class="callout-icon">${icon}</div><div class="callout-content">${text}</div></div>\n`;
+      // Convert inline markdown inside the callout text
+      const html = text
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+      return `<div class="callout callout-${type}"><div class="callout-icon">${icon}</div><div class="callout-content">${html}</div></div>\n`;
     }
   );
 }
@@ -66,6 +72,9 @@ function preprocessMarkdown(md: string): string {
 
   // Convert <br> and <br/> to double-newline for proper paragraph breaks
   processed = processed.replace(/<br\s*\/?>/gi, '\n\n');
+
+  // Convert Wiki.js spacer lines (** **) to a line break after the <br>→\n\n pass
+  processed = processed.replace(/^\*\*\s+\*\*\s*$/gm, '<br>');
 
   return processed;
 }
