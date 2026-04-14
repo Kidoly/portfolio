@@ -24,7 +24,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.SMTP_PASS,
   },
   tls: {
-    rejectUnauthorized: false, // Could be changed to true if SMTP has valid certificate
+    rejectUnauthorized: process.env.SMTP_REJECT_UNAUTHORIZED !== 'false',
   },
 });
 
