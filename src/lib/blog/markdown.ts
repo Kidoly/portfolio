@@ -33,12 +33,12 @@ function preprocessCallouts(md: string): string {
   // Supports multi-line blockquotes and inline {.is-TYPE} on the last line
   // First normalize: move inline {.is-*} from inside blockquote to after it
   let normalized = md.replace(
-    /^(>\s*.*)\{\.is-(info|success|warning|danger)\}\s*$/gm,
+    /^(>[^\n]*)\{\.is-(info|success|warning|danger)\}\s*$/gm,
     '$1\n{.is-$2}'
   );
 
   return normalized.replace(
-    /((?:^>\s*.*\n?)+)\s*\{\.is-(info|success|warning|danger)\}/gm,
+    /((?:^>[^\n]*\n?)+)\s*\{\.is-(info|success|warning|danger)\}/gm,
     (_match, blockquoteRaw: string, type: string) => {
       // Strip leading "> " from each line and join
       const text = blockquoteRaw

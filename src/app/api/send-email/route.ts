@@ -70,8 +70,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email) || email.length > 254) {
+    const emailRegex = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/;
+    if (email.length > 254 || !emailRegex.test(email)) {
       return NextResponse.json(
         { error: 'Adresse email invalide.' },
         { status: 400 }
@@ -80,6 +80,7 @@ export async function POST(request: NextRequest) {
 
     // Sanitization against HTML injection in email clients
     const safeName = escapeHtml(name.substring(0, 100));
+    const safeEmail = escapeHtml(email.substring(0, 254));
     const safeSubject = escapeHtml(subject.substring(0, 150));
     const safeMessage = escapeHtml(message.substring(0, 5000));
 
@@ -100,7 +101,7 @@ export async function POST(request: NextRequest) {
           </div>
           <div style="background: #f9fafb; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
             <p style="margin: 0 0 8px;"><strong>De :</strong> ${safeName}</p>
-            <p style="margin: 0 0 8px;"><strong>Email :</strong> <a href="mailto:${email}">${email}</a></p>
+            <p style="margin: 0 0 8px;"><strong>Email :</strong> <a href="mailto:${safeEmail}">${safeEmail}</a></p>
             <p style="margin: 0 0 16px;"><strong>Sujet :</strong> ${safeSubject}</p>
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 16px 0;" />
             <div style="white-space: pre-wrap; color: #374151;">${safeMessage}</div>

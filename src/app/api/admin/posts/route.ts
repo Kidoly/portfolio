@@ -7,6 +7,17 @@ import { adminLog } from '@/lib/blog/auth';
 import { commitFile } from '@/lib/blog/github';
 import { BlogPost } from '@/lib/blog/types';
 
+function sanitizeImageUrl(url: unknown): string | undefined {
+  if (!url || typeof url !== 'string') return undefined;
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') return undefined;
+    return url;
+  } catch {
+    return undefined;
+  }
+}
+
 // GET /api/admin/posts - list all posts (including drafts)
 export async function GET(request: NextRequest) {
   const authError = await authGuard(request);
@@ -38,7 +49,7 @@ export async function POST(request: NextRequest) {
       author: 'Alban Mary',
       tags: tags || [],
       category: category || 'General',
-      coverImage: coverImage || undefined,
+      coverImage: sanitizeImageUrl(coverImage),
       published: published ?? false,
       publishedAt: published ? new Date().toISOString() : '',
       updatedAt: new Date().toISOString(),

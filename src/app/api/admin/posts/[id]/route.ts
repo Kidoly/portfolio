@@ -3,6 +3,17 @@ import { revalidatePath } from 'next/cache';
 import { getPostById, savePost, deletePost, generateSlug } from '@/lib/blog/posts';
 import { getReadingTime } from '@/lib/blog/markdown';
 import { authGuard, getRequestUser } from '@/lib/blog/api-auth';
+
+function sanitizeImageUrl(url: unknown): string | undefined {
+  if (!url || typeof url !== 'string') return undefined;
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') return undefined;
+    return url;
+  } catch {
+    return undefined;
+  }
+}
 import { adminLog } from '@/lib/blog/auth';
 import { commitFile, deleteFile } from '@/lib/blog/github';
 
@@ -49,7 +60,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     if (body.description !== undefined) post.description = body.description;
     if (body.tags !== undefined) post.tags = body.tags;
     if (body.category !== undefined) post.category = body.category;
-    if (body.coverImage !== undefined) post.coverImage = body.coverImage;
+    if (body.coverImage !== undefined) post.coverImage = sanitizeImageUrl(body.coverImage);
     if (body.locale !== undefined) post.locale = body.locale;
     if (body.seoTitle !== undefined) post.seoTitle = body.seoTitle;
     if (body.seoDescription !== undefined) post.seoDescription = body.seoDescription;
