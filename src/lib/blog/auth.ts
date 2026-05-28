@@ -14,6 +14,56 @@ const AUTHENTIK_CLIENT_ID = process.env.AUTHENTIK_CLIENT_ID || '';
 const AUTHENTIK_CLIENT_SECRET = process.env.AUTHENTIK_CLIENT_SECRET || '';
 export const AUTHENTIK_ALLOWED_GROUP = process.env.AUTHENTIK_ALLOWED_GROUP || '';
 
+const AUTH_DEBUG = process.env.AUTH_DEBUG === 'true';
+
+type AuthEvent = 'login' | 'logout' | 'granted' | 'denied' | 'error';
+
+export function authLog(event: AuthEvent, details: {
+  email?: string;
+  username?: string;
+  groups?: string[];
+  provider?: string;
+  ip?: string;
+  reason?: string;
+}) {
+  if (!AUTH_DEBUG) return;
+  const ts = new Date().toISOString();
+  const prefix: Record<AuthEvent, string> = {
+    login:   '[auth:login  ]',
+    logout:  '[auth:logout ]',
+    granted: '[auth:granted]',
+    denied:  '[auth:denied ]',
+    error:   '[auth:error  ]',
+  };
+  const parts = [
+    `${prefix[event]} ${ts}`,
+    details.username && `user=${details.username}`,
+    details.email    && `email=${details.email}`,
+    details.provider && `via=${details.provider}`,
+    details.ip       && `ip=${details.ip}`,
+    details.groups   && `groups=[${details.groups.join(', ')}]`,
+    details.reason   && `reason=${details.reason}`,
+  ].filter(Boolean);
+  const log = ['login', 'logout', 'granted'].includes(event) ? console.log : console.warn;
+  log(parts.join(' | '));
+}
+
+type AdminAction =
+  | 'post.create' | 'post.update' | 'post.delete'
+  | 'comment.update' | 'comment.delete'
+  | 'sync';
+
+export function adminLog(action: AdminAction, user: { username?: string; email?: string } | null, details?: Record<string, string | boolean | undefined>) {
+  if (!AUTH_DEBUG) return;
+  const ts = new Date().toISOString();
+  const parts = [
+    `[admin:${action.padEnd(14)}] ${ts}`,
+    user?.username && `user=${user.username}`,
+    ...Object.entries(details ?? {}).map(([k, v]) => v !== undefined ? `${k}=${v}` : null),
+  ].filter(Boolean);
+  console.log(parts.join(' | '));
+}
+
 export function isAuthentikEnabled(): boolean {
   return !!(AUTHENTIK_URL && AUTHENTIK_CLIENT_ID && AUTHENTIK_CLIENT_SECRET);
 }

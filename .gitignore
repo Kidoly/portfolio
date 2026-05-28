@@ -25,3 +25,7 @@ out
 *.sln
 *.sw?
 .env
+
+# Exclude blog content
+content/blog/*
+content/comments/*

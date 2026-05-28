@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { getAllPosts, savePost, generateSlug, generateId } from '@/lib/blog/posts';
 import { getReadingTime } from '@/lib/blog/markdown';
-import { authGuard } from '@/lib/blog/api-auth';
+import { authGuard, getRequestUser } from '@/lib/blog/api-auth';
+import { adminLog } from '@/lib/blog/auth';
 import { BlogPost } from '@/lib/blog/types';
 
 // GET /api/admin/posts - list all posts (including drafts)
@@ -52,6 +53,9 @@ export async function POST(request: NextRequest) {
     if (saved.published) {
       revalidatePath(`/blog/${saved.slug}`);
     }
+
+    const user = await getRequestUser(request);
+    adminLog('post.create', user, { id: saved.id, title: saved.title, published: saved.published });
 
     return NextResponse.json(saved, { status: 201 });
   } catch (error) {

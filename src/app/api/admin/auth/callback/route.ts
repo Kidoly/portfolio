@@ -6,6 +6,7 @@ import {
   buildRedirectUri,
   buildBaseUrl,
   AUTHENTIK_ALLOWED_GROUP,
+  authLog,
 } from '@/lib/blog/auth';
 
 export async function GET(request: NextRequest) {
@@ -45,25 +46,42 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/admin?error=user_info', baseUrl));
   }
 
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim()
+    ?? request.headers.get('x-real-ip')
+    ?? 'unknown';
+
   // Enforce group-based access control
-  console.log('[auth] AUTHENTIK_ALLOWED_GROUP:', AUTHENTIK_ALLOWED_GROUP);
-  console.log('[auth] userInfo.groups:', userInfo.groups);
-  console.log('[auth] userInfo.email:', userInfo.email);
+  const userGroups = userInfo.groups ?? [];
   if (AUTHENTIK_ALLOWED_GROUP) {
-    const userGroups = userInfo.groups ?? [];
     if (!userGroups.includes(AUTHENTIK_ALLOWED_GROUP)) {
-      console.warn(`Authentik login denied for ${userInfo.email}: not in group "${AUTHENTIK_ALLOWED_GROUP}"`);
+      authLog('denied', {
+        email: userInfo.email,
+        username: userInfo.preferred_username,
+        groups: userGroups,
+        provider: 'authentik',
+        ip,
+        reason: `not in group "${AUTHENTIK_ALLOWED_GROUP}"`,
+      });
       return NextResponse.redirect(new URL('/admin?error=unauthorized', baseUrl));
     }
   }
 
   // Create our own JWT with user info
+  const username = userInfo.preferred_username || userInfo.email;
   const token = await createToken({
-    username: userInfo.preferred_username || userInfo.email,
+    username,
     name: userInfo.name || userInfo.preferred_username,
     email: userInfo.email,
     role: 'admin',
     provider: 'authentik',
+  });
+
+  authLog('granted', {
+    email: userInfo.email,
+    username,
+    groups: userGroups,
+    provider: 'authentik',
+    ip,
   });
 
   // Redirect to admin dashboard with auth cookie

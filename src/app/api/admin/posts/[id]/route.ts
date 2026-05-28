@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { getPostById, savePost, deletePost, generateSlug } from '@/lib/blog/posts';
 import { getReadingTime } from '@/lib/blog/markdown';
-import { authGuard } from '@/lib/blog/api-auth';
+import { authGuard, getRequestUser } from '@/lib/blog/api-auth';
+import { adminLog } from '@/lib/blog/auth';
 
 // GET /api/admin/posts/[id]
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -66,6 +67,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     revalidatePath('/blog');
     revalidatePath(`/blog/${saved.slug}`);
 
+    const user = await getRequestUser(request);
+    adminLog('post.update', user, { id: saved.id, title: saved.title, published: saved.published });
+
     return NextResponse.json(saved);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update post' }, { status: 500 });
@@ -78,12 +82,16 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   if (authError) return authError;
 
   const { id } = await params;
+  const post = getPostById(id);
   const success = deletePost(id);
   if (!success) {
     return NextResponse.json({ error: 'Post not found' }, { status: 404 });
   }
 
   revalidatePath('/blog');
+
+  const user = await getRequestUser(request);
+  adminLog('post.delete', user, { id, title: post?.title });
 
   return NextResponse.json({ success: true });
 }

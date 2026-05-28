@@ -14,3 +14,9 @@ export async function authGuard(request: NextRequest): Promise<NextResponse | nu
 
   return null; // null means authorized
 }
+
+export async function getRequestUser(request: NextRequest) {
+  const token = request.cookies.get('admin_token')?.value;
+  if (!token) return null;
+  return verifyToken(token);
+}

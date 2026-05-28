@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyCredentials, createToken, isAuthentikEnabled } from '@/lib/blog/auth';
+import { verifyCredentials, createToken, isAuthentikEnabled, authLog } from '@/lib/blog/auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -9,8 +9,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Username and password required' }, { status: 400 });
     }
 
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim()
+      ?? request.headers.get('x-real-ip')
+      ?? 'unknown';
+
     const valid = await verifyCredentials(username, password);
     if (!valid) {
+      authLog('denied', { username, provider: 'local', ip, reason: 'invalid credentials' });
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
@@ -21,6 +26,7 @@ export async function POST(request: NextRequest) {
       provider: 'local',
     });
 
+    authLog('login', { username, provider: 'local', ip });
     const response = NextResponse.json({ success: true });
     response.cookies.set('admin_token', token, {
       httpOnly: true,

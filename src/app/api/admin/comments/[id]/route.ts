@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authGuard } from '@/lib/blog/api-auth';
+import { authGuard, getRequestUser } from '@/lib/blog/api-auth';
+import { adminLog } from '@/lib/blog/auth';
 import { deleteComment, updateComment } from '@/lib/blog/comments';
 
 export async function PUT(
@@ -24,6 +25,9 @@ export async function PUT(
       return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
     }
 
+    const user = await getRequestUser(request);
+    adminLog('comment.update', user, { id, status });
+
     return NextResponse.json(updated);
   } catch {
     return NextResponse.json({ error: 'Failed to update comment' }, { status: 500 });
@@ -43,6 +47,9 @@ export async function DELETE(
   if (!deleted) {
     return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
   }
+
+  const user = await getRequestUser(request);
+  adminLog('comment.delete', user, { id });
 
   return NextResponse.json({ success: true });
 }
