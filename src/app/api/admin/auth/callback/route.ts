@@ -46,6 +46,9 @@ export async function GET(request: NextRequest) {
   }
 
   // Enforce group-based access control
+  console.log('[auth] AUTHENTIK_ALLOWED_GROUP:', AUTHENTIK_ALLOWED_GROUP);
+  console.log('[auth] userInfo.groups:', userInfo.groups);
+  console.log('[auth] userInfo.email:', userInfo.email);
   if (AUTHENTIK_ALLOWED_GROUP) {
     const userGroups = userInfo.groups ?? [];
     if (!userGroups.includes(AUTHENTIK_ALLOWED_GROUP)) {
