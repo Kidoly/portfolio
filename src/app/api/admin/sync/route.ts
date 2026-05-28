@@ -17,9 +17,10 @@ export async function POST(request: NextRequest) {
 
     const user = await getRequestUser(request);
     adminLog('sync', user, {
-      created: String(result.created ?? 0),
-      updated: String(result.updated ?? 0),
-      deleted: String(result.deleted ?? 0),
+      synced: String(result.synced),
+      created: String(result.created),
+      updated: String(result.updated),
+      errors: String(result.errors.length),
     });
 
     return NextResponse.json(result);
