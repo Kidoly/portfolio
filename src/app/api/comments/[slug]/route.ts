@@ -5,6 +5,7 @@ import {
   getCommentsByPost,
   saveComment,
 } from '@/lib/blog/comments';
+import { sendCommentNotification } from '@/lib/blog/comment-mailer';
 
 function sanitizeText(value: string, maxLength: number): string {
   return value.trim().slice(0, maxLength);
@@ -80,6 +81,11 @@ export async function POST(
     };
 
     saveComment(comment);
+
+    // Fire-and-forget — don't block the response if email fails
+    sendCommentNotification(comment).catch((err) =>
+      console.error('[comment] notification email failed:', err)
+    );
 
     return NextResponse.json({
       success: true,
