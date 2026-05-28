@@ -17,7 +17,7 @@ export default function SyncPage() {
     setResult(null);
 
     try {
-      const res = await fetch('/api/admin/sync', { method: 'POST' });
+      const res = await fetch('/api/admin/sync/', { method: 'POST' });
       if (res.ok) {
         const data = await res.json();
         setResult(data);

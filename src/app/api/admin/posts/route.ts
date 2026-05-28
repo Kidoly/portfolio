@@ -4,6 +4,7 @@ import { getAllPosts, savePost, generateSlug, generateId } from '@/lib/blog/post
 import { getReadingTime } from '@/lib/blog/markdown';
 import { authGuard, getRequestUser } from '@/lib/blog/api-auth';
 import { adminLog } from '@/lib/blog/auth';
+import { commitFile } from '@/lib/blog/github';
 import { BlogPost } from '@/lib/blog/types';
 
 // GET /api/admin/posts - list all posts (including drafts)
@@ -56,6 +57,15 @@ export async function POST(request: NextRequest) {
 
     const user = await getRequestUser(request);
     adminLog('post.create', user, { id: saved.id, title: saved.title, published: saved.published });
+
+    if (saved.published) {
+      commitFile({
+        path: `content/blog/${saved.id}.json`,
+        content: JSON.stringify(saved, null, 2),
+        message: `blog: publish "${saved.title}"`,
+        author: { name: user?.name || user?.username || 'Admin', email: user?.email || 'admin@portfolio' },
+      });
+    }
 
     return NextResponse.json(saved, { status: 201 });
   } catch (error) {

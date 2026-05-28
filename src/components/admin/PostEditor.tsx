@@ -60,7 +60,7 @@ export default function PostEditor({ post, onSave, saving, authorName }: Props) 
   const handlePreview = async () => {
     setActiveTab('preview');
     try {
-      const res = await fetch('/api/admin/preview', {
+      const res = await fetch('/api/admin/preview/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content }),
@@ -100,7 +100,7 @@ export default function PostEditor({ post, onSave, saving, authorName }: Props) 
     setGenSource(null);
 
     try {
-      const res = await fetch('/api/admin/generate', {
+      const res = await fetch('/api/admin/generate/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content, title, locale, useAI }),

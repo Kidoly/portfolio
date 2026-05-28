@@ -13,7 +13,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetch(`/api/admin/posts/${id}`)
+    fetch(`/api/admin/posts/${id}/`)
       .then((res) => {
         if (!res.ok) throw new Error('Not found');
         return res.json();
@@ -26,7 +26,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
   const handleSave = async (data: any) => {
     setSaving(true);
     try {
-      const res = await fetch(`/api/admin/posts/${id}`, {
+      const res = await fetch(`/api/admin/posts/${id}/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),

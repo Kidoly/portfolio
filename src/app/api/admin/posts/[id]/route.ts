@@ -4,6 +4,7 @@ import { getPostById, savePost, deletePost, generateSlug } from '@/lib/blog/post
 import { getReadingTime } from '@/lib/blog/markdown';
 import { authGuard, getRequestUser } from '@/lib/blog/api-auth';
 import { adminLog } from '@/lib/blog/auth';
+import { commitFile, deleteFile } from '@/lib/blog/github';
 
 // GET /api/admin/posts/[id]
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -70,6 +71,15 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const user = await getRequestUser(request);
     adminLog('post.update', user, { id: saved.id, title: saved.title, published: saved.published });
 
+    if (saved.published) {
+      commitFile({
+        path: `content/blog/${saved.id}.json`,
+        content: JSON.stringify(saved, null, 2),
+        message: `blog: update "${saved.title}"`,
+        author: { name: user?.name || user?.username || 'Admin', email: user?.email || 'admin@portfolio' },
+      });
+    }
+
     return NextResponse.json(saved);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update post' }, { status: 500 });
@@ -92,6 +102,12 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
   const user = await getRequestUser(request);
   adminLog('post.delete', user, { id, title: post?.title });
+
+  deleteFile({
+    path: `content/blog/${id}.json`,
+    message: `blog: delete "${post?.title ?? id}"`,
+    author: { name: user?.name || user?.username || 'Admin', email: user?.email || 'admin@portfolio' },
+  });
 
   return NextResponse.json({ success: true });
 }

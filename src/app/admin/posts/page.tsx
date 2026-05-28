@@ -24,7 +24,7 @@ export default function PostsListPage() {
 
   const fetchPosts = async () => {
     try {
-      const res = await fetch('/api/admin/posts');
+      const res = await fetch('/api/admin/posts/');
       if (res.ok) {
         const data = await res.json();
         setPosts(data);
@@ -43,7 +43,7 @@ export default function PostsListPage() {
     if (!confirm(`Supprimer l'article "${title}" ?`)) return;
 
     try {
-      const res = await fetch(`/api/admin/posts/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/admin/posts/${id}/`, { method: 'DELETE' });
       if (res.ok) {
         setPosts(posts.filter((p) => p.id !== id));
       }
@@ -52,7 +52,7 @@ export default function PostsListPage() {
 
   const handleTogglePublish = async (post: BlogPost) => {
     try {
-      const res = await fetch(`/api/admin/posts/${post.id}`, {
+      const res = await fetch(`/api/admin/posts/${post.id}/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ published: !post.published }),

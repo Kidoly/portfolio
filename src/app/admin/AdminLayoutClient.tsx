@@ -28,7 +28,7 @@ export default function AdminLayoutClient({ children }: { children: ReactNode })
   const router = useRouter();
 
   useEffect(() => {
-    fetch('/api/admin/me')
+    fetch('/api/admin/me/')
       .then(async (res) => {
         if (res.ok) {
           const data = await res.json();
@@ -42,7 +42,7 @@ export default function AdminLayoutClient({ children }: { children: ReactNode })
   }, []);
 
   const handleLogout = async () => {
-    await fetch('/api/admin/logout', { method: 'POST' });
+    await fetch('/api/admin/logout/', { method: 'POST' });
     setAuthenticated(false);
     router.push('/admin');
   };

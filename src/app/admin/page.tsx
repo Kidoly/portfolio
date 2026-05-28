@@ -17,7 +17,7 @@ function LoginForm() {
 
   useEffect(() => {
     // Check if Authentik SSO is available
-    fetch('/api/admin/login')
+    fetch('/api/admin/login/')
       .then((res) => res.json())
       .then((data) => setAuthentikEnabled(data.authentik === true))
       .catch(() => {});
@@ -42,7 +42,7 @@ function LoginForm() {
     setError('');
 
     try {
-      const res = await fetch('/api/admin/login', {
+      const res = await fetch('/api/admin/login/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -147,7 +147,7 @@ function Dashboard() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch('/api/admin/posts')
+    fetch('/api/admin/posts/')
       .then((res) => res.json())
       .then((posts) => {
         setStats({
@@ -158,7 +158,7 @@ function Dashboard() {
       })
       .catch(() => {});
 
-    fetch('/api/admin/comments')
+    fetch('/api/admin/comments/')
       .then((res) => (res.ok ? res.json() : []))
       .then((comments) => {
         setPendingComments(comments.filter((c: any) => c.status === 'pending').length);
@@ -249,7 +249,7 @@ export default function AdminPage() {
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    fetch('/api/admin/me')
+    fetch('/api/admin/me/')
       .then((res) => {
         setAuthenticated(res.ok);
       })

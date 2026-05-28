@@ -1,12 +1,17 @@
 import { SignJWT, jwtVerify } from 'jose';
 import bcryptjs from 'bcryptjs';
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.ADMIN_JWT_SECRET || 'change-me-in-production-please'
-);
+if (!process.env.ADMIN_JWT_SECRET) {
+  throw new Error('ADMIN_JWT_SECRET environment variable is required but not set.');
+}
+if (!process.env.ADMIN_PASSWORD_HASH) {
+  throw new Error('ADMIN_PASSWORD_HASH environment variable is required but not set.');
+}
+
+const JWT_SECRET = new TextEncoder().encode(process.env.ADMIN_JWT_SECRET);
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
-const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || '';
+const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH;
 
 // --- Authentik OIDC config ---
 const AUTHENTIK_URL = process.env.AUTHENTIK_URL || ''; // e.g. https://auth.yourdomain.com
@@ -163,12 +168,6 @@ export async function getAuthentikUserInfo(accessToken: string): Promise<{
 // --- Local auth ---
 export async function verifyCredentials(username: string, password: string): Promise<boolean> {
   if (username !== ADMIN_USERNAME) return false;
-
-  // If no hash is set, use a default password (for dev only)
-  if (!ADMIN_PASSWORD_HASH) {
-    return password === 'admin';
-  }
-
   return bcryptjs.compare(password, ADMIN_PASSWORD_HASH);
 }
 

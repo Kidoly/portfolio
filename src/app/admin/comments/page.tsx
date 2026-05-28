@@ -23,7 +23,7 @@ export default function AdminCommentsPage() {
 
   const loadComments = async () => {
     try {
-      const res = await fetch('/api/admin/comments');
+      const res = await fetch('/api/admin/comments/');
       if (res.ok) {
         const data = await res.json();
         setComments(data);
@@ -40,7 +40,7 @@ export default function AdminCommentsPage() {
   }, []);
 
   const updateStatus = async (id: string, status: CommentStatus) => {
-    const res = await fetch(`/api/admin/comments/${id}`, {
+    const res = await fetch(`/api/admin/comments/${id}/`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status }),
@@ -55,7 +55,7 @@ export default function AdminCommentsPage() {
   const removeComment = async (id: string) => {
     if (!confirm('Supprimer ce commentaire ?')) return;
 
-    const res = await fetch(`/api/admin/comments/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/admin/comments/${id}/`, { method: 'DELETE' });
     if (res.ok) {
       setComments((prev) => prev.filter((c) => c.id !== id));
     }

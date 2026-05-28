@@ -10,7 +10,7 @@ export default function NewPostPage() {
   const [authorName, setAuthorName] = useState('');
 
   useEffect(() => {
-    fetch('/api/admin/me')
+    fetch('/api/admin/me/')
       .then((res) => res.json())
       .then((data) => setAuthorName(data.name || data.username || ''))
       .catch(() => {});
@@ -19,7 +19,7 @@ export default function NewPostPage() {
   const handleSave = async (data: any) => {
     setSaving(true);
     try {
-      const res = await fetch('/api/admin/posts', {
+      const res = await fetch('/api/admin/posts/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
