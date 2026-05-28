@@ -5,6 +5,7 @@ import {
   createToken,
   buildRedirectUri,
   buildBaseUrl,
+  AUTHENTIK_ALLOWED_GROUP,
 } from '@/lib/blog/auth';
 
 export async function GET(request: NextRequest) {
@@ -42,6 +43,15 @@ export async function GET(request: NextRequest) {
   const userInfo = await getAuthentikUserInfo(tokens.access_token);
   if (!userInfo) {
     return NextResponse.redirect(new URL('/admin?error=user_info', baseUrl));
+  }
+
+  // Enforce group-based access control
+  if (AUTHENTIK_ALLOWED_GROUP) {
+    const userGroups = userInfo.groups ?? [];
+    if (!userGroups.includes(AUTHENTIK_ALLOWED_GROUP)) {
+      console.warn(`Authentik login denied for ${userInfo.email}: not in group "${AUTHENTIK_ALLOWED_GROUP}"`);
+      return NextResponse.redirect(new URL('/admin?error=unauthorized', baseUrl));
+    }
   }
 
   // Create our own JWT with user info

@@ -12,6 +12,7 @@ const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || '';
 const AUTHENTIK_URL = process.env.AUTHENTIK_URL || ''; // e.g. https://auth.yourdomain.com
 const AUTHENTIK_CLIENT_ID = process.env.AUTHENTIK_CLIENT_ID || '';
 const AUTHENTIK_CLIENT_SECRET = process.env.AUTHENTIK_CLIENT_SECRET || '';
+export const AUTHENTIK_ALLOWED_GROUP = process.env.AUTHENTIK_ALLOWED_GROUP || '';
 
 export function isAuthentikEnabled(): boolean {
   return !!(AUTHENTIK_URL && AUTHENTIK_CLIENT_ID && AUTHENTIK_CLIENT_SECRET);
@@ -54,7 +55,7 @@ export function getAuthentikAuthUrl(state: string, redirectUri: string): string 
     client_id: AUTHENTIK_CLIENT_ID,
     redirect_uri: redirectUri,
     response_type: 'code',
-    scope: 'openid profile email',
+    scope: 'openid profile email groups',
     state,
   });
   return `${AUTHENTIK_URL}/application/o/authorize/?${params.toString()}`;
