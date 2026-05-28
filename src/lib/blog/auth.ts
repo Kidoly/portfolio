@@ -1,17 +1,19 @@
 import { SignJWT, jwtVerify } from 'jose';
 import bcryptjs from 'bcryptjs';
 
-if (!process.env.ADMIN_JWT_SECRET) {
-  throw new Error('ADMIN_JWT_SECRET environment variable is required but not set.');
-}
-if (!process.env.ADMIN_PASSWORD_HASH) {
-  throw new Error('ADMIN_PASSWORD_HASH environment variable is required but not set.');
+function getJwtSecret(): Uint8Array {
+  const secret = process.env.ADMIN_JWT_SECRET;
+  if (!secret) throw new Error('ADMIN_JWT_SECRET is not set.');
+  return new TextEncoder().encode(secret);
 }
 
-const JWT_SECRET = new TextEncoder().encode(process.env.ADMIN_JWT_SECRET);
+function getPasswordHash(): string {
+  const hash = process.env.ADMIN_PASSWORD_HASH;
+  if (!hash) throw new Error('ADMIN_PASSWORD_HASH is not set.');
+  return hash;
+}
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
-const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH;
 
 // --- Authentik OIDC config ---
 const AUTHENTIK_URL = process.env.AUTHENTIK_URL || ''; // e.g. https://auth.yourdomain.com
@@ -168,7 +170,7 @@ export async function getAuthentikUserInfo(accessToken: string): Promise<{
 // --- Local auth ---
 export async function verifyCredentials(username: string, password: string): Promise<boolean> {
   if (username !== ADMIN_USERNAME) return false;
-  return bcryptjs.compare(password, ADMIN_PASSWORD_HASH);
+  return bcryptjs.compare(password, getPasswordHash());
 }
 
 // --- JWT tokens (used by both local and Authentik) ---
@@ -185,12 +187,12 @@ export async function createToken(payload: TokenPayload): Promise<string> {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('24h')
-    .sign(JWT_SECRET);
+    .sign(getJwtSecret());
 }
 
 export async function verifyToken(token: string): Promise<TokenPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, getJwtSecret());
     return payload as unknown as TokenPayload;
   } catch {
     return null;
