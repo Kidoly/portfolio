@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyReviewToken } from '@/lib/blog/comment-token';
-import { updateComment, getCommentsByPost, getAllComments } from '@/lib/blog/comments';
+import { updateComment } from '@/lib/blog/comments';
 
 const siteUrl = (process.env.SITE_URL || 'http://localhost:3000').replace(/\/$/, '');
 
