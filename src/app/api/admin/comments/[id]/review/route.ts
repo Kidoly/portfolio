@@ -4,6 +4,15 @@ import { updateComment } from '@/lib/blog/comments';
 
 const siteUrl = (process.env.SITE_URL || 'http://localhost:3000').replace(/\/$/, '');
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 function page(title: string, body: string) {
   return new NextResponse(
     `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
@@ -50,7 +59,7 @@ export async function GET(
   return page(
     `Commentaire ${verb}`,
     `<h2 style="color:${color}">${icon} Commentaire ${verb}</h2>
-     <p>Le commentaire de <strong>${comment.authorName}</strong> sur <em>${comment.postSlug}</em> a été ${verb}.</p>
+     <p>Le commentaire de <strong>${escapeHtml(comment.authorName)}</strong> sur <em>${escapeHtml(comment.postSlug)}</em> a été ${verb}.</p>
      <p><a href="${siteUrl}/admin/comments">Gérer tous les commentaires →</a></p>`
   );
 }

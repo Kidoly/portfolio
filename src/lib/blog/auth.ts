@@ -192,7 +192,7 @@ export async function createToken(payload: TokenPayload): Promise<string> {
 
 export async function verifyToken(token: string): Promise<TokenPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, getJwtSecret());
+    const { payload } = await jwtVerify(token, getJwtSecret(), { algorithms: ['HS256'] });
     return payload as unknown as TokenPayload;
   } catch {
     return null;

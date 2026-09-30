@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.ADMIN_JWT_SECRET || 'change-me-in-production-please'
-);
+/**
+ * Resolve the JWT secret at request time. Returns null when it is not
+ * configured so the guard can fail closed (deny admin access) instead of
+ * verifying tokens against a known, hardcoded fallback secret.
+ */
+function getJwtSecret(): Uint8Array | null {
+  const secret = process.env.ADMIN_JWT_SECRET;
+  if (!secret) return null;
+  return new TextEncoder().encode(secret);
+}
 
 const PUBLIC_PATHS = [
   '/admin',
@@ -58,12 +65,13 @@ export async function proxy(request: NextRequest) {
 
   if (isAdminPage || isAdminApi) {
     if (!isPublicPath(pathname)) {
+      const secret = getJwtSecret();
       const token = request.cookies.get('admin_token')?.value;
-      if (!token) {
+      if (!secret || !token) {
         return denyAccess(request, isAdminApi);
       }
       try {
-        await jwtVerify(token, JWT_SECRET);
+        await jwtVerify(token, secret, { algorithms: ['HS256'] });
       } catch {
         return denyAccess(request, isAdminApi);
       }
