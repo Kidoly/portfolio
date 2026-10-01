@@ -11,8 +11,8 @@
 /** TODO(contenu) : date de naissance 'YYYY-MM-DD'. La ligne « Âge » du whoami est masquée tant que null. */
 export const BIRTH_DATE: string | null = null;
 
-/** TODO(contenu) : portrait, fichier dans public/ (ex. '/images/portrait.webp'). Emplacement masqué tant que null. */
-export const PORTRAIT_SRC: string | null = null;
+/** Portrait (copie recadrée, sans métadonnées EXIF/GPS, de la photo d'origine). Emplacement masqué si null. */
+export const PORTRAIT_SRC: string | null = '/images/portrait.webp';
 
 /** TODO(contenu) : captures des projets, fichiers dans public/, par `id` de projet (locales). Bloc image masqué tant que null. */
 export const PROJECT_IMAGES: Record<string, string | null> = {

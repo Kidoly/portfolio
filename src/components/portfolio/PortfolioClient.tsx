@@ -100,7 +100,7 @@ function Hero({ age }: { age: number | null }) {
             </div>
             {PORTRAIT_SRC && (
               <div className="relative h-[180px] mx-4 mt-4 mb-1 overflow-hidden">
-                <Image src={PORTRAIT_SRC} alt={p.portrait} fill priority sizes="(min-width: 1024px) 380px, 100vw" className="object-cover" />
+                <Image src={PORTRAIT_SRC} alt={p.portrait} fill priority unoptimized className="object-cover object-[62%_50%]" />
               </div>
             )}
             <div className="px-4 pt-3 pb-4 flex flex-col gap-2.5">
