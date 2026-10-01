@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getPostBySlug, getPostDescription, getRelatedPosts } from '@/lib/blog/posts';
-import { markdownToHtml, generateSeoTitle } from '@/lib/blog/markdown';
+import { renderArticle, generateSeoTitle } from '@/lib/blog/markdown';
 import { ArrowUpRight } from 'lucide-react';
 import BlogNav from '@/components/blog/BlogNav';
 import TableOfContents from '@/components/blog/TableOfContents';
@@ -86,7 +86,7 @@ export default async function BlogPostPage({ params }: Props) {
   }
 
   const description = getPostDescription(post);
-  const contentHtml = await markdownToHtml(post.content);
+  const { html: contentHtml, toc } = await renderArticle(post.content, { title: post.title });
   const relatedPosts = getRelatedPosts(post, 2);
 
   const jsonLd = {
@@ -198,10 +198,8 @@ export default async function BlogPostPage({ params }: Props) {
         {/* Body: TOC + article */}
         <div className={CONTAINER}>
           <div className="grid lg:grid-cols-12 gap-5 pt-12 lg:pt-[72px] items-start">
-            <div className="lg:col-span-3">
-              <TableOfContents />
-            </div>
-            <div className="lg:col-span-7">
+            {toc.length >= 2 && <TableOfContents items={toc} />}
+            <div className="lg:col-span-7 lg:col-start-4 min-w-0">
               <CodeBlockCopyButtons />
               <div className="blog-content" dangerouslySetInnerHTML={{ __html: contentHtml }} />
 
