@@ -22,6 +22,7 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [honeypot, setHoneypot] = useState('');
   const [feedback, setFeedback] = useState('');
   const [error, setError] = useState('');
 
@@ -50,7 +51,7 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
       const res = await fetch(`/api/comments/${encodeURIComponent(slug)}/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, message, website: '' }),
+        body: JSON.stringify({ name, email, message, website: honeypot }),
       });
       let data: { error?: string; message?: string } = {};
       try {
@@ -93,6 +94,11 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
           Commentaire
           <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} className={`${field} resize-y`} maxLength={1500} required disabled={submitting} />
         </label>
+
+        {/* honeypot: off-screen, left empty by people, filled by naive bots */}
+        <div className="absolute -left-[9999px] w-px h-px overflow-hidden" aria-hidden="true">
+          <input type="text" name="website" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} tabIndex={-1} autoComplete="off" />
+        </div>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
         {feedback && <p className="text-sm text-green-700">{feedback}</p>}

@@ -169,8 +169,9 @@ export async function getAuthentikUserInfo(accessToken: string): Promise<{
 
 // --- Local auth ---
 export async function verifyCredentials(username: string, password: string): Promise<boolean> {
-  if (username !== ADMIN_USERNAME) return false;
-  return bcryptjs.compare(password, getPasswordHash());
+  // Always run bcrypt so the response time does not reveal whether the username exists
+  const passwordOk = await bcryptjs.compare(password, getPasswordHash());
+  return passwordOk && username === ADMIN_USERNAME;
 }
 
 // --- JWT tokens (used by both local and Authentik) ---

@@ -35,30 +35,57 @@ function denyAccess(request: NextRequest, isApi: boolean): NextResponse {
   return NextResponse.redirect(loginUrl);
 }
 
-function buildCspHeaders(nonce: string): string {
+/**
+ * Strict CSP: nothing is allowed unless listed. Next.js scripts carry the
+ * per-request nonce and 'strict-dynamic' lets them load their own chunks.
+ * Fonts are self-hosted by next/font (Google Fonts fetched at build time), so
+ * no third-party origin is needed.
+ */
+function buildCspHeader(nonce: string): string {
+  const isDev = process.env.NODE_ENV === 'development';
   return [
-    "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}'`,
+    "default-src 'none'",
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ''}`,
+    // React style attributes and next/image need inline styles
     "style-src 'self' 'unsafe-inline'",
+    // Article images can be hosted elsewhere (Wiki.js, CDN)
     "img-src 'self' data: https:",
-    "font-src 'self' data:",
+    "font-src 'self'",
     "connect-src 'self'",
+    "manifest-src 'self'",
     "media-src 'self'",
     "object-src 'none'",
     "frame-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
-    "frame-ancestors 'self'",
-    "upgrade-insecure-requests",
+    "frame-ancestors 'none'",
+    ...(isDev ? [] : ['upgrade-insecure-requests']),
   ].join('; ');
+}
+
+/** Public HTTPS URL for a request the reverse proxy received over plain HTTP. */
+function httpsUrl(request: NextRequest): URL {
+  const { pathname, search } = request.nextUrl;
+  const host = process.env.SITE_URL
+    ? new URL(process.env.SITE_URL).host
+    : request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? request.nextUrl.host;
+  return new URL(`https://${host}${pathname}${search}`);
 }
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Opt-in (HTTPS_REDIRECT=true): only safe when the reverse proxy reports the
+  // client scheme in X-Forwarded-Proto, otherwise it would loop.
+  if (process.env.HTTPS_REDIRECT === 'true' && request.headers.get('x-forwarded-proto') === 'http') {
+    return NextResponse.redirect(httpsUrl(request), 308);
+  }
+
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+  const csp = buildCspHeader(nonce);
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-nonce', nonce);
+  requestHeaders.set('Content-Security-Policy', csp);
 
   const isAdminPage = pathname.startsWith('/admin');
   const isAdminApi = pathname.startsWith('/api/admin');
@@ -79,18 +106,11 @@ export async function proxy(request: NextRequest) {
   }
 
   const response = NextResponse.next({ request: { headers: requestHeaders } });
-  response.headers.set('Content-Security-Policy', buildCspHeaders(nonce));
+  response.headers.set('Content-Security-Policy', csp);
   return response;
 }
 
+// Prefetch requests are not skipped: the admin guard above must run on every request.
 export const config = {
-  matcher: [
-    {
-      source: '/((?!_next/static|_next/image|favicon\\.ico).*)',
-      missing: [
-        { type: 'header', key: 'next-router-prefetch' },
-        { type: 'header', key: 'purpose', value: 'prefetch' },
-      ],
-    },
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon\\.ico).*)'],
 };

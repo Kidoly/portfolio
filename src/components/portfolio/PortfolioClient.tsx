@@ -416,20 +416,20 @@ function Contact() {
           <div className="grid md:grid-cols-2 gap-5">
             <label className="flex flex-col gap-1.5 font-medium">
               {p.form.name}
-              <input className={field} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required disabled={submitting} />
+              <input className={field} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} maxLength={100} autoComplete="name" required disabled={submitting} />
             </label>
             <label className="flex flex-col gap-1.5 font-medium">
               {p.form.email}
-              <input type="email" className={field} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required disabled={submitting} />
+              <input type="email" className={field} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} maxLength={254} autoComplete="email" required disabled={submitting} />
             </label>
           </div>
           <label className="flex flex-col gap-1.5 font-medium">
             {p.form.subject}
-            <input className={field} value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} required disabled={submitting} />
+            <input className={field} value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} maxLength={150} required disabled={submitting} />
           </label>
           <label className="flex flex-col gap-1.5 font-medium">
             {p.form.message}
-            <textarea rows={4} className={`${field} resize-y`} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} required disabled={submitting} />
+            <textarea rows={4} className={`${field} resize-y`} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} maxLength={5000} required disabled={submitting} />
           </label>
 
           {/* honeypot: off-screen, left empty by people, filled by naive bots */}
