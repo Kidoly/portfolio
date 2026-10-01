@@ -110,7 +110,7 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
         >
           {submitting ? 'Envoi…' : 'Envoyer →'}
         </button>
-        <p className="m-0 font-plex text-[12px] leading-[1.6] text-[#8a8680]">
+        <p className="m-0 font-plex text-[12px] leading-[1.6] text-[#68655f]">
           Nom et commentaire publiés après modération, email jamais affiché.{' '}
           <Link href="/confidentialite/" className="text-[#4a4a48] border-b border-[#c9c5bd] hover:no-underline hover:border-[var(--accent)]">
             Politique de confidentialité
@@ -120,15 +120,15 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
 
       <div className="flex flex-col">
         {loading ? (
-          <p className="font-plex text-[12px] text-[#8a8680]">Chargement…</p>
+          <p className="font-plex text-[12px] text-[#68655f]">Chargement…</p>
         ) : comments.length === 0 ? (
-          <p className="font-plex text-[12px] text-[#8a8680]">Aucun commentaire pour l&apos;instant.</p>
+          <p className="font-plex text-[12px] text-[#68655f]">Aucun commentaire pour l&apos;instant.</p>
         ) : (
           comments.map((c) => (
             <article key={c.id} className="border-t border-[#c9c5bd] py-5 flex flex-col gap-2">
               <div className="flex items-baseline justify-between gap-4">
                 <span className="font-bold text-[#141414]">{c.authorName}</span>
-                <span className="font-plex text-[12px] text-[#8a8680]">
+                <span className="font-plex text-[12px] text-[#68655f]">
                   {formatPostDate(c.createdAt)}
                 </span>
               </div>

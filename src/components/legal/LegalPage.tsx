@@ -39,7 +39,7 @@ function inline(text: string): ReactNode[] {
 function Block({ block }: { block: LegalBlock }) {
   if (typeof block === 'string') return <p className="m-0">{inline(block)}</p>;
   return (
-    <ul className="m-0 pl-5 list-disc flex flex-col gap-2 marker:text-[#8a8680]">
+    <ul className="m-0 pl-5 list-disc flex flex-col gap-2 marker:text-[#68655f]">
       {block.list.map((item) => (
         <li key={item}>{inline(item)}</li>
       ))}
@@ -81,7 +81,7 @@ export default function LegalPage({ doc: id }: { doc: LegalDocId }) {
               {doc.title}
             </h1>
             <p className="m-0 text-[18px] leading-[1.6] text-[#4a4a48] max-w-[640px]">{doc.intro}</p>
-            <span className="font-plex text-[12px] text-[#8a8680]">
+            <span className="font-plex text-[12px] text-[#68655f]">
               {ui.updated} : {formatPostDate(LEGAL_UPDATED_AT, language)}
             </span>
           </div>

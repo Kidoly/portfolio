@@ -55,9 +55,9 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
         <div className="mx-auto w-full max-w-[1280px] px-6 lg:px-14">
           <div className="grid lg:grid-cols-12 gap-5 pt-10 lg:pt-16 items-end">
             <div className="lg:col-span-8 flex flex-col gap-5">
-              <span className="font-mono text-[13px] text-[#6c736e]">$ ls ~/blog</span>
+              <span className="font-mono text-[13px] text-[#7d8580]">$ ls ~/blog</span>
               <h1 className="m-0 font-extrabold leading-[0.86] tracking-[-0.055em]" style={{ fontSize: 'clamp(56px, 13vw, 168px)' }}>
-                Notes<br />d&apos;infra<span className="text-[var(--accent)]">.</span>
+                Notes<br />d&apos;infra<span className="text-[var(--accent-on-dark)]">.</span>
               </h1>
             </div>
             <p className="lg:col-span-4 m-0 text-[18px] leading-[1.55] text-[#9aa19c]">
@@ -73,7 +73,7 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Rechercher un article, un tag…"
-                className="flex-1 bg-transparent border-none outline-none text-[#e4e7e4] py-3.5 font-mono text-[14px] placeholder:text-[#6c736e]"
+                className="flex-1 bg-transparent border-none outline-none text-[#e4e7e4] py-3.5 font-mono text-[14px] placeholder:text-[#7d8580]"
               />
               {q && (
                 <button onClick={() => setQ('')} className="text-[#9aa19c] hover:text-[#e4e7e4] cursor-pointer font-mono text-[12px]">
@@ -137,7 +137,7 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
                   className="grid grid-cols-1 sm:grid-cols-[130px_minmax(0,1fr)_110px] gap-x-6 gap-y-3 items-start py-7 -mx-5 px-5 border-t-2 border-[#141414] hover:bg-[#e9e6df] hover:no-underline transition-colors"
                 >
                   <div className="flex flex-col gap-2.5 pt-1.5">
-                    <span className="font-plex text-[12px] text-[#8a8680]">{formatPostDate(post.publishedAt || post.updatedAt)}</span>
+                    <span className="font-plex text-[12px] text-[#68655f]">{formatPostDate(post.publishedAt || post.updatedAt)}</span>
                     <span className="font-mono text-[12px] bg-[#e6e3dc] text-[#141414] px-2 py-1 self-start">{post.category}</span>
                   </div>
                   <div className="flex flex-col gap-2.5">

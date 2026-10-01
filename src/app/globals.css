@@ -16,7 +16,7 @@
   --bg: #f3f1ec;
   --ink: #141414;
   --ink-2: #4a4a48;
-  --ink-3: #8a8680;
+  --ink-3: #68655f; /* AA on --bg (validated #68655f was 3.2:1) */
   --rule: #c9c5bd;
   --tag: #e6e3dc;
   /* Dark */
@@ -27,9 +27,11 @@
   --drule-2: #2c322e;
   --dtext: #e4e7e4;
   --dtext-2: #9aa19c;
-  --dim: #6c736e;
+  --dim: #7d8580; /* AA on the dark panels (validated #7d8580 was 3.6:1) */
   /* Accent */
-  --accent: oklch(0.58 0.2 30);
+  /* Validated accent oklch(0.58 0.2 30), split for AA contrast on small text */
+  --accent: oklch(0.53 0.2 30); /* on light backgrounds, button fills */
+  --accent-on-dark: oklch(0.63 0.2 30); /* on the dark hero / panels */
   --ok: oklch(0.82 0.16 150);
 }
 
@@ -162,7 +164,7 @@ code.hljs {
   border-bottom: 1px solid var(--drule);
   font-family: var(--font-jetbrains), monospace;
   font-size: 12px;
-  color: #6c736e;
+  color: #7d8580;
 }
 .cb-copy {
   background: none;

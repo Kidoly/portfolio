@@ -210,7 +210,7 @@ export default async function BlogPostPage({ params }: Props) {
         <div className={CONTAINER}>
           <div className="grid lg:grid-cols-12 gap-5 pt-20">
             <div className="lg:col-span-7 lg:col-start-4 bg-[#0e100f] text-[#e4e7e4] font-mono text-[13px]">
-              <div className="px-4 py-2.5 border-b border-[#232825] text-[#6c736e]">$ whoami</div>
+              <div className="px-4 py-2.5 border-b border-[#232825] text-[#7d8580]">$ whoami</div>
               <div className="p-5 flex flex-col gap-3.5">
                 <span className="font-sans text-[22px] font-bold">Alban Mary</span>
                 <span className="font-sans text-[16px] leading-[1.55] text-[#9aa19c]">
@@ -248,7 +248,7 @@ export default async function BlogPostPage({ params }: Props) {
                     href={`/blog/${rp.slug}/`}
                     className="grid grid-cols-[1fr_auto] lg:grid-cols-[130px_minmax(0,1fr)_150px_24px] gap-x-5 gap-y-2 items-baseline py-5 border-t-2 border-[#141414] hover:text-[var(--accent)] hover:no-underline transition-colors"
                   >
-                    <span className="font-plex text-[12px] text-[#8a8680] order-1">{formatPostDate(rp.publishedAt || rp.updatedAt)}</span>
+                    <span className="font-plex text-[12px] text-[#68655f] order-1">{formatPostDate(rp.publishedAt || rp.updatedAt)}</span>
                     <span className="text-[22px] font-bold tracking-[-0.015em] leading-[1.2] col-span-2 lg:col-span-1 order-3 lg:order-2">{rp.title}</span>
                     <span className="font-mono text-[12px] bg-[#e6e3dc] text-[#141414] px-2 py-1 justify-self-start order-2 lg:order-3">{rp.category}</span>
                     <span className="text-[var(--accent)] justify-self-end hidden lg:flex items-center order-4"><ArrowUpRight className="w-4 h-4" strokeWidth={2.5} aria-hidden /></span>

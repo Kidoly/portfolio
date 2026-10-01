@@ -26,7 +26,7 @@ function Container({ children, className = '' }: { children: ReactNode; classNam
 function Label({ n, children, dark = false }: { n: string; children: ReactNode; dark?: boolean }) {
   return (
     <h2 className="m-0 font-plex text-[13px] font-normal lg:col-span-3">
-      <span className={dark ? 'text-[#6c736e]' : undefined}>({n})</span>{' '}
+      <span className={dark ? 'text-[#7d8580]' : undefined}>({n})</span>{' '}
       <span className={dark ? 'text-[#e4e7e4]' : undefined}>{children}</span>
     </h2>
   );
@@ -45,7 +45,7 @@ function Hero({ age }: { age: number | null }) {
       <Container>
         <header className="grid grid-cols-2 lg:grid-cols-12 gap-5 items-center py-7 text-sm font-medium">
           <span className="lg:col-span-3 text-base font-semibold">
-            Alban Mary<span className="text-[var(--accent)]">.</span>
+            Alban Mary<span className="text-[var(--accent-on-dark)]">.</span>
           </span>
           <nav className="hidden lg:flex lg:col-span-7 gap-7">
             {p.nav.map((n, i) => (
@@ -69,7 +69,7 @@ function Hero({ age }: { age: number | null }) {
               className="m-0 font-extrabold leading-[0.84] tracking-[-0.055em]"
               style={{ fontSize: 'clamp(72px, 15vw, 208px)' }}
             >
-              Alban<br />Mary<span className="text-[var(--accent)]">.</span>
+              Alban<br />Mary<span className="text-[var(--accent-on-dark)]">.</span>
             </h1>
             <div className="flex flex-col gap-6 max-w-[620px]">
               <p className="m-0 font-medium tracking-[-0.015em]" style={{ fontSize: 'clamp(26px, 4vw, 38px)', lineHeight: 1.12 }}>
@@ -83,7 +83,7 @@ function Hero({ age }: { age: number | null }) {
                 <a href="/Alban_Mary_CV.pdf" className="border-2 border-[#e4e7e4] rounded-full px-5 py-3 hover:no-underline hover:bg-[#e4e7e4] hover:text-[#0e100f] transition-colors">
                   {p.hero.cta2}
                 </a>
-                <a href="/blog/" className="px-2.5 py-3 border-b-2 border-[var(--accent)] hover:no-underline">
+                <a href="/blog/" className="px-2.5 py-3 border-b-2 border-[var(--accent-on-dark)] hover:no-underline">
                   {p.hero.cta3}
                 </a>
               </div>
@@ -92,7 +92,7 @@ function Hero({ age }: { age: number | null }) {
 
           {/* whoami card */}
           <div className="lg:col-span-4 lg:mt-3 bg-[#161917] text-[#e4e7e4] border border-[#2c322e] font-mono text-[13px] shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
-            <div className="flex justify-between px-4 py-2.5 border-b border-[#232825] text-[#6c736e]">
+            <div className="flex justify-between px-4 py-2.5 border-b border-[#232825] text-[#7d8580]">
               <span>{p.whoamiTitle}</span>
               <span>
                 <span className="text-[var(--ok)]">●</span> {p.online}
@@ -106,7 +106,7 @@ function Hero({ age }: { age: number | null }) {
             <div className="px-4 pt-3 pb-4 flex flex-col gap-2.5">
               {facts.map((f) => (
                 <div key={f.k} className="grid grid-cols-[100px_1fr] gap-3">
-                  <span className="text-[#6c736e]">{f.k}</span>
+                  <span className="text-[#7d8580]">{f.k}</span>
                   <span>{f.v}</span>
                 </div>
               ))}
@@ -271,7 +271,7 @@ function Infrastructure() {
               ))}
             </div>
             <div className="border border-[#232825] bg-[#131614] font-mono text-[14px]">
-              <div className="flex justify-between px-5 py-2.5 border-b border-[#232825] text-[#6c736e]">
+              <div className="flex justify-between px-5 py-2.5 border-b border-[#232825] text-[#7d8580]">
                 <span>{p.infraTitle}</span>
                 <span>{p.infraPath}</span>
               </div>
@@ -330,7 +330,7 @@ function Blog({ posts }: { posts: BlogPreview[] }) {
                 href={post.url}
                 className="grid grid-cols-[1fr_auto] lg:grid-cols-[140px_minmax(0,1fr)_150px_24px] gap-x-5 gap-y-2 items-baseline py-5 border-t-2 border-[#141414] hover:text-[var(--accent)] hover:no-underline transition-colors"
               >
-                <span className="font-plex text-[12px] text-[#8a8680] order-1">{formatPostDate(post.date, language)}</span>
+                <span className="font-plex text-[12px] text-[#68655f] order-1">{formatPostDate(post.date, language)}</span>
                 <span className="text-[22px] font-bold tracking-[-0.015em] leading-[1.2] col-span-2 lg:col-span-1 order-3 lg:order-2">
                   {post.title}
                 </span>
