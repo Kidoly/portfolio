@@ -4,10 +4,12 @@
  */
 export function formatPostDate(iso: string, locale: 'fr' | 'en' = 'fr'): string {
   if (!iso) return '';
-  return new Date(iso).toLocaleDateString(locale === 'en' ? 'en-GB' : 'fr-FR', {
+  const date = new Date(iso).toLocaleDateString(locale === 'en' ? 'en-GB' : 'fr-FR', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
     timeZone: 'Europe/Paris',
   });
+  // French ordinal for the first day of the month: « 1er octobre »
+  return locale === 'fr' ? date.replace(/^1 /, '1er ') : date;
 }

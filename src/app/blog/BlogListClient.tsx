@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { BlogPostMeta } from '@/lib/blog/types';
 import BlogNav from '@/components/blog/BlogNav';
+import LegalLinks from '@/components/legal/LegalLinks';
 import { formatPostDate } from '@/lib/blog/format';
 
 interface Props {
@@ -181,8 +182,11 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
 
       {/* Footer */}
       <div className="mx-auto w-full max-w-[1280px] px-6 lg:px-14">
-        <footer className="py-6 border-t border-[#c9c5bd] text-[13px] flex justify-between">
-          <span>© 2026 Alban Mary</span>
+        <footer className="py-6 border-t border-[#c9c5bd] text-[13px] flex flex-wrap justify-between gap-x-5 gap-y-2">
+          <div className="flex flex-wrap gap-x-5 gap-y-2">
+            <span>© 2026 Alban Mary</span>
+            <LegalLinks />
+          </div>
           <div className="flex gap-5">
             <a href="https://github.com/Kidoly" target="_blank" rel="noopener noreferrer">GitHub</a>
             <a href="https://www.linkedin.com/in/alban-mary/" target="_blank" rel="noopener noreferrer">LinkedIn</a>

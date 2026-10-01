@@ -9,6 +9,7 @@ import BlogNav from '@/components/blog/BlogNav';
 import TableOfContents from '@/components/blog/TableOfContents';
 import CommentsSection from '@/components/blog/CommentsSection';
 import CodeBlockCopyButtons from '@/components/blog/CodeBlockCopyButtons';
+import LegalLinks from '@/components/legal/LegalLinks';
 
 const CONTAINER = 'mx-auto w-full max-w-[1280px] px-6 lg:px-14';
 
@@ -260,8 +261,11 @@ export default async function BlogPostPage({ params }: Props) {
 
         {/* Footer */}
         <div className={CONTAINER}>
-          <footer className="py-6 border-t border-[#c9c5bd] text-[13px] flex justify-between">
-            <span>© 2026 Alban Mary</span>
+          <footer className="py-6 border-t border-[#c9c5bd] text-[13px] flex flex-wrap justify-between gap-x-5 gap-y-2">
+            <div className="flex flex-wrap gap-x-5 gap-y-2">
+              <span>© 2026 Alban Mary</span>
+              <LegalLinks />
+            </div>
             <div className="flex gap-5">
               <a href="https://github.com/Kidoly" target="_blank" rel="noopener noreferrer">GitHub</a>
               <a href="https://www.linkedin.com/in/alban-mary/" target="_blank" rel="noopener noreferrer">LinkedIn</a>

@@ -6,6 +6,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { useLanguage, useLocalizedDocument } from '@/contexts/LanguageContext';
 import { formatPostDate } from '@/lib/blog/format';
 import { PORTRAIT_SRC, PROJECT_IMAGES } from '@/config/profile';
+import LegalLinks from '@/components/legal/LegalLinks';
 
 export interface BlogPreview {
   title: string;
@@ -473,12 +474,15 @@ function Contact() {
 /* ---------- footer ---------- */
 
 function Footer() {
-  const { dict } = useLanguage();
+  const { dict, language } = useLanguage();
   const p = dict.portfolio;
   return (
     <Container>
-      <footer className="py-6 border-t border-[#c9c5bd] text-[13px] flex justify-between">
-        <span>{p.footer.copyright}</span>
+      <footer className="py-6 border-t border-[#c9c5bd] text-[13px] flex flex-wrap justify-between gap-x-5 gap-y-2">
+        <div className="flex flex-wrap gap-x-5 gap-y-2">
+          <span>{p.footer.copyright}</span>
+          <LegalLinks lang={language} />
+        </div>
         <span>{p.footer.location}</span>
       </footer>
     </Container>
