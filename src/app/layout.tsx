@@ -1,14 +1,9 @@
 import type { Metadata, Viewport } from 'next'
-import { Archivo, IBM_Plex_Mono, JetBrains_Mono } from 'next/font/google'
 import { headers } from 'next/headers'
 import './globals.css'
 import Providers from './providers'
+import { fontVariables } from './fonts'
 import fr from '@/locales/fr.json'
-
-const archivo = Archivo({ subsets: ['latin'], display: 'swap', variable: '--font-archivo' })
-// Only Archivo (body text, LCP) is preloaded; the mono fonts dress small labels
-const plexMono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500'], display: 'swap', preload: false, variable: '--font-ibm-plex' })
-const jetbrains = JetBrains_Mono({ subsets: ['latin'], display: 'swap', preload: false, variable: '--font-jetbrains' })
 
 const SITE_URL = 'https://albanmary.com';
 // FR by default; the EN version is applied client-side when the visitor switches language
@@ -152,7 +147,7 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </head>
-      <body className={`${archivo.variable} ${plexMono.variable} ${jetbrains.variable} font-sans`}>
+      <body className={`${fontVariables} font-sans`}>
         <Providers>
           {children}
         </Providers>

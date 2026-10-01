@@ -190,7 +190,7 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
           <div className="flex gap-5">
             <a href="https://github.com/Kidoly" target="_blank" rel="noopener noreferrer">GitHub</a>
             <a href="https://www.linkedin.com/in/alban-mary/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-            <Link href="/blog/feed.xml">RSS</Link>
+            <a href="/blog/feed.xml">RSS</a>
           </div>
         </footer>
       </div>

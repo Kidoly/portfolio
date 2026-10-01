@@ -264,7 +264,6 @@ code.hljs {
   font-family: var(--font-ibm-plex), ui-monospace, monospace;
   font-size: 0.875rem;
   color: var(--accent);
-  font-weight: 500;
 }
 .blog-content p {
   margin-bottom: 1.25rem;

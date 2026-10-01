@@ -20,13 +20,13 @@ export default function BlogNav() {
           </Link>
           <span className="border-b-2 border-[var(--accent-on-dark)] pb-0.5">Articles</span>
         </nav>
-        <Link
+        <a
           href="/blog/feed.xml"
           className="lg:col-span-2 justify-self-end inline-flex items-center gap-1 font-mono text-[12px] border border-[#333a36] px-2.5 py-1.5 hover:border-[#e4e7e4] hover:no-underline transition-colors"
           title="Flux RSS"
         >
           RSS <ArrowUpRight className="w-3.5 h-3.5" aria-hidden />
-        </Link>
+        </a>
       </div>
     </header>
   );
