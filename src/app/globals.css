@@ -3,10 +3,12 @@
 /* ========================================================
    Design system - direction "4b Hero sombre"
    ======================================================== */
-@theme {
+/* `inline`: the next/font variables are defined on <body>, not on :root, so
+   utilities must resolve them where they are used (font-sans, font-mono…). */
+@theme inline {
   --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
-  --font-plex: var(--font-plex), ui-monospace, monospace;
+  --font-plex: var(--font-ibm-plex), ui-monospace, monospace;
 }
 
 :root {
@@ -43,7 +45,7 @@ body {
 
 /* Section label (mono) helper */
 .dc-label {
-  font-family: var(--font-plex);
+  font-family: var(--font-ibm-plex), ui-monospace, monospace;
   font-size: 13px;
 }
 
@@ -210,7 +212,7 @@ code.hljs {
   margin: 0;
 }
 .blog-content .note .note-label {
-  font-family: var(--font-plex);
+  font-family: var(--font-ibm-plex), ui-monospace, monospace;
   font-size: 12px;
   color: var(--accent);
 }
@@ -257,7 +259,7 @@ code.hljs {
 }
 .blog-content h3::before {
   content: counter(h3counter, decimal-leading-zero) "\00a0\00a0";
-  font-family: var(--font-plex);
+  font-family: var(--font-ibm-plex), ui-monospace, monospace;
   font-size: 0.875rem;
   color: var(--accent);
   font-weight: 500;

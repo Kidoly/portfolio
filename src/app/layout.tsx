@@ -6,8 +6,9 @@ import Providers from './providers'
 import fr from '@/locales/fr.json'
 
 const archivo = Archivo({ subsets: ['latin'], display: 'swap', variable: '--font-archivo' })
-const plexMono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500'], display: 'swap', variable: '--font-plex' })
-const jetbrains = JetBrains_Mono({ subsets: ['latin'], display: 'swap', variable: '--font-jetbrains' })
+// Only Archivo (body text, LCP) is preloaded; the mono fonts dress small labels
+const plexMono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500'], display: 'swap', preload: false, variable: '--font-ibm-plex' })
+const jetbrains = JetBrains_Mono({ subsets: ['latin'], display: 'swap', preload: false, variable: '--font-jetbrains' })
 
 const SITE_URL = 'https://albanmary.com';
 // FR by default; the EN version is applied client-side when the visitor switches language

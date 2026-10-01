@@ -182,7 +182,7 @@ const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
   allowedAttributes: {
     '*': ['class', 'id'],
     'div': ['role'],
-    'input': ['type', 'checked', 'disabled'],
+    'input': ['type', 'checked', 'disabled', 'aria-hidden'],
     'a': ['href', 'title', 'target', 'rel'],
     'img': ['src', 'alt', 'title', 'width', 'height', 'loading'],
     'td': ['align', 'colspan', 'rowspan'],
@@ -191,10 +191,10 @@ const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
     'video': ['src', 'controls', 'width', 'height', 'poster'],
   },
   allowedSchemes: ['http', 'https', 'mailto'],
-  // Only read-only task list checkboxes survive
+  // Only read-only task list checkboxes survive (decorative: hidden from assistive tech)
   exclusiveFilter: (frame) => frame.tag === 'input' && frame.attribs.type !== 'checkbox',
   transformTags: {
-    input: (tagName, attribs) => ({ tagName, attribs: { ...attribs, disabled: '' } }),
+    input: (tagName, attribs) => ({ tagName, attribs: { ...attribs, disabled: '', 'aria-hidden': 'true' } }),
   },
 };
 

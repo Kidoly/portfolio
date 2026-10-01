@@ -22,12 +22,13 @@ function Container({ children, className = '' }: { children: ReactNode; classNam
   return <div className={`mx-auto w-full max-w-[1280px] px-6 lg:px-14 ${className}`}>{children}</div>;
 }
 
+/** Section label, e.g. "(02) Expérience": the section heading for assistive tech. */
 function Label({ n, children, dark = false }: { n: string; children: ReactNode; dark?: boolean }) {
   return (
-    <div className="font-plex text-[13px] lg:col-span-3">
+    <h2 className="m-0 font-plex text-[13px] font-normal lg:col-span-3">
       <span className={dark ? 'text-[#6c736e]' : undefined}>({n})</span>{' '}
       <span className={dark ? 'text-[#e4e7e4]' : undefined}>{children}</span>
-    </div>
+    </h2>
   );
 }
 
@@ -210,7 +211,7 @@ function Projects() {
   return (
     <Container className="mt-28 lg:mt-36">
       <section id="projects" className="flex flex-col gap-10 scroll-mt-8">
-        <div className="font-plex text-[13px]">(03) {p.labels.projects}</div>
+        <h2 className="m-0 font-plex text-[13px] font-normal">(03) {p.labels.projects}</h2>
         <div className="grid md:grid-cols-2 gap-x-5 gap-y-14">
           {p.projects.map((pr) => (
             <div key={pr.id} className="flex flex-col gap-4">
