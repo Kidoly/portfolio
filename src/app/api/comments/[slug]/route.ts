@@ -125,7 +125,7 @@ export async function POST(
 
     saveComment(comment);
 
-    // Fire-and-forget — don't block the response if email fails
+    // Fire-and-forget - don't block the response if email fails
     sendCommentNotification(comment)
       .then(() => console.log('[comment] notification email sent for', comment.id))
       .catch((err) => console.error('[comment] notification email failed:', err));

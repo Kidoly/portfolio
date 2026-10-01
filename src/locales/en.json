@@ -166,5 +166,97 @@
   "status.cdd": "Fixed-Term",
   "status.apprenticeship": "Apprenticeship",
   "status.internship": "Internship",
-  "status.education": "Education"
+  "status.education": "Education",
+
+  "portfolio": {
+    "nav": ["About", "Experience", "Projects", "Infra", "Skills", "Contact"],
+    "navAnchors": ["about", "experience", "projects", "infra", "skills", "contact"],
+    "hero": {
+      "role": "Systems & network administrator, focused on cybersecurity.",
+      "pitch": "4th-year computer science student at EPSI Nantes, work-study at Epsight. I monitor, automate and secure infrastructure, at work and in my homelab.",
+      "cta1": "See projects",
+      "cta2": "Download CV",
+      "cta3": "Read the blog"
+    },
+    "whoamiTitle": "$ whoami",
+    "online": "online",
+    "portrait": "[ portrait ]",
+    "facts": [
+      { "k": "Education", "v": "EPSI Nantes - 2027" },
+      { "k": "Work-study", "v": "Epsight, since 2024" },
+      { "k": "Location", "v": "Nantes, France" },
+      { "k": "Age", "v": "21" }
+    ],
+    "stats": [
+      { "v": "4 yrs", "l": "of projects and experience" },
+      { "v": "15+", "l": "projects shipped" },
+      { "v": "3", "l": "internships" },
+      { "v": "99.99%", "l": "homelab uptime" }
+    ],
+    "about": [
+      { "title": "Security first", "text": "Pentesting, end-to-end encryption, phishing awareness: security drives my architecture choices." },
+      { "title": "Automate", "text": "PowerShell and Ansible to remove repetitive work and make maintenance reliable." },
+      { "title": "Monitor", "text": "I build my own tools, like MonitorFlow, to catch incidents before users do." }
+    ],
+    "strengthsLabel": "Strengths",
+    "strengths": "Problem solving · Teamwork · Fast learner · Documentation",
+    "exp": [
+      { "company": "Epsight", "role": "Systems & network administrator", "type": "Work-study", "dates": "Aug 2024 - now",
+        "bullets": ["Server and client infrastructure monitoring, L2/L3 support", "PowerShell & Ansible scripts to automate maintenance", "Installation, backup and configuration projects"],
+        "tags": ["Linux", "Windows Server", "Proxmox", "VMware", "Ansible", "PowerShell", "Docker"] },
+      { "company": "Troublanc", "role": "Fullstack developer", "type": "Internship", "dates": "Jan - Feb 2024",
+        "bullets": ["Rebuilt troublanc.com on WordPress", "Monitoring app for Raspberry Pi"],
+        "tags": ["WordPress", "PHP", "Rust", "Flutter", "Raspberry Pi"] },
+      { "company": "Kereis", "role": "Web designer", "type": "Contract", "dates": "Jul - Sep 2023",
+        "bullets": ["Internal document-sharing site", "Redesign of client-facing documents"],
+        "tags": ["SharePoint", "Microsoft 365"] },
+      { "company": "Kereis", "role": "Cybersecurity engineer", "type": "Internship", "dates": "May - Jun 2023",
+        "bullets": ["End-to-end encrypted file sharing", "Penetration test and phishing awareness campaign"],
+        "tags": ["Pentest", "Encryption", "Azure AD Connect", "AWS"] },
+      { "company": "EPSI Nantes", "role": "Computer science studies", "type": "Education", "dates": "2022 - 2027",
+        "bullets": ["Network specialisation after a development core", "Student union member"],
+        "tags": ["Networking", "Symfony", "React", "Docker", "Git"] }
+    ],
+    "projects": [
+      { "title": "MonitorFlow", "shot": "MonitorFlow dashboard screenshot", "text": "Real-time server monitoring with automated alerts and cross-platform clients.", "tags": ["Rust", "Flutter", "Next.js"], "link": "https://github.com/Kidoly/monitorflowmodule" },
+      { "title": "Security engagements", "shot": "pentest report excerpt", "text": "Penetration testing, end-to-end encrypted file sharing and a phishing awareness campaign.", "tags": ["Pentest", "Encryption", "Awareness"], "link": "" },
+      { "title": "Autonomous drone", "shot": "drone photo", "text": "Drone flown with an Xbox controller, capable of autonomous flight, with real-time telemetry.", "tags": ["Python", "Node.js", "WebSockets"], "link": "https://github.com/Kidoly/Drone" },
+      { "title": "Astraso", "shot": "Astraso screenshot", "text": "A social network for sharing unusual lateness stories. Group project, 2nd year at EPSI.", "tags": ["Symfony", "HTML", "CSS"], "link": "https://github.com/Kidoly/Astraso" }
+    ],
+    "infraIntro": "A self-hosted homelab, run solo: virtualisation, firewall, CI/CD and monitoring.",
+    "infraStats": [
+      { "v": "10+", "l": "services" },
+      { "v": "99.99%", "l": "uptime" },
+      { "v": "100%", "l": "self-hosted" },
+      { "v": "1", "l": "admin" }
+    ],
+    "infraTitle": "$ homelab status",
+    "infraPath": "~/infra",
+    "up": "up",
+    "infra": [
+      { "name": "Proxmox", "role": "Virtualisation" },
+      { "name": "OPNsense", "role": "Firewall" },
+      { "name": "GitLab", "role": "Git, CI/CD, registry" },
+      { "name": "Ansible + AWX", "role": "Automation" },
+      { "name": "MonitorFlow", "role": "Monitoring" },
+      { "name": "Send", "role": "E2E encrypted sharing" },
+      { "name": "Wiki", "role": "Documentation" }
+    ],
+    "skills": [
+      { "name": "Security", "items": ["Pentesting", "Burp Suite", "Wireshark", "Encryption", "Awareness"] },
+      { "name": "Systems & networks", "items": ["Linux", "Windows Server", "Active Directory", "Proxmox", "VMware", "OPNsense", "NGINX"] },
+      { "name": "Automation & DevOps", "items": ["Ansible", "Terraform", "Docker", "Kubernetes", "CI/CD", "Git"] },
+      { "name": "Development", "items": ["Python", "Rust", "Bash", "PowerShell", "C#", "JavaScript", "React", "PHP"] }
+    ],
+    "blogIntro": "Technical notes on infrastructure, security and my homelab.",
+    "blogCta": "Read the blog",
+    "blogReadMore": "Read",
+    "contact": {
+      "title": "Let's talk about your security team.",
+      "text": "Open to conversations about cybersecurity and infrastructure. Drop me a line, I reply within 48 h."
+    },
+    "form": { "name": "Name", "email": "Email", "subject": "Subject", "message": "Message", "send": "Send" },
+    "labels": { "about": "About", "exp": "Experience", "projects": "Projects", "infra": "Infrastructure", "skills": "Skills", "blog": "Blog", "contact": "Contact" },
+    "footer": { "copyright": "© 2026 Alban Mary", "location": "Nantes, France" }
+  }
 }

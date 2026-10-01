@@ -1,16 +1,20 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { getPostBySlug, getPublishedPosts, getRelatedPosts } from '@/lib/blog/posts';
 import { markdownToHtml, generateSeoTitle } from '@/lib/blog/markdown';
-import { Calendar, Clock, ArrowLeft, Tag, User } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import BlogNav from '@/components/blog/BlogNav';
-import AuthorCard from '@/components/blog/AuthorCard';
-import RelatedPosts from '@/components/blog/RelatedPosts';
 import TableOfContents from '@/components/blog/TableOfContents';
 import CommentsSection from '@/components/blog/CommentsSection';
 import CodeBlockCopyButtons from '@/components/blog/CodeBlockCopyButtons';
+
+const CONTAINER = 'mx-auto w-full max-w-[1280px] px-6 lg:px-14';
+
+function formatDate(iso: string): string {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+}
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -84,7 +88,7 @@ export default async function BlogPostPage({ params }: Props) {
   }
 
   const contentHtml = await markdownToHtml(post.content);
-  const relatedPosts = getRelatedPosts(post, 3);
+  const relatedPosts = getRelatedPosts(post, 2);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -163,121 +167,122 @@ export default async function BlogPostPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd).replace(/</g, '\\u003c') }}
       />
-      <BlogNav />
-      <main className="min-h-screen bg-gray-50 pt-16">
-        {/* Header */}
-        <header className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white py-16">
-          <div className="container mx-auto px-6 max-w-4xl">
-            <Link
-              href="/blog"
-              className="inline-flex items-center text-blue-300 hover:text-white mb-6 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Retour au blog
-            </Link>
-            <div className="h-4"></div>
+      <main className="bg-[#f3f1ec] text-[#141414] font-sans min-h-screen">
+        {/* Dark hero */}
+        <div className="bg-[#0e100f] text-[#e4e7e4] pb-16 lg:pb-[72px]">
+          <BlogNav />
+          <div className={CONTAINER}>
+            <div className="grid lg:grid-cols-12 gap-5 pt-8 lg:pt-12">
+              <div className="lg:col-span-3 font-mono text-[13px]">
+                <Link href="/blog/" className="text-[#9aa19c] hover:text-white hover:no-underline">← Articles</Link>
+              </div>
+              <div className="lg:col-span-9 flex flex-col gap-6">
+                {post.category && (
+                  <span className="font-mono text-[12px] border border-[#2c322e] text-[var(--ok)] px-2 py-1 self-start">
+                    {post.category}
+                  </span>
+                )}
+                <h1 className="m-0 font-extrabold tracking-[-0.045em]" style={{ fontSize: 'clamp(38px, 7vw, 80px)', lineHeight: 0.95 }}>
+                  {post.title}
+                </h1>
+                <p className="m-0 text-[20px] leading-[1.55] text-[#9aa19c] max-w-[720px]">{post.description}</p>
+                <div className="flex flex-wrap gap-6 font-mono text-[13px] text-[#9aa19c] pt-3.5 border-t border-[#232825]">
+                  <span className="text-[#e4e7e4]">{post.author}</span>
+                  <span>{formatDate(post.publishedAt || post.updatedAt)}</span>
+                  {post.readingTime && <span>{post.readingTime}</span>}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-            {post.category && (
-              <span className="inline-block bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium mb-4">
-                {post.category}
-              </span>
-            )}
+        {/* Body: TOC + article */}
+        <div className={CONTAINER}>
+          <div className="grid lg:grid-cols-12 gap-5 pt-12 lg:pt-[72px] items-start">
+            <div className="lg:col-span-3">
+              <TableOfContents />
+            </div>
+            <div className="lg:col-span-7">
+              <CodeBlockCopyButtons />
+              <div className="blog-content" dangerouslySetInnerHTML={{ __html: contentHtml }} />
 
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
-              {post.title}
-            </h1>
-
-            <p className="text-lg text-blue-200 mb-6 max-w-2xl">
-              {post.description}
-            </p>
-
-            <div className="flex flex-wrap items-center gap-4 text-sm text-blue-300">
-              <span className="flex items-center gap-1.5">
-                <User className="w-4 h-4" />
-                {post.author}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Calendar className="w-4 h-4" />
-                {new Date(post.publishedAt).toLocaleDateString('fr-FR', {
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric',
-                })}
-              </span>
-              {post.readingTime && (
-                <span className="flex items-center gap-1.5">
-                  <Clock className="w-4 h-4" />
-                  {post.readingTime}
-                </span>
+              {post.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-8 mt-6 border-t-2 border-[#141414]">
+                  {post.tags.map((tag) => (
+                    <span key={tag} className="font-mono text-[13px] bg-[#e6e3dc] px-2.5 py-1.5">
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
               )}
             </div>
           </div>
-        </header>
+        </div>
 
-        {/* Cover Image */}
-        {post.coverImage && (
-          <div className="container mx-auto px-6 max-w-4xl -mt-8">
-            <div className="relative w-full h-64 md:h-96">
-              <Image
-                src={post.coverImage}
-                alt={post.title}
-                fill
-                sizes="(max-width: 768px) 100vw, 896px"
-                priority
-                className="object-cover rounded-xl shadow-lg"
-              />
+        {/* Author card (dark, whoami style) */}
+        <div className={CONTAINER}>
+          <div className="grid lg:grid-cols-12 gap-5 pt-20">
+            <div className="lg:col-span-7 lg:col-start-4 bg-[#0e100f] text-[#e4e7e4] font-mono text-[13px]">
+              <div className="px-4 py-2.5 border-b border-[#232825] text-[#6c736e]">$ whoami</div>
+              <div className="p-5 flex flex-col gap-3.5">
+                <span className="font-sans text-[22px] font-bold">Alban Mary</span>
+                <span className="font-sans text-[16px] leading-[1.55] text-[#9aa19c]">
+                  Administrateur systèmes &amp; réseaux, orienté cybersécurité. Étudiant à l&apos;EPSI Nantes. J&apos;écris ici ce que je mets en place.
+                </span>
+                <div className="flex flex-wrap gap-5">
+                  <Link href="/" className="text-[var(--ok)] hover:no-underline">Portfolio →</Link>
+                  <a href="https://github.com/Kidoly" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1">GitHub <ArrowUpRight className="w-3.5 h-3.5" aria-hidden /></a>
+                  <a href="https://www.linkedin.com/in/alban-mary/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1">LinkedIn <ArrowUpRight className="w-3.5 h-3.5" aria-hidden /></a>
+                </div>
+              </div>
             </div>
           </div>
-        )}
+        </div>
 
-        {/* Article Content */}
-        <article className="container mx-auto px-6 max-w-6xl py-12 grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Table of Contents - Sticky Sidebar */}
-          <div className="lg:col-span-1">
-            <TableOfContents />
+        {/* Comments */}
+        <div className={CONTAINER}>
+          <div className="grid lg:grid-cols-12 gap-5 pt-24">
+            <div className="font-plex text-[13px] lg:col-span-3">(Commentaires)</div>
+            <div className="lg:col-span-7">
+              <CommentsSection slug={post.slug} />
+            </div>
           </div>
+        </div>
 
-          {/* Main Content */}
-          <div className="lg:col-span-3">
-            <CodeBlockCopyButtons />
-            <div
-              className="blog-content"
-              dangerouslySetInnerHTML={{ __html: contentHtml }}
-            />
-
-          {/* Tags */}
-          {post.tags.length > 0 && (
-            <div className="mt-12 pt-8 border-t border-gray-200">
-              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-                <Tag className="w-4 h-4" /> Tags
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {post.tags.map((tag) => (
+        {/* Related posts */}
+        {relatedPosts.length > 0 && (
+          <div className={CONTAINER}>
+            <div className="grid lg:grid-cols-12 gap-5 pt-24 pb-20">
+              <div className="font-plex text-[13px] lg:col-span-3">(À lire aussi)</div>
+              <div className="lg:col-span-9 flex flex-col border-b-2 border-[#141414]">
+                {relatedPosts.map((rp) => (
                   <Link
-                    key={tag}
-                    href={`/blog?tag=${encodeURIComponent(tag)}`}
-                    className="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full text-sm hover:bg-blue-50 hover:text-blue-700 transition"
+                    key={rp.id}
+                    href={`/blog/${rp.slug}/`}
+                    className="grid grid-cols-[1fr_auto] lg:grid-cols-[130px_minmax(0,1fr)_150px_24px] gap-x-5 gap-y-2 items-baseline py-5 border-t-2 border-[#141414] hover:text-[var(--accent)] hover:no-underline transition-colors"
                   >
-                    #{tag}
+                    <span className="font-plex text-[12px] text-[#8a8680] order-1">{formatDate(rp.publishedAt || rp.updatedAt)}</span>
+                    <span className="text-[22px] font-bold tracking-[-0.015em] leading-[1.2] col-span-2 lg:col-span-1 order-3 lg:order-2">{rp.title}</span>
+                    <span className="font-mono text-[12px] bg-[#e6e3dc] text-[#141414] px-2 py-1 justify-self-start order-2 lg:order-3">{rp.category}</span>
+                    <span className="text-[var(--accent)] justify-self-end hidden lg:flex items-center order-4"><ArrowUpRight className="w-4 h-4" strokeWidth={2.5} aria-hidden /></span>
                   </Link>
                 ))}
               </div>
             </div>
-          )}
-
-          {/* Author Card — Portfolio CTA */}
-          <AuthorCard />
-
-          {/* Comments Section */}
-          <section className="mt-12 pt-8 border-t border-gray-200">
-            <h2 className="text-2xl font-bold mb-6">Commentaires</h2>
-            <CommentsSection slug={post.slug} />
-          </section>
-
-          {/* Related Posts */}
-          <RelatedPosts posts={relatedPosts} />
           </div>
-        </article>
+        )}
+
+        {/* Footer */}
+        <div className={CONTAINER}>
+          <footer className="py-6 border-t border-[#c9c5bd] text-[13px] flex justify-between">
+            <span>© 2026 Alban Mary</span>
+            <div className="flex gap-5">
+              <a href="https://github.com/Kidoly" target="_blank" rel="noopener noreferrer">GitHub</a>
+              <a href="https://www.linkedin.com/in/alban-mary/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+              <Link href="/blog/feed.xml">RSS</Link>
+            </div>
+          </footer>
+        </div>
       </main>
     </>
   );

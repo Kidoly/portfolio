@@ -5,16 +5,19 @@ import en from '@/locales/en.json';
 import fr from '@/locales/fr.json';
 
 type Language = 'en' | 'fr';
+type Dict = typeof fr;
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
+  /** Full structured dictionary for the current language (nested content). */
+  dict: Dict;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-const translations: Record<Language, Record<string, string>> = { en, fr };
+const translations: Record<Language, Dict> = { en: en as Dict, fr };
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<Language>('fr');
@@ -36,11 +39,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const t = (key: string): string => {
-    return translations[language]?.[key] || key;
+    const val = (translations[language] as unknown as Record<string, unknown>)?.[key];
+    return typeof val === 'string' ? val : key;
   };
 
+  const dict = translations[language];
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t, dict }}>
       {children}
     </LanguageContext.Provider>
   );

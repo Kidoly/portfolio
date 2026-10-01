@@ -20,16 +20,13 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
-  const [feedback, setFeedback] = useState<string>('');
-  const [error, setError] = useState<string>('');
+  const [feedback, setFeedback] = useState('');
+  const [error, setError] = useState('');
 
   const loadComments = async () => {
     try {
       const res = await fetch(`/api/comments/${encodeURIComponent(slug)}/`);
-      if (res.ok) {
-        const data = await res.json();
-        setComments(data);
-      }
+      if (res.ok) setComments(await res.json());
     } catch {
       setComments([]);
     } finally {
@@ -39,6 +36,7 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
 
   useEffect(() => {
     loadComments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -46,30 +44,25 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
     setSubmitting(true);
     setError('');
     setFeedback('');
-
     try {
       const res = await fetch(`/api/comments/${encodeURIComponent(slug)}/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, message, website: '' }),
       });
-
       let data: { error?: string; message?: string } = {};
       try {
         data = await res.json();
       } catch {
         data = {};
       }
-
       if (!res.ok) {
-        setError(data.error || 'Erreur lors de l\'envoi du commentaire.');
+        setError(data.error || "Erreur lors de l'envoi du commentaire.");
       } else {
         setName('');
         setEmail('');
         setMessage('');
-        setFeedback(
-          data.message || 'Commentaire envoyé. Il sera visible après validation.'
-        );
+        setFeedback(data.message || 'Commentaire envoyé. Il sera visible après validation.');
       }
     } catch {
       setError('Erreur réseau. Merci de réessayer.');
@@ -78,39 +71,26 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
     }
   };
 
+  const field =
+    'bg-transparent border-0 border-b border-[#141414] py-2.5 text-[17px] outline-none focus:border-[var(--accent)] transition-colors';
+
   return (
-    <div className="space-y-8">
-      <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">Laisser un commentaire</h3>
-
-        <div className="grid md:grid-cols-2 gap-3">
-          <input
-            type="text"
-            placeholder="Votre nom"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900"
-            maxLength={80}
-            required
-          />
-          <input
-            type="email"
-            placeholder="Votre email (optionnel)"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900"
-            maxLength={254}
-          />
+    <div className="flex flex-col gap-10">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5 text-sm">
+        <div className="grid md:grid-cols-2 gap-5">
+          <label className="flex flex-col gap-1.5 font-medium">
+            Nom
+            <input value={name} onChange={(e) => setName(e.target.value)} className={field} maxLength={80} required disabled={submitting} />
+          </label>
+          <label className="flex flex-col gap-1.5 font-medium">
+            Email (optionnel)
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={field} maxLength={254} disabled={submitting} />
+          </label>
         </div>
-
-        <textarea
-          placeholder="Votre commentaire"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 min-h-28"
-          maxLength={1500}
-          required
-        />
+        <label className="flex flex-col gap-1.5 font-medium">
+          Commentaire
+          <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} className={`${field} resize-y`} maxLength={1500} required disabled={submitting} />
+        </label>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
         {feedback && <p className="text-sm text-green-700">{feedback}</p>}
@@ -118,29 +98,27 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
         <button
           type="submit"
           disabled={submitting}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+          className="self-start bg-[#141414] text-[#f3f1ec] rounded-full px-6 py-3.5 font-bold text-[15px] cursor-pointer hover:bg-[var(--accent)] transition-colors disabled:opacity-60"
         >
-          {submitting ? 'Envoi...' : 'Envoyer'}
+          {submitting ? 'Envoi…' : 'Envoyer →'}
         </button>
       </form>
 
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">Commentaires publiés</h3>
-
+      <div className="flex flex-col">
         {loading ? (
-          <p className="text-sm text-gray-500">Chargement...</p>
+          <p className="font-plex text-[12px] text-[#8a8680]">Chargement…</p>
         ) : comments.length === 0 ? (
-          <p className="text-sm text-gray-500">Aucun commentaire pour le moment.</p>
+          <p className="font-plex text-[12px] text-[#8a8680]">Aucun commentaire pour l&apos;instant.</p>
         ) : (
-          comments.map((comment) => (
-            <article key={comment.id} className="bg-white border border-gray-200 rounded-xl p-4">
-              <div className="flex items-center justify-between mb-2">
-                <p className="font-medium text-gray-900">{comment.authorName}</p>
-                <p className="text-xs text-gray-500">
-                  {new Date(comment.createdAt).toLocaleDateString('fr-FR')}
-                </p>
+          comments.map((c) => (
+            <article key={c.id} className="border-t border-[#c9c5bd] py-5 flex flex-col gap-2">
+              <div className="flex items-baseline justify-between gap-4">
+                <span className="font-bold text-[#141414]">{c.authorName}</span>
+                <span className="font-plex text-[12px] text-[#8a8680]">
+                  {new Date(c.createdAt).toLocaleDateString('fr-FR')}
+                </span>
               </div>
-              <p className="text-gray-700 whitespace-pre-wrap">{comment.content}</p>
+              <p className="text-[16px] leading-[1.6] text-[#2a2a28] whitespace-pre-wrap">{c.content}</p>
             </article>
           ))
         )}

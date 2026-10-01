@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'nodejs';
-export const alt = 'Alban Mary — Développeur Web & Administrateur Systèmes';
+export const alt = 'Alban Mary - Développeur Web & Administrateur Systèmes';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -56,7 +56,7 @@ export default function Image() {
               maxWidth: '700px',
             }}
           >
-            Développeur Web & Administrateur Systèmes — EPSI Nantes
+            Développeur Web & Administrateur Systèmes - EPSI Nantes
           </div>
           <div
             style={{

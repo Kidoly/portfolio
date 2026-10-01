@@ -131,10 +131,25 @@ export async function markdownToHtml(markdown: string): Promise<string> {
     allowedSchemes: ['http', 'https', 'mailto'],
   });
 
-  // Wrap pre > code blocks with data-code attribute for client-side copy button handling
+  // Expose the code language on a data attribute (for the client-side copy bar)
+  // and prepend a green shell prompt ($) to each line of bash-like code blocks.
+  // The prompt is marked so the copy button and text selection can exclude it.
+  // Note: rehype-highlight emits `class="hljs language-xxx"`, so match any order.
   sanitized = sanitized.replace(
-    /<pre><code class="language-([^"]*)">/g,
-    '<pre><code data-language="$1" class="language-$1">'
+    /<pre><code class="([^"]*)">([\s\S]*?)<\/code><\/pre>/g,
+    (_match, cls: string, inner: string) => {
+      const langMatch = cls.match(/language-([A-Za-z0-9]+)/);
+      const lang = langMatch ? langMatch[1] : '';
+      const isShell = /^(bash|sh|shell|zsh|console)$/.test(lang);
+      const body = isShell
+        ? inner
+            .split('\n')
+            .map((line) => (line.trim() === '' ? line : `<span class="cb-prompt">$ </span>${line}`))
+            .join('\n')
+        : inner;
+      const dataAttr = lang ? ` data-language="${lang}"` : '';
+      return `<pre><code${dataAttr} class="${cls}">${body}</code></pre>`;
+    }
   );
 
   return sanitized;

@@ -187,7 +187,7 @@ export default function SyncPage() {
               4
             </span>
             <span>
-              Les nouveaux articles sont créés en brouillon — publiez-les
+              Les nouveaux articles sont créés en brouillon - publiez-les
               manuellement après révision
             </span>
           </li>

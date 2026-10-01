@@ -1,9 +1,12 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
+import { Archivo, IBM_Plex_Mono, JetBrains_Mono } from 'next/font/google'
 import { headers } from 'next/headers'
 import './globals.css'
 import Providers from './providers'
-const inter = Inter({ subsets: ['latin'], display: 'swap' })
+
+const archivo = Archivo({ subsets: ['latin'], display: 'swap', variable: '--font-archivo' })
+const plexMono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500'], display: 'swap', variable: '--font-plex' })
+const jetbrains = JetBrains_Mono({ subsets: ['latin'], display: 'swap', variable: '--font-jetbrains' })
 
 const SITE_URL = 'https://albanmary.com';
 
@@ -17,7 +20,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Alban Mary — Développeur Web & Administrateur Systèmes | Portfolio',
+    default: 'Alban Mary - Développeur Web & Administrateur Systèmes | Portfolio',
     template: '%s | Alban Mary',
   },
   description: 'Portfolio d\'Alban Mary, étudiant en informatique à l\'EPSI Nantes. Développeur web, administrateur systèmes & réseaux, passionné de cybersécurité. Découvrez mes projets, certifications et articles.',
@@ -45,7 +48,7 @@ export const metadata: Metadata = {
     locale: 'fr_FR',
     alternateLocale: 'en_US',
     url: SITE_URL,
-    title: 'Alban Mary — Développeur Web & Administrateur Systèmes',
+    title: 'Alban Mary - Développeur Web & Administrateur Systèmes',
     description: 'Portfolio d\'Alban Mary, étudiant en informatique à l\'EPSI Nantes. Développeur web, administrateur systèmes & réseaux, passionné de cybersécurité.',
     siteName: 'Alban Mary',
     images: [
@@ -53,14 +56,14 @@ export const metadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Alban Mary — Développeur Web & Administrateur Systèmes',
+        alt: 'Alban Mary - Développeur Web & Administrateur Systèmes',
         type: 'image/png',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Alban Mary — Développeur Web & Administrateur Systèmes',
+    title: 'Alban Mary - Développeur Web & Administrateur Systèmes',
     description: 'Portfolio d\'Alban Mary : développement web, systèmes, réseaux et cybersécurité.',
     images: ['/og-image.png'],
     creator: '@kidoly',
@@ -69,7 +72,7 @@ export const metadata: Metadata = {
     canonical: SITE_URL,
     types: {
       'application/rss+xml': [
-        { url: '/blog/feed.xml', title: 'Blog Alban Mary — RSS Feed' },
+        { url: '/blog/feed.xml', title: 'Blog Alban Mary - RSS Feed' },
       ],
     },
   },
@@ -127,7 +130,7 @@ const websiteJsonLd = {
   '@id': `${SITE_URL}/#website`,
   name: 'Alban Mary',
   url: SITE_URL,
-  description: 'Portfolio et blog d\'Alban Mary — développement web, systèmes, réseaux et cybersécurité',
+  description: 'Portfolio et blog d\'Alban Mary - développement web, systèmes, réseaux et cybersécurité',
   author: { '@id': `${SITE_URL}/#person` },
   inLanguage: ['fr', 'en'],
   potentialAction: {
@@ -160,7 +163,7 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </head>
-      <body className={inter.className}>
+      <body className={`${archivo.variable} ${plexMono.variable} ${jetbrains.variable} font-sans`}>
         <Providers>
           {children}
         </Providers>

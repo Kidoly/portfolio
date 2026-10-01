@@ -75,7 +75,7 @@ export function isAuthentikEnabled(): boolean {
   return !!(AUTHENTIK_URL && AUTHENTIK_CLIENT_ID && AUTHENTIK_CLIENT_SECRET);
 }
 
-/** Resolve the public-facing base URL — works behind reverse proxies and inside Docker */
+/** Resolve the public-facing base URL - works behind reverse proxies and inside Docker */
 export function buildBaseUrl(request: { headers: Headers; url: string }): string {
   // 1. Explicit SITE_URL env var (most reliable for Docker)
   const siteUrl = process.env.SITE_URL;
@@ -102,7 +102,7 @@ export function buildBaseUrl(request: { headers: Headers; url: string }): string
   return url.origin;
 }
 
-/** Build the redirect URI — works behind reverse proxies and inside Docker */
+/** Build the redirect URI - works behind reverse proxies and inside Docker */
 export function buildRedirectUri(request: { headers: Headers; url: string }): string {
   return `${buildBaseUrl(request)}/api/admin/auth/callback`;
 }

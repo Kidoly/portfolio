@@ -1,34 +1,21 @@
-import Hero from '@/components/Hero'
-import About from '@/components/About'
-import Experience from '@/components/Experience'
-import Projects from '@/components/Projects'
-import Certifications from '@/components/Certifications'
-import Contact from '@/components/Contact'
-import Infrastructure from '@/components/Infrastructure'
-import ScrollReveal from '@/components/ScrollReveal'
+import { getPublishedPosts } from '@/lib/blog/posts';
+import PortfolioClient, { type BlogPreview } from '@/components/portfolio/PortfolioClient';
+
+export const revalidate = 60;
 
 export default function Home() {
-  return (
-    <main className="min-h-screen bg-gray-50">
-      <Hero />
-      <ScrollReveal>
-        <About />
-      </ScrollReveal>
-      <ScrollReveal delay={0.1}>
-        <Experience />
-      </ScrollReveal>
-      <ScrollReveal delay={0.2}>
-        <Projects />
-      </ScrollReveal>
-      <ScrollReveal delay={0.1}>
-        <Infrastructure />
-      </ScrollReveal>
-      <ScrollReveal delay={0.2}>
-        <Certifications />
-      </ScrollReveal>
-      <ScrollReveal delay={0.1}>
-        <Contact />
-      </ScrollReveal>
-    </main>
-  )
+  const latest = getPublishedPosts().slice(0, 3);
+
+  const posts: BlogPreview[] = latest.map((post) => ({
+    title: post.title,
+    url: `/blog/${post.slug}/`,
+    cat: post.category || 'Blog',
+    date: new Date(post.publishedAt || post.updatedAt).toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }),
+  }));
+
+  return <PortfolioClient posts={posts} />;
 }

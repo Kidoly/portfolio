@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: #1e3a5f; color: white; padding: 20px 24px; border-radius: 8px 8px 0 0;">
-            <h2 style="margin: 0;">Nouveau message — Portfolio</h2>
+            <h2 style="margin: 0;">Nouveau message - Portfolio</h2>
           </div>
           <div style="background: #f9fafb; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
             <p style="margin: 0 0 8px;"><strong>De :</strong> ${safeName}</p>

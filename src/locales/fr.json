@@ -166,5 +166,97 @@
   "status.cdd": "CDD",
   "status.apprenticeship": "Alternance",
   "status.internship": "Stage",
-  "status.education": "Éducation"
+  "status.education": "Éducation",
+
+  "portfolio": {
+    "nav": ["À propos", "Expérience", "Projets", "Infra", "Compétences", "Contact"],
+    "navAnchors": ["about", "experience", "projects", "infra", "skills", "contact"],
+    "hero": {
+      "role": "Administrateur systèmes & réseaux, orienté cybersécurité.",
+      "pitch": "4e année à l'EPSI Nantes, en alternance chez Epsight. Je supervise, automatise et sécurise des infrastructures, au travail comme dans mon homelab.",
+      "cta1": "Voir les projets",
+      "cta2": "Télécharger le CV",
+      "cta3": "Lire le blog"
+    },
+    "whoamiTitle": "$ whoami",
+    "online": "online",
+    "portrait": "[ portrait ]",
+    "facts": [
+      { "k": "Formation", "v": "EPSI Nantes - 2027" },
+      { "k": "Alternance", "v": "Epsight, depuis 2024" },
+      { "k": "Lieu", "v": "Nantes, France" },
+      { "k": "Âge", "v": "21 ans" }
+    ],
+    "stats": [
+      { "v": "4 ans", "l": "de projets et d'expérience" },
+      { "v": "15+", "l": "projets réalisés" },
+      { "v": "3", "l": "stages en entreprise" },
+      { "v": "99,99 %", "l": "d'uptime sur mon homelab" }
+    ],
+    "about": [
+      { "title": "Sécurité d'abord", "text": "Pentest, chiffrement de bout en bout, sensibilisation au phishing : la sécurité guide mes choix d'architecture." },
+      { "title": "Automatiser", "text": "PowerShell et Ansible pour supprimer les tâches répétitives et fiabiliser la maintenance." },
+      { "title": "Superviser", "text": "Je construis mes propres outils, comme MonitorFlow, pour détecter les incidents avant les utilisateurs." }
+    ],
+    "strengthsLabel": "Points forts",
+    "strengths": "Résolution de problèmes · Travail d'équipe · Apprentissage rapide · Documentation",
+    "exp": [
+      { "company": "Epsight", "role": "Administrateur systèmes & réseaux", "type": "Alternance", "dates": "Août 2024 - auj.",
+        "bullets": ["Supervision de serveurs et d'infrastructures clients, support N2/N3", "Scripts PowerShell & Ansible pour automatiser la maintenance", "Projets d'installation, de sauvegarde et de configuration"],
+        "tags": ["Linux", "Windows Server", "Proxmox", "VMware", "Ansible", "PowerShell", "Docker"] },
+      { "company": "Troublanc", "role": "Développeur fullstack", "type": "Stage", "dates": "Jan - Fév 2024",
+        "bullets": ["Refonte du site vitrine troublanc.com sous WordPress", "Application de monitoring pour Raspberry Pi"],
+        "tags": ["WordPress", "PHP", "Rust", "Flutter", "Raspberry Pi"] },
+      { "company": "Kereis", "role": "Webdesigner", "type": "CDD", "dates": "Juil - Sept 2023",
+        "bullets": ["Site interne de partage de documents", "Refonte des documents clients"],
+        "tags": ["SharePoint", "Microsoft 365"] },
+      { "company": "Kereis", "role": "Ingénieur cybersécurité", "type": "Stage", "dates": "Mai - Juin 2023",
+        "bullets": ["Partage de fichiers chiffré de bout en bout", "Test d'intrusion et campagne de sensibilisation au phishing"],
+        "tags": ["Pentest", "Chiffrement", "Azure AD Connect", "AWS"] },
+      { "company": "EPSI Nantes", "role": "Études en informatique", "type": "Formation", "dates": "2022 - 2027",
+        "bullets": ["Spécialisation réseaux après un tronc commun développement", "Membre du BDE"],
+        "tags": ["Réseaux", "Symfony", "React", "Docker", "Git"] }
+    ],
+    "projects": [
+      { "title": "MonitorFlow", "shot": "capture dashboard MonitorFlow", "text": "Monitoring de serveurs en temps réel, avec alertes automatiques et clients multi-plateformes.", "tags": ["Rust", "Flutter", "Next.js"], "link": "https://github.com/Kidoly/monitorflowmodule" },
+      { "title": "Missions cybersécurité", "shot": "extrait rapport de pentest", "text": "Test d'intrusion, partage de fichiers chiffré de bout en bout et campagne de sensibilisation au phishing.", "tags": ["Pentest", "Chiffrement", "Sensibilisation"], "link": "" },
+      { "title": "Drone autonome", "shot": "photo du drone", "text": "Drone piloté à la manette Xbox, capable de vol autonome, avec télémétrie en temps réel.", "tags": ["Python", "Node.js", "WebSockets"], "link": "https://github.com/Kidoly/Drone" },
+      { "title": "Astraso", "shot": "capture Astraso", "text": "Réseau social pour partager ses histoires de retards insolites. Projet de groupe, 2e année EPSI.", "tags": ["Symfony", "HTML", "CSS"], "link": "https://github.com/Kidoly/Astraso" }
+    ],
+    "infraIntro": "Un homelab auto-hébergé, administré seul : virtualisation, pare-feu, CI/CD et supervision.",
+    "infraStats": [
+      { "v": "10+", "l": "services" },
+      { "v": "99,99 %", "l": "uptime" },
+      { "v": "100 %", "l": "auto-hébergé" },
+      { "v": "1", "l": "administrateur" }
+    ],
+    "infraTitle": "$ homelab status",
+    "infraPath": "~/infra",
+    "up": "up",
+    "infra": [
+      { "name": "Proxmox", "role": "Virtualisation" },
+      { "name": "OPNsense", "role": "Pare-feu" },
+      { "name": "GitLab", "role": "Git, CI/CD, registre" },
+      { "name": "Ansible + AWX", "role": "Automatisation" },
+      { "name": "MonitorFlow", "role": "Supervision" },
+      { "name": "Send", "role": "Partage chiffré E2E" },
+      { "name": "Wiki", "role": "Documentation" }
+    ],
+    "skills": [
+      { "name": "Sécurité", "items": ["Pentest", "Burp Suite", "Wireshark", "Chiffrement", "Sensibilisation"] },
+      { "name": "Systèmes & réseaux", "items": ["Linux", "Windows Server", "Active Directory", "Proxmox", "VMware", "OPNsense", "NGINX"] },
+      { "name": "Automatisation & DevOps", "items": ["Ansible", "Terraform", "Docker", "Kubernetes", "CI/CD", "Git"] },
+      { "name": "Développement", "items": ["Python", "Rust", "Bash", "PowerShell", "C#", "JavaScript", "React", "PHP"] }
+    ],
+    "blogIntro": "Notes techniques sur l'infra, la sécurité et mon homelab.",
+    "blogCta": "Lire le blog",
+    "blogReadMore": "Lire",
+    "contact": {
+      "title": "Parlons de votre équipe sécurité.",
+      "text": "Ouvert aux échanges autour de la cybersécurité et de l'infrastructure. Écrivez-moi, je réponds sous 48 h."
+    },
+    "form": { "name": "Nom", "email": "Email", "subject": "Sujet", "message": "Message", "send": "Envoyer" },
+    "labels": { "about": "Présentation", "exp": "Expérience", "projects": "Projets", "infra": "Infrastructure", "skills": "Compétences", "blog": "Blog", "contact": "Contact" },
+    "footer": { "copyright": "© 2026 Alban Mary", "location": "Nantes, France" }
+  }
 }

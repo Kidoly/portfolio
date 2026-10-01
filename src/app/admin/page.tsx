@@ -186,7 +186,7 @@ function Dashboard() {
             <h3 className="text-sm font-medium text-gray-500">Total articles</h3>
           </div>
           <p className="text-3xl font-bold text-gray-900">
-            {stats?.total ?? '—'}
+            {stats?.total ?? '-'}
           </p>
         </div>
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
@@ -195,7 +195,7 @@ function Dashboard() {
             <h3 className="text-sm font-medium text-gray-500">Publiés</h3>
           </div>
           <p className="text-3xl font-bold text-green-600">
-            {stats?.published ?? '—'}
+            {stats?.published ?? '-'}
           </p>
         </div>
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
@@ -204,7 +204,7 @@ function Dashboard() {
             <h3 className="text-sm font-medium text-gray-500">Brouillons</h3>
           </div>
           <p className="text-3xl font-bold text-yellow-600">
-            {stats?.drafts ?? '—'}
+            {stats?.drafts ?? '-'}
           </p>
         </div>
       </div>

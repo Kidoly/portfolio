@@ -1,104 +1,33 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { Menu, X, Rss } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 
+/**
+ * Blog header row - designed to sit inside a dark (#0e100f) hero block.
+ * Nav is simplified across the blog: logo · Portfolio · Articles (active) · RSS.
+ */
 export default function BlogNav() {
-  const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
   return (
-    <nav
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100"
-    >
-      <div className="container mx-auto px-6 flex items-center justify-between h-16">
-        {/* Logo / Home */}
-        <Link
-          href="/"
-          className="font-bold text-lg transition text-gray-900"
-        >
-          Alban Mary
+    <header className="mx-auto w-full max-w-[1280px] px-6 lg:px-14">
+      <div className="grid grid-cols-2 lg:grid-cols-12 gap-5 items-center py-7 text-sm font-medium text-[#e4e7e4]">
+        <Link href="/" className="lg:col-span-3 text-base font-semibold hover:no-underline">
+          Alban Mary<span className="text-[var(--accent)]">.</span>
         </Link>
-
-        {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-6">
-          <Link
-            href="/blog/"
-            className="text-sm font-medium transition hover:text-blue-500 text-gray-600"
-          >
-            Articles
+        <nav className="hidden lg:flex lg:col-span-7 gap-7">
+          <Link href="/" className="text-[#9aa19c] hover:text-white hover:no-underline transition-colors">
+            Portfolio
           </Link>
-          <Link
-            href="/#projects"
-            className="text-sm font-medium transition hover:text-blue-500 text-gray-600"
-          >
-            Projets
-          </Link>
-          <Link
-            href="/#certifications"
-            className="text-sm font-medium transition hover:text-blue-500 text-gray-600"
-          >
-            Certifications
-          </Link>
-          <Link
-            href="/blog/feed.xml"
-            className={`transition hover:text-orange-500 ${
-              scrolled ? 'text-gray-400' : 'text-blue-300'
-            }`}
-            title="Flux RSS"
-          >
-            <Rss className="w-4 h-4" />
-          </Link>
-          <Link
-            href="/#contact"
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition"
-          >
-            Me contacter
-          </Link>
-        </div>
-
-        {/* Mobile toggle */}
-        <button
-          onClick={() => setOpen(!open)}
-          aria-label={open ? 'Close menu' : 'Open menu'}
-          className={`md:hidden transition ${
-            scrolled ? 'text-gray-900' : 'text-white'
-          }`}
+          <span className="border-b-2 border-[var(--accent)] pb-0.5">Articles</span>
+        </nav>
+        <Link
+          href="/blog/feed.xml"
+          className="lg:col-span-2 justify-self-end inline-flex items-center gap-1 font-mono text-[12px] border border-[#333a36] px-2.5 py-1.5 hover:border-[#e4e7e4] hover:no-underline transition-colors"
+          title="Flux RSS"
         >
-          {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+          RSS <ArrowUpRight className="w-3.5 h-3.5" aria-hidden />
+        </Link>
       </div>
-
-      {/* Mobile menu */}
-      {open && (
-        <div className="md:hidden bg-white border-t border-gray-100 shadow-lg">
-          <div className="container mx-auto px-6 py-4 flex flex-col gap-3">
-            <Link href="/blog/" onClick={() => setOpen(false)} className="text-gray-700 font-medium py-2">
-              Articles
-            </Link>
-            <Link href="/#projects" onClick={() => setOpen(false)} className="text-gray-700 font-medium py-2">
-              Projets
-            </Link>
-            <Link href="/#certifications" onClick={() => setOpen(false)} className="text-gray-700 font-medium py-2">
-              Certifications
-            </Link>
-            <Link
-              href="/#contact"
-              onClick={() => setOpen(false)}
-              className="bg-blue-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium text-center hover:bg-blue-700 transition"
-            >
-              Me contacter
-            </Link>
-          </div>
-        </div>
-      )}
-    </nav>
+    </header>
   );
 }

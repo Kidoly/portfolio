@@ -2,8 +2,8 @@
  * Auto-generate blog metadata from markdown content.
  *
  * Two modes:
- * 1. Local analysis (always available) — regex-based extraction of tags, summary, category
- * 2. AI-powered (optional) — uses OpenAI API if OPENAI_API_KEY is configured
+ * 1. Local analysis (always available) - regex-based extraction of tags, summary, category
+ * 2. AI-powered (optional) - uses OpenAI API if OPENAI_API_KEY is configured
  */
 
 // ─── Known tech terms dictionary ───────────────────────────────────────────
@@ -234,7 +234,7 @@ export interface GeneratedMetadata {
 }
 
 /**
- * Local content analysis — always works, no API key needed.
+ * Local content analysis - always works, no API key needed.
  */
 export function analyzeContentLocally(content: string, title: string): GeneratedMetadata {
   return {
@@ -248,7 +248,7 @@ export function analyzeContentLocally(content: string, title: string): Generated
 }
 
 /**
- * AI-powered analysis via OpenAI — much better results.
+ * AI-powered analysis via OpenAI - much better results.
  * Falls back to local analysis if AI is unavailable.
  */
 export async function analyzeContentWithAI(
