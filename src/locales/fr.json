@@ -177,13 +177,13 @@
     "langSwitch": "Passer le site en anglais",
     "whoamiTitle": "$ whoami",
     "online": "online",
-    "portrait": "[ portrait ]",
+    "portrait": "Portrait d'Alban Mary",
     "facts": [
       { "k": "Formation", "v": "EPSI Nantes - 2027" },
       { "k": "Alternance", "v": "Epsight, depuis 2024" },
-      { "k": "Lieu", "v": "Nantes, France" },
-      { "k": "Âge", "v": "21 ans" }
+      { "k": "Lieu", "v": "Nantes, France" }
     ],
+    "age": { "k": "Âge", "v": "{n} ans" },
     "stats": [
       { "v": "4 ans", "l": "de projets et d'expérience" },
       { "v": "15+", "l": "projets réalisés" },
@@ -215,10 +215,10 @@
         "tags": ["Réseaux", "Symfony", "React", "Docker", "Git"] }
     ],
     "projects": [
-      { "title": "MonitorFlow", "shot": "capture dashboard MonitorFlow", "text": "Monitoring de serveurs en temps réel, avec alertes automatiques et clients multi-plateformes.", "tags": ["Rust", "Flutter", "Next.js"], "link": "https://github.com/Kidoly/monitorflowmodule" },
-      { "title": "Missions cybersécurité", "shot": "extrait rapport de pentest", "text": "Test d'intrusion, partage de fichiers chiffré de bout en bout et campagne de sensibilisation au phishing.", "tags": ["Pentest", "Chiffrement", "Sensibilisation"], "link": "" },
-      { "title": "Drone autonome", "shot": "photo du drone", "text": "Drone piloté à la manette Xbox, capable de vol autonome, avec télémétrie en temps réel.", "tags": ["Python", "Node.js", "WebSockets"], "link": "https://github.com/Kidoly/Drone" },
-      { "title": "Astraso", "shot": "capture Astraso", "text": "Réseau social pour partager ses histoires de retards insolites. Projet de groupe, 2e année EPSI.", "tags": ["Symfony", "HTML", "CSS"], "link": "https://github.com/Kidoly/Astraso" }
+      { "id": "monitorflow", "title": "MonitorFlow", "shot": "capture dashboard MonitorFlow", "text": "Monitoring de serveurs en temps réel, avec alertes automatiques et clients multi-plateformes.", "tags": ["Rust", "Flutter", "Next.js"], "link": "https://github.com/Kidoly/monitorflowmodule" },
+      { "id": "security", "title": "Missions cybersécurité", "shot": "extrait rapport de pentest", "text": "Test d'intrusion, partage de fichiers chiffré de bout en bout et campagne de sensibilisation au phishing.", "tags": ["Pentest", "Chiffrement", "Sensibilisation"], "link": "" },
+      { "id": "drone", "title": "Drone autonome", "shot": "photo du drone", "text": "Drone piloté à la manette Xbox, capable de vol autonome, avec télémétrie en temps réel.", "tags": ["Python", "Node.js", "WebSockets"], "link": "https://github.com/Kidoly/Drone" },
+      { "id": "astraso", "title": "Astraso", "shot": "capture Astraso", "text": "Réseau social pour partager ses histoires de retards insolites. Projet de groupe, 2e année EPSI.", "tags": ["Symfony", "HTML", "CSS"], "link": "https://github.com/Kidoly/Astraso" }
     ],
     "infraIntro": "Un homelab auto-hébergé, administré seul : virtualisation, pare-feu, CI/CD et supervision.",
     "infraStats": [

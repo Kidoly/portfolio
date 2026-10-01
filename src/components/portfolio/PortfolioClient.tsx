@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, type FormEvent, type ReactNode } from 'react';
+import Image from 'next/image';
 import { ArrowUpRight } from 'lucide-react';
 import { useLanguage, useLocalizedDocument } from '@/contexts/LanguageContext';
 import { formatPostDate } from '@/lib/blog/format';
+import { PORTRAIT_SRC, PROJECT_IMAGES } from '@/config/profile';
 
 export interface BlogPreview {
   title: string;
@@ -30,10 +32,11 @@ function Label({ n, children, dark = false }: { n: string; children: ReactNode; 
 
 /* ---------- header + hero (dark) ---------- */
 
-function Hero() {
+function Hero({ age }: { age: number | null }) {
   const { dict, language, setLanguage } = useLanguage();
   const p = dict.portfolio;
   const other = language === 'fr' ? 'EN' : 'FR';
+  const facts = age === null ? p.facts : [...p.facts, { k: p.age.k, v: p.age.v.replace('{n}', String(age)) }];
 
   return (
     <div className="bg-[#0e100f] text-[#e4e7e4] pb-16 lg:pb-24">
@@ -93,14 +96,13 @@ function Hero() {
                 <span className="text-[var(--ok)]">●</span> {p.online}
               </span>
             </div>
-            <div
-              className="h-[180px] mx-4 mt-4 mb-1 flex items-center justify-center text-[#5d655f]"
-              style={{ background: 'repeating-linear-gradient(135deg,#1a1e1b 0 8px,#161917 8px 16px)' }}
-            >
-              {p.portrait}
-            </div>
+            {PORTRAIT_SRC && (
+              <div className="relative h-[180px] mx-4 mt-4 mb-1 overflow-hidden">
+                <Image src={PORTRAIT_SRC} alt={p.portrait} fill priority sizes="(min-width: 1024px) 380px, 100vw" className="object-cover" />
+              </div>
+            )}
             <div className="px-4 pt-3 pb-4 flex flex-col gap-2.5">
-              {p.facts.map((f) => (
+              {facts.map((f) => (
                 <div key={f.k} className="grid grid-cols-[100px_1fr] gap-3">
                   <span className="text-[#6c736e]">{f.k}</span>
                   <span>{f.v}</span>
@@ -210,13 +212,12 @@ function Projects() {
         <div className="font-plex text-[13px]">(03) {p.labels.projects}</div>
         <div className="grid md:grid-cols-2 gap-x-5 gap-y-14">
           {p.projects.map((pr) => (
-            <div key={pr.title} className="flex flex-col gap-4">
-              <div
-                className="aspect-[4/3] flex items-center justify-center font-plex text-[12px] text-[#8a8680]"
-                style={{ background: 'repeating-linear-gradient(135deg,#e4e1da 0 8px,#ece9e3 8px 16px)' }}
-              >
-                {pr.shot}
-              </div>
+            <div key={pr.id} className="flex flex-col gap-4">
+              {PROJECT_IMAGES[pr.id] && (
+                <div className="relative aspect-[4/3] overflow-hidden bg-[#e6e3dc]">
+                  <Image src={PROJECT_IMAGES[pr.id]!} alt={pr.shot} fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" />
+                </div>
+              )}
               <div className="flex justify-between items-baseline gap-4">
                 <h3 className="m-0 text-[36px] font-extrabold tracking-[-0.03em]">{pr.title}</h3>
                 {pr.link && (
@@ -486,13 +487,13 @@ function Footer() {
 
 /* ---------- page ---------- */
 
-export default function PortfolioClient({ posts }: { posts: BlogPreview[] }) {
+export default function PortfolioClient({ posts, age }: { posts: BlogPreview[]; age: number | null }) {
   const { dict } = useLanguage();
   useLocalizedDocument(dict.portfolio.meta);
 
   return (
     <main className="bg-[#f3f1ec] text-[#141414] font-sans">
-      <Hero />
+      <Hero age={age} />
       <Stats />
       <About />
       <Experience />

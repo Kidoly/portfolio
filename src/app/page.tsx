@@ -1,5 +1,6 @@
 import { getPublishedPosts } from '@/lib/blog/posts';
 import PortfolioClient, { type BlogPreview } from '@/components/portfolio/PortfolioClient';
+import { BIRTH_DATE, getAge } from '@/config/profile';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,5 +14,6 @@ export default function Home() {
     date: post.publishedAt || post.updatedAt,
   }));
 
-  return <PortfolioClient posts={posts} />;
+  // Computed server-side so the hydrated page shows the same value
+  return <PortfolioClient posts={posts} age={getAge(BIRTH_DATE)} />;
 }

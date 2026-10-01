@@ -177,13 +177,13 @@
     "langSwitch": "Switch the site to French",
     "whoamiTitle": "$ whoami",
     "online": "online",
-    "portrait": "[ portrait ]",
+    "portrait": "Portrait of Alban Mary",
     "facts": [
       { "k": "Education", "v": "EPSI Nantes - 2027" },
       { "k": "Work-study", "v": "Epsight, since 2024" },
-      { "k": "Location", "v": "Nantes, France" },
-      { "k": "Age", "v": "21" }
+      { "k": "Location", "v": "Nantes, France" }
     ],
+    "age": { "k": "Age", "v": "{n}" },
     "stats": [
       { "v": "4 yrs", "l": "of projects and experience" },
       { "v": "15+", "l": "projects shipped" },
@@ -215,10 +215,10 @@
         "tags": ["Networking", "Symfony", "React", "Docker", "Git"] }
     ],
     "projects": [
-      { "title": "MonitorFlow", "shot": "MonitorFlow dashboard screenshot", "text": "Real-time server monitoring with automated alerts and cross-platform clients.", "tags": ["Rust", "Flutter", "Next.js"], "link": "https://github.com/Kidoly/monitorflowmodule" },
-      { "title": "Security engagements", "shot": "pentest report excerpt", "text": "Penetration testing, end-to-end encrypted file sharing and a phishing awareness campaign.", "tags": ["Pentest", "Encryption", "Awareness"], "link": "" },
-      { "title": "Autonomous drone", "shot": "drone photo", "text": "Drone flown with an Xbox controller, capable of autonomous flight, with real-time telemetry.", "tags": ["Python", "Node.js", "WebSockets"], "link": "https://github.com/Kidoly/Drone" },
-      { "title": "Astraso", "shot": "Astraso screenshot", "text": "A social network for sharing unusual lateness stories. Group project, 2nd year at EPSI.", "tags": ["Symfony", "HTML", "CSS"], "link": "https://github.com/Kidoly/Astraso" }
+      { "id": "monitorflow", "title": "MonitorFlow", "shot": "MonitorFlow dashboard screenshot", "text": "Real-time server monitoring with automated alerts and cross-platform clients.", "tags": ["Rust", "Flutter", "Next.js"], "link": "https://github.com/Kidoly/monitorflowmodule" },
+      { "id": "security", "title": "Security engagements", "shot": "pentest report excerpt", "text": "Penetration testing, end-to-end encrypted file sharing and a phishing awareness campaign.", "tags": ["Pentest", "Encryption", "Awareness"], "link": "" },
+      { "id": "drone", "title": "Autonomous drone", "shot": "drone photo", "text": "Drone flown with an Xbox controller, capable of autonomous flight, with real-time telemetry.", "tags": ["Python", "Node.js", "WebSockets"], "link": "https://github.com/Kidoly/Drone" },
+      { "id": "astraso", "title": "Astraso", "shot": "Astraso screenshot", "text": "A social network for sharing unusual lateness stories. Group project, 2nd year at EPSI.", "tags": ["Symfony", "HTML", "CSS"], "link": "https://github.com/Kidoly/Astraso" }
     ],
     "infraIntro": "A self-hosted homelab, run solo: virtualisation, firewall, CI/CD and monitoring.",
     "infraStats": [
