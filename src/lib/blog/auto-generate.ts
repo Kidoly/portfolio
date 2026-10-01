@@ -165,13 +165,8 @@ export function extractDescription(content: string, maxLength = 160): string {
 }
 
 export function generateSeoTitle(title: string): string {
-  // Clean emojis and keep it under 60 chars
-  const cleaned = title.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '').trim();
-  const suffix = ' | Alban Mary';
-  if (cleaned.length + suffix.length <= 60) {
-    return cleaned + suffix;
-  }
-  return cleaned.substring(0, 60 - suffix.length - 3) + '...' + suffix;
+  // Emojis removed; the " | Alban Mary" suffix is added by the site title template
+  return title.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '').trim();
 }
 
 export function generateSeoDescription(content: string, title: string): string {

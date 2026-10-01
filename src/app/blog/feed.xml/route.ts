@@ -37,7 +37,7 @@ export function GET() {
   <channel>
     <title>Blog - Alban Mary</title>
     <link>${baseUrl}/blog/</link>
-    <description>Articles sur le développement web, l'administration système, la cybersécurité et les réseaux par Alban Mary.</description>
+    <description>Notes d'infra d'Alban Mary : virtualisation, conteneurs, réseau et sécurité, documentés pas à pas.</description>
     <language>fr</language>
     <managingEditor>contact@albanmary.com (Alban Mary)</managingEditor>
     <webMaster>contact@albanmary.com (Alban Mary)</webMaster>

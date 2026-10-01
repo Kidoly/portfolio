@@ -3,15 +3,19 @@ import { Archivo, IBM_Plex_Mono, JetBrains_Mono } from 'next/font/google'
 import { headers } from 'next/headers'
 import './globals.css'
 import Providers from './providers'
+import fr from '@/locales/fr.json'
 
 const archivo = Archivo({ subsets: ['latin'], display: 'swap', variable: '--font-archivo' })
 const plexMono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500'], display: 'swap', variable: '--font-plex' })
 const jetbrains = JetBrains_Mono({ subsets: ['latin'], display: 'swap', variable: '--font-jetbrains' })
 
 const SITE_URL = 'https://albanmary.com';
+// FR by default; the EN version is applied client-side when the visitor switches language
+const SITE_TITLE = fr.portfolio.meta.title;
+const SITE_DESCRIPTION = fr.portfolio.meta.description;
 
 export const viewport: Viewport = {
-  themeColor: '#0f172a',
+  themeColor: '#0e100f',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -20,15 +24,10 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Alban Mary - Développeur Web & Administrateur Systèmes | Portfolio',
+    default: SITE_TITLE,
     template: '%s | Alban Mary',
   },
-  description: 'Portfolio d\'Alban Mary, étudiant en informatique à l\'EPSI Nantes. Développeur web, administrateur systèmes & réseaux, passionné de cybersécurité. Découvrez mes projets, certifications et articles.',
-  keywords: [
-    'Alban Mary', 'développeur web', 'administrateur systèmes', 'portfolio',
-    'EPSI Nantes', 'cybersécurité', 'réseaux', 'DevOps', 'Python', 'Rust',
-    'Next.js', 'Docker', 'Linux', 'infrastructure',
-  ],
+  description: SITE_DESCRIPTION,
   authors: [{ name: 'Alban Mary', url: SITE_URL }],
   creator: 'Alban Mary',
   publisher: 'Alban Mary',
@@ -43,29 +42,20 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  // og:image and twitter:image both come from app/opengraph-image.tsx
   openGraph: {
     type: 'website',
     locale: 'fr_FR',
     alternateLocale: 'en_US',
     url: SITE_URL,
-    title: 'Alban Mary - Développeur Web & Administrateur Systèmes',
-    description: 'Portfolio d\'Alban Mary, étudiant en informatique à l\'EPSI Nantes. Développeur web, administrateur systèmes & réseaux, passionné de cybersécurité.',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     siteName: 'Alban Mary',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Alban Mary - Développeur Web & Administrateur Systèmes',
-        type: 'image/png',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Alban Mary - Développeur Web & Administrateur Systèmes',
-    description: 'Portfolio d\'Alban Mary : développement web, systèmes, réseaux et cybersécurité.',
-    images: ['/og-image.png'],
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     creator: '@kidoly',
   },
   alternates: {
@@ -82,8 +72,7 @@ export const metadata: Metadata = {
   },
   manifest: '/manifest.json',
   other: {
-    'theme-color': '#1e40af',
-    'msapplication-TileColor': '#1e40af',
+    'msapplication-TileColor': '#0e100f',
   },
   // Uncomment and fill these when you register with search consoles:
   // verification: {
@@ -99,10 +88,9 @@ const personJsonLd = {
   name: 'Alban Mary',
   givenName: 'Alban',
   familyName: 'Mary',
-  jobTitle: 'Développeur Web & Administrateur Systèmes',
-  description: 'Étudiant en informatique à l\'EPSI Nantes spécialisé en développement web, systèmes, réseaux et cybersécurité',
+  jobTitle: 'Administrateur systèmes & réseaux',
+  description: 'Administrateur systèmes & réseaux orienté cybersécurité, en alternance chez Epsight, étudiant à l\'EPSI Nantes',
   url: SITE_URL,
-  image: `${SITE_URL}/og-image.png`,
   sameAs: [
     'https://www.linkedin.com/in/alban-mary/',
     'https://github.com/Kidoly',
@@ -117,9 +105,9 @@ const personJsonLd = {
     url: 'https://www.epsi.fr/',
   },
   knowsAbout: [
-    'Développement Web', 'Python', 'Rust', 'C#', 'TypeScript', 'Next.js',
-    'Cybersécurité', 'Réseaux', 'Linux', 'Docker', 'Infrastructure',
-    'Administration Systèmes', 'DevOps',
+    'Administration systèmes', 'Réseaux', 'Cybersécurité', 'Linux', 'Windows Server',
+    'Active Directory', 'Proxmox', 'Docker', 'Ansible', 'Terraform', 'DevOps',
+    'Python', 'Rust', 'Bash', 'PowerShell',
   ],
   knowsLanguage: ['fr', 'en'],
 };
@@ -130,7 +118,7 @@ const websiteJsonLd = {
   '@id': `${SITE_URL}/#website`,
   name: 'Alban Mary',
   url: SITE_URL,
-  description: 'Portfolio et blog d\'Alban Mary - développement web, systèmes, réseaux et cybersécurité',
+  description: 'Portfolio et blog d\'Alban Mary : administration systèmes & réseaux, homelab et cybersécurité',
   author: { '@id': `${SITE_URL}/#person` },
   inLanguage: ['fr', 'en'],
   potentialAction: {

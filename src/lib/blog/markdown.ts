@@ -306,12 +306,3 @@ export function isUsableDescription(text: string | undefined): text is string {
   const value = text?.trim();
   return !!value && !/^(\||#{1,6}\s|>|```|~~~|[-*+]\s|\{\.|<)/.test(value);
 }
-
-export function generateSeoTitle(title: string, siteName = 'Alban Mary'): string {
-  const maxLength = 60;
-  const suffix = ` | ${siteName}`;
-  if (title.length + suffix.length <= maxLength) {
-    return title + suffix;
-  }
-  return title.substring(0, maxLength - suffix.length - 3) + '...' + suffix;
-}

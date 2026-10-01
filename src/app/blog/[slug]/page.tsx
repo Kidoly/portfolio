@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getPostBySlug, getPostDescription, getRelatedPosts } from '@/lib/blog/posts';
-import { renderArticle, generateSeoTitle, getReadingTime } from '@/lib/blog/markdown';
+import { getPostBySlug, getPostDescription, getRelatedPosts, getSeoTitle } from '@/lib/blog/posts';
+import { renderArticle, getReadingTime } from '@/lib/blog/markdown';
 import { formatPostDate } from '@/lib/blog/format';
 import { ArrowUpRight } from 'lucide-react';
 import BlogNav from '@/components/blog/BlogNav';
@@ -25,17 +25,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = getPostBySlug(slug);
 
-  if (!post) {
+  if (!post || !post.published) {
     return { title: 'Article non trouvé' };
   }
 
-  const title = post.seoTitle || generateSeoTitle(post.title);
+  const title = getSeoTitle(post);
   const description = getPostDescription(post);
 
+  // og:image / twitter:image: the 4b card from ./opengraph-image.tsx
   return {
     title,
     description,
-    keywords: post.tags,
     authors: [{ name: post.author, url: 'https://albanmary.com' }],
     openGraph: {
       title,
@@ -49,26 +49,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       section: post.category,
       siteName: 'Alban Mary',
       locale: post.locale === 'en' ? 'en_US' : 'fr_FR',
-      ...(post.coverImage && {
-        images: [{ url: post.coverImage, width: 1200, height: 630, alt: post.title }]
-      }),
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      ...(post.coverImage && { images: [post.coverImage] }),
       creator: '@kidoly',
     },
     alternates: {
       canonical: post.canonicalUrl || `https://albanmary.com/blog/${post.slug}`,
-    },
-    other: {
-      'article:published_time': post.publishedAt || '',
-      'article:modified_time': post.updatedAt,
-      'article:author': post.author,
-      'article:section': post.category || '',
-      'article:tag': post.tags.join(','),
     },
   };
 }
@@ -103,8 +92,8 @@ export default async function BlogPostPage({ params }: Props) {
       '@type': 'WebPage',
       '@id': `https://albanmary.com/blog/${post.slug}`,
     },
-    image: post.coverImage || 'https://albanmary.com/opengraph-image',
-    thumbnailUrl: post.coverImage || 'https://albanmary.com/opengraph-image',
+    image: `https://albanmary.com/blog/${post.slug}/opengraph-image`,
+    thumbnailUrl: `https://albanmary.com/blog/${post.slug}/opengraph-image`,
     publisher: {
       '@type': 'Person',
       '@id': 'https://albanmary.com/#person',

@@ -2,27 +2,24 @@ import { Metadata } from 'next';
 import { getPublishedPosts, getAllTags, getAllCategories, getPostSummary } from '@/lib/blog/posts';
 import BlogListClient from './BlogListClient';
 
+const BLOG_DESCRIPTION =
+  'Notes d\'infra d\'Alban Mary : virtualisation, conteneurs, réseau et sécurité. Ce qu\'il met en place dans son homelab et en alternance, documenté pas à pas.';
+
 export const metadata: Metadata = {
-  title: 'Blog - Articles Tech, Systèmes & Cybersécurité',
-  description:
-    'Découvrez les articles d\'Alban Mary sur le développement web, l\'administration système, la cybersécurité et les réseaux. Tutoriels, guides et retours d\'expérience.',
-  keywords: [
-    'blog tech', 'tutoriel linux', 'guide cybersécurité', 'administration système',
-    'docker', 'proxmox', 'développement web', 'devops', 'réseau',
-  ],
+  title: 'Blog — Notes d\'infra',
+  description: BLOG_DESCRIPTION,
   openGraph: {
-    title: 'Blog - Alban Mary | Articles Tech & Cybersécurité',
-    description:
-      'Articles sur le développement web, l\'administration système, la cybersécurité et les réseaux.',
+    title: 'Notes d\'infra — Blog d\'Alban Mary',
+    description: BLOG_DESCRIPTION,
     url: 'https://albanmary.com/blog',
     type: 'website',
     siteName: 'Alban Mary',
+    locale: 'fr_FR',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Blog - Alban Mary',
-    description:
-      'Articles sur le développement web, la cybersécurité et les réseaux.',
+    title: 'Notes d\'infra — Blog d\'Alban Mary',
+    description: BLOG_DESCRIPTION,
   },
   alternates: {
     canonical: 'https://albanmary.com/blog',
@@ -38,8 +35,7 @@ const jsonLdBase = {
   '@context': 'https://schema.org',
   '@type': ['CollectionPage', 'ItemList'],
   name: 'Blog - Alban Mary',
-  description:
-    'Articles sur le développement web, l\'administration système et la cybersécurité',
+  description: BLOG_DESCRIPTION,
   url: 'https://albanmary.com/blog',
   isPartOf: {
     '@type': 'WebSite',

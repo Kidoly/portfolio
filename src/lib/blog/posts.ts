@@ -86,6 +86,16 @@ export function getPostDescription(post: Pick<BlogPost, 'description' | 'seoDesc
   return extractExcerpt(post.content);
 }
 
+/**
+ * Page title of an article, without the site suffix (added once by the root
+ * title template): the SEO title when set, else the full title. Legacy SEO
+ * titles carrying " | Alban Mary" or cut with "..." are cleaned / ignored.
+ */
+export function getSeoTitle(post: Pick<BlogPost, 'title' | 'seoTitle'>): string {
+  const seoTitle = post.seoTitle?.replace(/\s*\|\s*Alban Mary\s*$/i, '').trim();
+  return seoTitle && !/(\.\.\.|…)$/.test(seoTitle) ? seoTitle : post.title;
+}
+
 /** Post fields needed by list views, without the markdown body. */
 export function getPostSummary(post: BlogPost): BlogPostMeta {
   return {

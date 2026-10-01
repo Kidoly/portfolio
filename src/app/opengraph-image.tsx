@@ -1,11 +1,12 @@
 import { ImageResponse } from 'next/og';
+import { loadOgFonts, OG_COLORS, OG_SIZE, OG_TAGLINE } from '@/lib/og';
 
 export const runtime = 'nodejs';
-export const alt = 'Alban Mary - Développeur Web & Administrateur Systèmes';
-export const size = { width: 1200, height: 630 };
+export const alt = 'Alban Mary — Administrateur systèmes & réseaux, cybersécurité';
+export const size = OG_SIZE;
 export const contentType = 'image/png';
 
-export default function Image() {
+export default async function Image() {
   return new ImageResponse(
     (
       <div
@@ -14,90 +15,48 @@ export default function Image() {
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center',
-          padding: '60px 80px',
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%)',
-          fontFamily: 'Inter, sans-serif',
+          justifyContent: 'space-between',
+          padding: '60px 72px',
+          background: OG_COLORS.bg,
+          color: OG_COLORS.text,
+          fontFamily: 'Archivo',
         }}
       >
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px',
-          }}
-        >
-          <div
-            style={{
-              fontSize: '28px',
-              color: '#60a5fa',
-              fontWeight: 600,
-              letterSpacing: '0.05em',
-              textTransform: 'uppercase',
-            }}
-          >
-            Portfolio & Blog
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'JetBrains Mono', fontSize: 24, color: OG_COLORS.dim }}>
+          <span>$ whoami</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 14, height: 14, borderRadius: 7, background: OG_COLORS.ok }} />
+            <span>online</span>
           </div>
-          <div
-            style={{
-              fontSize: '64px',
-              fontWeight: 800,
-              color: '#ffffff',
-              lineHeight: 1.1,
-            }}
-          >
-            Alban Mary
-          </div>
-          <div
-            style={{
-              fontSize: '28px',
-              color: '#94a3b8',
-              lineHeight: 1.4,
-              maxWidth: '700px',
-            }}
-          >
-            Développeur Web & Administrateur Systèmes - EPSI Nantes
-          </div>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 34 }}>
           <div
             style={{
               display: 'flex',
-              gap: '12px',
-              marginTop: '20px',
+              flexDirection: 'column',
+              fontWeight: 800,
+              fontSize: 156,
+              lineHeight: 0.86,
+              letterSpacing: '-0.055em',
             }}
           >
-            {['Next.js', 'Python', 'Docker', 'Linux', 'Cybersécurité'].map(
-              (tag) => (
-                <div
-                  key={tag}
-                  style={{
-                    padding: '8px 20px',
-                    background: 'rgba(96, 165, 250, 0.15)',
-                    border: '1px solid rgba(96, 165, 250, 0.3)',
-                    borderRadius: '999px',
-                    color: '#93c5fd',
-                    fontSize: '18px',
-                    fontWeight: 500,
-                  }}
-                >
-                  {tag}
-                </div>
-              )
-            )}
+            <span>Alban</span>
+            <div style={{ display: 'flex' }}>
+              Mary<span style={{ color: OG_COLORS.accent }}>.</span>
+            </div>
+          </div>
+          <div style={{ display: 'flex', fontSize: 38, fontWeight: 500, lineHeight: 1.2, color: OG_COLORS.text2, maxWidth: 900 }}>
+            {OG_TAGLINE}
           </div>
         </div>
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '40px',
-            right: '60px',
-            fontSize: '20px',
-            color: '#475569',
-          }}
-        >
-          albanmary.com
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'JetBrains Mono', fontSize: 22, color: OG_COLORS.dim }}>
+          <span>EPSI Nantes · alternance Epsight</span>
+          <span>albanmary.com</span>
         </div>
       </div>
     ),
-    { ...size }
+    { ...size, fonts: await loadOgFonts() }
   );
 }

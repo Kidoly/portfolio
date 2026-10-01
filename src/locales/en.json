@@ -161,6 +161,10 @@
   "status.education": "Education",
 
   "portfolio": {
+    "meta": {
+      "title": "Alban Mary — Systems & network administrator, cybersecurity",
+      "description": "Portfolio of Alban Mary, systems & network administrator focused on cybersecurity, work-study student at EPSI Nantes. Projects, homelab and technical articles."
+    },
     "nav": ["About", "Experience", "Projects", "Infra", "Skills", "Contact"],
     "navAnchors": ["about", "experience", "projects", "infra", "skills", "contact"],
     "hero": {

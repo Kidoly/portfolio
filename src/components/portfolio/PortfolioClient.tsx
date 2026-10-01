@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent, type ReactNode } from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useLanguage, useLocalizedDocument } from '@/contexts/LanguageContext';
 import { formatPostDate } from '@/lib/blog/format';
 
 export interface BlogPreview {
@@ -487,6 +487,9 @@ function Footer() {
 /* ---------- page ---------- */
 
 export default function PortfolioClient({ posts }: { posts: BlogPreview[] }) {
+  const { dict } = useLanguage();
+  useLocalizedDocument(dict.portfolio.meta);
+
   return (
     <main className="bg-[#f3f1ec] text-[#141414] font-sans">
       <Hero />

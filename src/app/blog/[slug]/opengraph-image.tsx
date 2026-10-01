@@ -1,17 +1,24 @@
 import { ImageResponse } from 'next/og';
-import { getPostBySlug, getPostDescription } from '@/lib/blog/posts';
+import { getPostBySlug } from '@/lib/blog/posts';
+import { loadOgFonts, OgBrand, OG_COLORS, OG_SIZE, OG_TAGLINE } from '@/lib/og';
 
 export const runtime = 'nodejs';
-export const alt = 'Article du blog - Alban Mary';
-export const size = { width: 1200, height: 630 };
+export const alt = 'Article du blog d’Alban Mary';
+export const size = OG_SIZE;
 export const contentType = 'image/png';
 
-export default async function Image({ params }: { params: { slug: string } }) {
-  const post = getPostBySlug(params.slug);
-  
-  if (!post) {
-    return new ImageResponse(<div style={{ background: '#0f172a', width: '100%', height: '100%' }}>Modele introuvable</div>);
-  }
+function titleSize(title: string): number {
+  if (title.length <= 32) return 88;
+  if (title.length <= 48) return 76;
+  if (title.length <= 72) return 64;
+  return 54;
+}
+
+export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
+  const title = post?.published ? post.title : 'Notes d’infra';
+  const category = post?.published ? post.category || 'Blog' : 'Blog';
 
   return new ImageResponse(
     (
@@ -22,71 +29,56 @@ export default async function Image({ params }: { params: { slug: string } }) {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          padding: '80px',
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%)',
-          fontFamily: 'Inter, sans-serif',
+          padding: '60px 72px',
+          background: OG_COLORS.bg,
+          color: OG_COLORS.text,
+          fontFamily: 'Archivo',
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <div
-            style={{
-              fontSize: '24px',
-              color: '#60a5fa',
-              fontWeight: 600,
-              textTransform: 'uppercase',
-            }}
-          >
-            {post.category || 'Blog'}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+          <div style={{ display: 'flex' }}>
+            <span
+              style={{
+                fontFamily: 'JetBrains Mono',
+                fontSize: 24,
+                color: OG_COLORS.ok,
+                border: `1px solid ${OG_COLORS.rule2}`,
+                padding: '6px 14px',
+              }}
+            >
+              {category}
+            </span>
           </div>
           <div
             style={{
-              fontSize: '60px',
+              display: 'flex',
               fontWeight: 800,
-              color: '#ffffff',
-              lineHeight: 1.2,
+              fontSize: titleSize(title),
+              lineHeight: 0.98,
+              letterSpacing: '-0.045em',
             }}
           >
-            {post.title}
-          </div>
-          <div
-            style={{
-              fontSize: '28px',
-              color: '#94a3b8',
-              lineHeight: 1.4,
-              maxWidth: '800px',
-              display: '-webkit-box',
-              WebkitLineClamp: 3,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-            }}
-          >
-            {getPostDescription(post)}
+            {title}
           </div>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
-           <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-             <img 
-               src="https://github.com/kidoly.png" 
-               alt="Alban Mary" 
-               style={{ width: '60px', height: '60px', borderRadius: '50%' }} 
-             />
-             <div style={{ display: 'flex', flexDirection: 'column' }}>
-               <div style={{ color: '#fff', fontSize: '24px', fontWeight: 'bold' }}>Alban Mary</div>
-               <div style={{ color: '#94a3b8', fontSize: '18px' }}>albanmary.com</div>
-             </div>
-           </div>
-           
-           <div style={{ display: 'flex', gap: '8px' }}>
-             {post.tags?.slice(0, 3).map(tag => (
-                <div key={tag} style={{ padding: '8px 16px', background: 'rgba(96,165,250,0.15)', borderRadius: '999px', color: '#93c5fd', fontSize: '18px' }}>
-                  {tag}
-                </div>
-             ))}
-           </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+            borderTop: `1px solid ${OG_COLORS.rule}`,
+            paddingTop: 28,
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <OgBrand size={44} />
+            <span style={{ fontSize: 24, fontWeight: 500, color: OG_COLORS.text2 }}>{OG_TAGLINE}</span>
+          </div>
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: 22, color: OG_COLORS.dim }}>albanmary.com/blog</span>
         </div>
       </div>
     ),
-    { ...size }
+    { ...size, fonts: await loadOgFonts() }
   );
 }

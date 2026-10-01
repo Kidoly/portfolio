@@ -1,11 +1,11 @@
 {
   "name": "Alban Mary — Portfolio & Blog",
   "short_name": "Alban Mary",
-  "description": "Portfolio et blog d'Alban Mary — développement web, systèmes, réseaux et cybersécurité",
+  "description": "Portfolio et blog d'Alban Mary — administrateur systèmes & réseaux, orienté cybersécurité",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f9fafb",
-  "theme_color": "#1e40af",
+  "background_color": "#0e100f",
+  "theme_color": "#0e100f",
   "icons": [
     {
       "src": "/icon-192.png",

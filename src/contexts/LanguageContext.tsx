@@ -59,3 +59,23 @@ export const useLanguage = () => {
   }
   return context;
 };
+
+/**
+ * For pages that switch FR/EN client-side: mirrors the language on <html lang>
+ * and, when given, on the document title and meta description.
+ */
+export function useLocalizedDocument(meta?: { title: string; description: string }) {
+  const { language } = useLanguage();
+  const title = meta?.title;
+  const description = meta?.description;
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+    if (title) document.title = title;
+    if (description) document.querySelector('meta[name="description"]')?.setAttribute('content', description);
+    // The rest of the site (blog) is French
+    return () => {
+      document.documentElement.lang = 'fr';
+    };
+  }, [language, title, description]);
+}
