@@ -191,9 +191,13 @@ export default async function BlogPostPage({ params }: Props) {
               {post.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 pt-8 mt-6 border-t-2 border-[#141414]">
                   {post.tags.map((tag) => (
-                    <span key={tag} className="font-mono text-[13px] bg-[#e6e3dc] px-2.5 py-1.5">
+                    <Link
+                      key={tag}
+                      href={`/blog/?tag=${encodeURIComponent(tag)}#articles`}
+                      className="font-mono text-[13px] bg-[#e6e3dc] px-2.5 py-1.5 hover:bg-[#141414] hover:text-[#f3f1ec] hover:no-underline transition-colors"
+                    >
                       #{tag}
-                    </span>
+                    </Link>
                   ))}
                 </div>
               )}

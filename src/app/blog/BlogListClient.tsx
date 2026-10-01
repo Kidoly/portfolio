@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { BlogPostMeta } from '@/lib/blog/types';
 import BlogNav from '@/components/blog/BlogNav';
 import { formatPostDate } from '@/lib/blog/format';
@@ -12,8 +13,17 @@ interface Props {
   categories: string[];
 }
 
+/** Tag filter URL; the fragment brings the visitor back to the article list. */
+function tagHref(tag: string): string {
+  return tag ? `/blog/?tag=${encodeURIComponent(tag)}#articles` : '/blog/#articles';
+}
+
 export default function BlogListClient({ posts, tags, categories }: Props) {
-  const [q, setQ] = useState('');
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  // ?tag= filters on load (also from the article tags); ?q= pre-fills the search
+  const tag = searchParams.get('tag') ?? '';
+  const [q, setQ] = useState(() => searchParams.get('q') ?? '');
   const [category, setCategory] = useState('Tous');
 
   const query = q.trim().toLowerCase();
@@ -22,11 +32,18 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
   const filtered = useMemo(() => {
     return posts.filter((post) => {
       const matchCat = category === 'Tous' || post.category === category;
+      const matchTag = !tag || post.tags.includes(tag);
       const haystack = [post.title, post.description, post.category, ...post.tags].join(' ').toLowerCase();
       const matchSearch = !query || haystack.includes(query);
-      return matchCat && matchSearch;
+      return matchCat && matchTag && matchSearch;
     });
-  }, [posts, category, query]);
+  }, [posts, category, tag, query]);
+
+  const clearFilters = () => {
+    setQ('');
+    setCategory('Tous');
+    if (tag) router.replace(tagHref(''), { scroll: false });
+  };
 
   return (
     <main className="bg-[#f3f1ec] text-[#141414] font-sans min-h-screen">
@@ -86,14 +103,26 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
 
       {/* Article list */}
       <div className="mx-auto w-full max-w-[1280px] px-6 lg:px-14">
-        <section className="grid lg:grid-cols-12 gap-5 pt-20 lg:pt-[88px]">
-          <div className="font-plex text-[13px] lg:col-span-3">(Articles)</div>
+        <section id="articles" className="grid lg:grid-cols-12 gap-5 pt-20 lg:pt-[88px]">
+          <div className="lg:col-span-3 flex flex-col items-start gap-3">
+            <span className="font-plex text-[13px]">(Articles)</span>
+            {tag && (
+              <Link
+                href={tagHref('')}
+                scroll={false}
+                aria-label={`Retirer le filtre #${tag}`}
+                className="font-mono text-[13px] bg-[#141414] text-[#f3f1ec] px-2.5 py-1.5 hover:bg-[var(--accent)] hover:no-underline transition-colors"
+              >
+                #{tag} ×
+              </Link>
+            )}
+          </div>
           <div className="lg:col-span-9 flex flex-col border-b-2 border-[#141414]">
             {filtered.length === 0 ? (
               <div className="border-t-2 border-[#141414] py-10 flex flex-col gap-2.5">
-                <span className="text-[24px] font-bold">Aucun article pour « {q} ».</span>
+                <span className="text-[24px] font-bold">Aucun article pour {q.trim() ? `« ${q.trim()} »` : tag ? `#${tag}` : 'ce filtre'}.</span>
                 <button
-                  onClick={() => { setQ(''); setCategory('Tous'); }}
+                  onClick={clearFilters}
                   className="self-start border-b-2 border-[var(--accent)] pb-0.5 cursor-pointer font-bold text-[15px]"
                 >
                   Effacer la recherche
@@ -128,11 +157,23 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
           <section className="grid lg:grid-cols-12 gap-5 pt-24 pb-20">
             <div className="font-plex text-[13px] lg:col-span-3">(Tags)</div>
             <div className="lg:col-span-9 flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <span key={tag} className="font-mono text-[13px] border border-[#c9c5bd] px-2.5 py-1.5">
-                  #{tag}
-                </span>
-              ))}
+              {tags.map((t) => {
+                const active = t === tag;
+                return (
+                  <Link
+                    key={t}
+                    href={tagHref(active ? '' : t)}
+                    aria-current={active ? 'true' : undefined}
+                    className={`font-mono text-[13px] border px-2.5 py-1.5 hover:no-underline transition-colors ${
+                      active
+                        ? 'bg-[#141414] text-[#f3f1ec] border-[#141414]'
+                        : 'border-[#c9c5bd] hover:border-[#141414]'
+                    }`}
+                  >
+                    #{t}
+                  </Link>
+                );
+              })}
             </div>
           </section>
         )}
