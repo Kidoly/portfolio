@@ -55,11 +55,18 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const { name, email, subject, message, confirm_terms } = await request.json();
+    const { name, email, subject, message, consent, website } = await request.json();
 
-    // Honeypot Field for bots
-    if (confirm_terms) {
+    // Honeypot field for bots
+    if (website) {
       return NextResponse.json({ success: true, message: 'Email envoyé avec succès.' });
+    }
+
+    if (consent !== true) {
+      return NextResponse.json(
+        { error: 'Merci d\'accepter l\'utilisation de vos données pour répondre à votre demande.' },
+        { status: 400 }
+      );
     }
 
     // Validation

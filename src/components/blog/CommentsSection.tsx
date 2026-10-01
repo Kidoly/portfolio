@@ -1,6 +1,8 @@
 'use client';
 
 import { FormEvent, useEffect, useState } from 'react';
+import Link from 'next/link';
+import { formatPostDate } from '@/lib/blog/format';
 
 interface PublicComment {
   id: string;
@@ -102,6 +104,12 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
         >
           {submitting ? 'Envoi…' : 'Envoyer →'}
         </button>
+        <p className="m-0 font-plex text-[12px] leading-[1.6] text-[#8a8680]">
+          Nom et commentaire publiés après modération, email jamais affiché.{' '}
+          <Link href="/confidentialite/" className="text-[#4a4a48] border-b border-[#c9c5bd] hover:no-underline hover:border-[var(--accent)]">
+            Politique de confidentialité
+          </Link>
+        </p>
       </form>
 
       <div className="flex flex-col">
@@ -115,7 +123,7 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
               <div className="flex items-baseline justify-between gap-4">
                 <span className="font-bold text-[#141414]">{c.authorName}</span>
                 <span className="font-plex text-[12px] text-[#8a8680]">
-                  {new Date(c.createdAt).toLocaleDateString('fr-FR')}
+                  {formatPostDate(c.createdAt)}
                 </span>
               </div>
               <p className="text-[16px] leading-[1.6] text-[#2a2a28] whitespace-pre-wrap">{c.content}</p>

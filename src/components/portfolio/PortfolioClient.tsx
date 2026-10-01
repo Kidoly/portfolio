@@ -3,10 +3,12 @@
 import { useState, type FormEvent, type ReactNode } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { formatPostDate } from '@/lib/blog/format';
 
 export interface BlogPreview {
   title: string;
   url: string;
+  /** ISO date, formatted in the visitor's language */
   date: string;
   cat: string;
 }
@@ -50,7 +52,7 @@ function Hero() {
           <button
             onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}
             className="lg:col-span-2 justify-self-end border-b-2 border-[#e4e7e4] pb-0.5 font-bold cursor-pointer"
-            aria-label={`Switch language to ${other}`}
+            aria-label={p.langSwitch}
           >
             {other}
           </button>
@@ -310,7 +312,7 @@ function Skills() {
 /* ---------- blog (06) ---------- */
 
 function Blog({ posts }: { posts: BlogPreview[] }) {
-  const { dict } = useLanguage();
+  const { dict, language } = useLanguage();
   const p = dict.portfolio;
   return (
     <Container className="mt-28 lg:mt-36">
@@ -325,7 +327,7 @@ function Blog({ posts }: { posts: BlogPreview[] }) {
                 href={post.url}
                 className="grid grid-cols-[1fr_auto] lg:grid-cols-[140px_minmax(0,1fr)_150px_24px] gap-x-5 gap-y-2 items-baseline py-5 border-t-2 border-[#141414] hover:text-[var(--accent)] hover:no-underline transition-colors"
               >
-                <span className="font-plex text-[12px] text-[#8a8680] order-1">{post.date}</span>
+                <span className="font-plex text-[12px] text-[#8a8680] order-1">{formatPostDate(post.date, language)}</span>
                 <span className="text-[22px] font-bold tracking-[-0.015em] leading-[1.2] col-span-2 lg:col-span-1 order-3 lg:order-2">
                   {post.title}
                 </span>
@@ -351,7 +353,8 @@ function Contact() {
   const { dict, t } = useLanguage();
   const p = dict.portfolio;
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
-  const [honeypot, setHoneypot] = useState(false);
+  const [consent, setConsent] = useState(false);
+  const [honeypot, setHoneypot] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({ type: null, message: '' });
 
@@ -360,22 +363,23 @@ function Contact() {
     setSubmitting(true);
     setStatus({ type: null, message: '' });
     try {
-      if (!form.name.trim() || !form.email.trim() || !form.subject.trim() || !form.message.trim()) {
+      if (!form.name.trim() || !form.email.trim() || !form.subject.trim() || !form.message.trim() || !consent) {
         throw new Error('required');
       }
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(form.email)) throw new Error('invalid email');
 
-      const res = await fetch('/api/send-email', {
+      const res = await fetch('/api/send-email/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, confirm_terms: honeypot }),
+        body: JSON.stringify({ ...form, consent, website: honeypot }),
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || 'failed');
 
       setStatus({ type: 'success', message: t('contact.success') });
       setForm({ name: '', email: '', subject: '', message: '' });
+      setConsent(false);
     } catch {
       setStatus({ type: 'error', message: t('contact.error') });
     } finally {
@@ -426,13 +430,27 @@ function Contact() {
             <textarea rows={4} className={`${field} resize-y`} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} required disabled={submitting} />
           </label>
 
-          {/* honeypot */}
-          <div className="absolute opacity-0 -z-10 pointer-events-none" aria-hidden="true" tabIndex={-1}>
-            <label>
-              <input type="checkbox" name="confirm_terms" checked={honeypot} onChange={(e) => setHoneypot(e.target.checked)} tabIndex={-1} autoComplete="off" />
-              I agree
-            </label>
+          {/* honeypot: off-screen, left empty by people, filled by naive bots */}
+          <div className="absolute -left-[9999px] w-px h-px overflow-hidden" aria-hidden="true">
+            <input type="text" name="website" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} tabIndex={-1} autoComplete="off" />
           </div>
+
+          <label className="flex items-start gap-3 text-[14px] leading-[1.5] text-[#4a4a48]">
+            <input
+              type="checkbox"
+              checked={consent}
+              onChange={(e) => setConsent(e.target.checked)}
+              required
+              disabled={submitting}
+              className="mt-[3px] w-4 h-4 shrink-0 accent-[#141414] cursor-pointer"
+            />
+            <span>
+              {p.form.consent}{' '}
+              <a href="/confidentialite/" className="text-[#141414] font-medium border-b border-[var(--accent)] hover:no-underline">
+                {p.form.privacy}
+              </a>
+            </span>
+          </label>
 
           {status.type && (
             <p className={`text-sm ${status.type === 'success' ? 'text-green-700' : 'text-red-600'}`}>{status.message}</p>

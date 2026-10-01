@@ -170,6 +170,7 @@
       "cta2": "Download CV",
       "cta3": "Read the blog"
     },
+    "langSwitch": "Switch the site to French",
     "whoamiTitle": "$ whoami",
     "online": "online",
     "portrait": "[ portrait ]",
@@ -247,7 +248,11 @@
       "title": "Let's talk about your security team.",
       "text": "Open to conversations about cybersecurity and infrastructure. Drop me a line, I reply within 48 h."
     },
-    "form": { "name": "Name", "email": "Email", "subject": "Subject", "message": "Message", "send": "Send" },
+    "form": {
+      "name": "Name", "email": "Email", "subject": "Subject", "message": "Message", "send": "Send",
+      "consent": "I agree that my data will be used to respond to my request.",
+      "privacy": "Privacy policy"
+    },
     "labels": { "about": "About", "exp": "Experience", "projects": "Projects", "infra": "Infrastructure", "skills": "Skills", "blog": "Blog", "contact": "Contact" },
     "footer": { "copyright": "© 2026 Alban Mary", "location": "Nantes, France" }
   }

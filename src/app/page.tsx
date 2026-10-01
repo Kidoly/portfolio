@@ -10,11 +10,7 @@ export default function Home() {
     title: post.title,
     url: `/blog/${post.slug}/`,
     cat: post.category || 'Blog',
-    date: new Date(post.publishedAt || post.updatedAt).toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    }),
+    date: post.publishedAt || post.updatedAt,
   }));
 
   return <PortfolioClient posts={posts} />;

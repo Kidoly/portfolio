@@ -170,6 +170,7 @@
       "cta2": "Télécharger le CV",
       "cta3": "Lire le blog"
     },
+    "langSwitch": "Passer le site en anglais",
     "whoamiTitle": "$ whoami",
     "online": "online",
     "portrait": "[ portrait ]",
@@ -247,7 +248,11 @@
       "title": "Parlons de votre équipe sécurité.",
       "text": "Ouvert aux échanges autour de la cybersécurité et de l'infrastructure. Écrivez-moi, je réponds sous 48 h."
     },
-    "form": { "name": "Nom", "email": "Email", "subject": "Sujet", "message": "Message", "send": "Envoyer" },
+    "form": {
+      "name": "Nom", "email": "Email", "subject": "Sujet", "message": "Message", "send": "Envoyer",
+      "consent": "J'accepte que mes données soient utilisées pour répondre à ma demande.",
+      "privacy": "Politique de confidentialité"
+    },
     "labels": { "about": "Présentation", "exp": "Expérience", "projects": "Projets", "infra": "Infrastructure", "skills": "Compétences", "blog": "Blog", "contact": "Contact" },
     "footer": { "copyright": "© 2026 Alban Mary", "location": "Nantes, France" }
   }

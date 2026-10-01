@@ -257,9 +257,10 @@ export async function markdownToHtml(markdown: string): Promise<string> {
   return (await renderArticle(markdown)).html;
 }
 
-export function getReadingTime(content: string): string {
-  const stats = readingTime(content);
-  return stats.text;
+/** "8 min de lecture" (fr) / "8 min read" (en), computed from the markdown. */
+export function getReadingTime(content: string, locale: 'fr' | 'en' = 'fr'): string {
+  const minutes = Math.max(1, Math.ceil(readingTime(content).minutes));
+  return locale === 'en' ? `${minutes} min read` : `${minutes} min de lecture`;
 }
 
 export function extractFirstImage(markdown: string): string | undefined {

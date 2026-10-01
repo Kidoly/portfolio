@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
       published: published ?? false,
       publishedAt: published ? new Date().toISOString() : '',
       updatedAt: new Date().toISOString(),
-      readingTime: getReadingTime(content),
+      readingTime: getReadingTime(content, locale === 'en' ? 'en' : 'fr'),
       locale: locale || 'fr',
       seoTitle: seoTitle || undefined,
       seoDescription: seoDescription || undefined,

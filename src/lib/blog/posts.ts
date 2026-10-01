@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { BlogPost, BlogPostMeta } from './types';
-import { extractExcerpt, isUsableDescription } from './markdown';
+import { extractExcerpt, getReadingTime, isUsableDescription } from './markdown';
 
 const POSTS_DIR = path.join(process.cwd(), 'content', 'blog');
 
@@ -88,7 +88,11 @@ export function getPostDescription(post: Pick<BlogPost, 'description' | 'seoDesc
 
 /** Post fields needed by list views, without the markdown body. */
 export function getPostSummary(post: BlogPost): BlogPostMeta {
-  return { ...getPostMeta(post), description: getPostDescription(post) };
+  return {
+    ...getPostMeta(post),
+    description: getPostDescription(post),
+    readingTime: getReadingTime(post.content, post.locale),
+  };
 }
 
 export function getAllTags(): string[] {

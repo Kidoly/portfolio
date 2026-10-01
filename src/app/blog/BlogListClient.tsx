@@ -4,16 +4,12 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { BlogPostMeta } from '@/lib/blog/types';
 import BlogNav from '@/components/blog/BlogNav';
+import { formatPostDate } from '@/lib/blog/format';
 
 interface Props {
   posts: BlogPostMeta[];
   tags: string[];
   categories: string[];
-}
-
-function formatDate(iso: string): string {
-  if (!iso) return '';
-  return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 export default function BlogListClient({ posts, tags, categories }: Props) {
@@ -111,7 +107,7 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
                   className="grid grid-cols-1 sm:grid-cols-[130px_minmax(0,1fr)_110px] gap-x-6 gap-y-3 items-start py-7 -mx-5 px-5 border-t-2 border-[#141414] hover:bg-[#e9e6df] hover:no-underline transition-colors"
                 >
                   <div className="flex flex-col gap-2.5 pt-1.5">
-                    <span className="font-plex text-[12px] text-[#8a8680]">{formatDate(post.publishedAt || post.updatedAt)}</span>
+                    <span className="font-plex text-[12px] text-[#8a8680]">{formatPostDate(post.publishedAt || post.updatedAt)}</span>
                     <span className="font-mono text-[12px] bg-[#e6e3dc] text-[#141414] px-2 py-1 self-start">{post.category}</span>
                   </div>
                   <div className="flex flex-col gap-2.5">

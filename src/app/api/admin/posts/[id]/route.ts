@@ -55,7 +55,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     if (body.slug !== undefined) post.slug = body.slug;
     if (body.content !== undefined) {
       post.content = body.content;
-      post.readingTime = getReadingTime(body.content);
+      post.readingTime = getReadingTime(body.content, body.locale ?? post.locale);
     }
     if (body.description !== undefined) post.description = body.description;
     if (body.tags !== undefined) post.tags = body.tags;

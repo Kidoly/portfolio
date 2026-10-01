@@ -91,7 +91,7 @@ function wikiPageToBlogPost(page: WikiPage, content: string, existingPost?: Blog
     updatedAt: new Date().toISOString(),
     wikiPath: page.path,
     wikiId: page.id,
-    readingTime: getReadingTime(content),
+    readingTime: getReadingTime(content, page.locale === 'en' ? 'en' : 'fr'),
     locale: (page.locale as 'fr' | 'en') || 'fr',
     seoTitle: existingPost?.seoTitle,
     seoDescription: existingPost?.seoDescription,
