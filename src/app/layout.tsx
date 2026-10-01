@@ -62,9 +62,13 @@ export const metadata: Metadata = {
       ],
     },
   },
+  // ?v= busts the long browser cache of the previous blue icon
   icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
+    icon: [
+      { url: '/favicon.ico?v=2', sizes: '16x16 32x32 48x48' },
+      { url: '/icon.svg?v=2', type: 'image/svg+xml' },
+    ],
+    apple: '/apple-touch-icon.png?v=2',
   },
   manifest: '/manifest.json',
   other: {
