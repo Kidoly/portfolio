@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getPostBySlug, getPublishedPosts, getRelatedPosts } from '@/lib/blog/posts';
+import { getPostBySlug, getRelatedPosts } from '@/lib/blog/posts';
 import { markdownToHtml, generateSeoTitle } from '@/lib/blog/markdown';
 import { ArrowUpRight } from 'lucide-react';
 import BlogNav from '@/components/blog/BlogNav';
@@ -20,12 +20,10 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export const revalidate = 60;
-
-export async function generateStaticParams() {
-  const posts = getPublishedPosts();
-  return posts.map((post) => ({ slug: post.slug }));
-}
+// Articles live in the runtime volume (content/blog), not in the build: always
+// render per request so a deploy can never serve HTML baked from an older
+// snapshot or template. The per-request CSP nonce requires it anyway.
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;

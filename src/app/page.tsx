@@ -1,7 +1,7 @@
 import { getPublishedPosts } from '@/lib/blog/posts';
 import PortfolioClient, { type BlogPreview } from '@/components/portfolio/PortfolioClient';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export default function Home() {
   const latest = getPublishedPosts().slice(0, 3);

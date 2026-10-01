@@ -2,7 +2,6 @@
   "nav.about": "About",
   "nav.experience": "Experience",
   "nav.projects": "Projects",
-  "nav.certifications": "Skills",
   "nav.contact": "Contact",
 
   "hero.title": "Alban Mary",
@@ -126,13 +125,6 @@
   "projects.security.achievement1": "End-to-end encrypted file sharing",
   "projects.security.achievement2": "Penetration test reports",
   "projects.security.achievement3": "Security awareness campaigns",
-
-  "certifications.title": "Skills & Technologies",
-  "certifications.subtitle": "Technical expertise across multiple domains and programming languages",
-  "certifications.verify": "View Project",
-  "certifications.training": "Core Technologies",
-  "certifications.completed": "Mastered",
-  "certifications.inProgress": "In Progress",
 
   "contact.title": "Let's Connect",
   "contact.subtitle": "Open to opportunities, collaborations, or networking with fellow tech enthusiasts",
