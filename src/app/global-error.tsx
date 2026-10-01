@@ -13,7 +13,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
           lang="fr"
           code="500"
           prompt="$ systemctl status albanmary.com"
-          output={`● albanmary.com — failed${error.digest ? ` (ref ${error.digest})` : ''}`}
+          output={`● albanmary.com - failed${error.digest ? ` (ref ${error.digest})` : ''}`}
           copy={{
             title: 'Une erreur est survenue.',
             text: 'Le site n’a pas pu se charger. Réessayez dans un instant ; si le problème persiste, écrivez-moi à alban.mary1@gmail.com.',

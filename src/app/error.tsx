@@ -37,7 +37,7 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
       prompt="$ systemctl status albanmary.com"
       output={
         <>
-          <span className="text-[var(--accent-on-dark)]">●</span> albanmary.com — failed
+          <span className="text-[var(--accent-on-dark)]">●</span> albanmary.com - failed
           {error.digest ? ` (ref ${error.digest})` : ''}
         </>
       }

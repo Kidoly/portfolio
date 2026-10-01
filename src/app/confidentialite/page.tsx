@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: doc.description,
   alternates: { canonical: url },
   openGraph: {
-    title: `${doc.title} — Alban Mary`,
+    title: `${doc.title} - Alban Mary`,
     description: doc.description,
     url,
     type: 'website',

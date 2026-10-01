@@ -1,4 +1,4 @@
-# Portfolio & Blog — Alban Mary
+# Portfolio & Blog - Alban Mary
 
 My personal portfolio and blog, built with Next.js 16 and Tailwind CSS.  
 The blog pulls articles from a Wiki.js instance and turns them into proper SEO-friendly posts.
@@ -19,7 +19,7 @@ Live at **[albanmary.com](https://albanmary.com)**
 - Bilingual portfolio (FR / EN)
 - Blog with article listing, search, filtering by tags/categories
 - Admin panel to create, edit and manage blog posts
-- Wiki.js integration — sync articles directly from your wiki
+- Wiki.js integration - sync articles directly from your wiki
 - Auto-generation of metadata (tags, description, SEO) with local analysis or OpenAI
 - Markdown support with code blocks, Wiki.js callouts, images
 - SEO optimized (JSON-LD, Open Graph, dynamic sitemap)

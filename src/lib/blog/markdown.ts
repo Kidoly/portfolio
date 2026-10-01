@@ -280,7 +280,7 @@ export function truncateOnWord(text: string, maxLength = 160): string {
   const cut = text.slice(0, maxLength - 1);
   const lastSpace = cut.lastIndexOf(' ');
   const base = lastSpace > maxLength * 0.6 ? cut.slice(0, lastSpace) : cut;
-  return `${base.replace(/[\s,;:.\-–—]+$/, '')}…`;
+  return `${base.replace(/[\s,;:.\-–-]+$/, '')}…`;
 }
 
 /**

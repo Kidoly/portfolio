@@ -25,11 +25,11 @@ export type LegalDocId = 'mentions' | 'privacy';
 const MAIL = `[${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL})`;
 
 const hostingFr = HOSTING
-  ? [`${HOSTING.name} — ${HOSTING.address}${HOSTING.phone ? ` — ${HOSTING.phone}` : ''}.`]
+  ? [`${HOSTING.name} - ${HOSTING.address}${HOSTING.phone ? ` - ${HOSTING.phone}` : ''}.`]
   : ['À compléter : nom, adresse et téléphone de l’hébergeur.'];
 
 const hostingEn = HOSTING
-  ? [`${HOSTING.name} — ${HOSTING.address}${HOSTING.phone ? ` — ${HOSTING.phone}` : ''}.`]
+  ? [`${HOSTING.name} - ${HOSTING.address}${HOSTING.phone ? ` - ${HOSTING.phone}` : ''}.`]
   : ['To be completed: name, address and phone number of the hosting provider.'];
 
 export const LEGAL: Record<'fr' | 'en', Record<LegalDocId, LegalDoc>> = {
@@ -64,7 +64,7 @@ export const LEGAL: Record<'fr' | 'en', Record<LegalDocId, LegalDoc>> = {
       description: 'Données collectées sur albanmary.com, finalités, durées de conservation et droits RGPD.',
       intro: 'Quelles données sont collectées sur albanmary.com, pourquoi, combien de temps elles sont conservées et comment exercer vos droits (RGPD).',
       sections: [
-        { title: 'Responsable', blocks: [`Alban Mary — ${MAIL}`] },
+        { title: 'Responsable', blocks: [`Alban Mary - ${MAIL}`] },
         {
           title: 'Données collectées',
           blocks: [
@@ -145,7 +145,7 @@ export const LEGAL: Record<'fr' | 'en', Record<LegalDocId, LegalDoc>> = {
       description: 'Data collected on albanmary.com, purposes, retention periods and GDPR rights.',
       intro: 'Which data is collected on albanmary.com, why, how long it is kept and how to exercise your rights (GDPR).',
       sections: [
-        { title: 'Controller', blocks: [`Alban Mary — ${MAIL}`] },
+        { title: 'Controller', blocks: [`Alban Mary - ${MAIL}`] },
         {
           title: 'Data collected',
           blocks: [

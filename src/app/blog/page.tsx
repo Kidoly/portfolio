@@ -6,10 +6,10 @@ const BLOG_DESCRIPTION =
   'Notes d\'infra d\'Alban Mary : virtualisation, conteneurs, réseau et sécurité. Ce qu\'il met en place dans son homelab et en alternance, documenté pas à pas.';
 
 export const metadata: Metadata = {
-  title: 'Blog — Notes d\'infra',
+  title: 'Blog - Notes d\'infra',
   description: BLOG_DESCRIPTION,
   openGraph: {
-    title: 'Notes d\'infra — Blog d\'Alban Mary',
+    title: 'Notes d\'infra - Blog d\'Alban Mary',
     description: BLOG_DESCRIPTION,
     url: 'https://albanmary.com/blog',
     type: 'website',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Notes d\'infra — Blog d\'Alban Mary',
+    title: 'Notes d\'infra - Blog d\'Alban Mary',
     description: BLOG_DESCRIPTION,
   },
   alternates: {
