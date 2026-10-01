@@ -151,6 +151,31 @@ code.hljs {
 .blog-content .cb pre {
   margin: 0;
 }
+/* Horizontal scrollbar of code blocks, in the terminal style (square, thin) */
+.blog-content .cb code::-webkit-scrollbar {
+  height: 10px;
+}
+.blog-content .cb code::-webkit-scrollbar-track {
+  background: var(--dark);
+  border-top: 1px solid var(--drule);
+}
+.blog-content .cb code::-webkit-scrollbar-thumb {
+  background: #333a36;
+  border: 3px solid var(--dark);
+  border-top-width: 4px;
+}
+.blog-content .cb code::-webkit-scrollbar-thumb:hover {
+  background: var(--dim);
+}
+.blog-content .cb code::-webkit-scrollbar-thumb:active {
+  background: var(--accent-on-dark);
+}
+@supports not selector(::-webkit-scrollbar) {
+  .blog-content .cb code {
+    scrollbar-width: thin;
+    scrollbar-color: #333a36 var(--dark);
+  }
+}
 .blog-content pre code.hljs,
 .hljs {
   background: var(--dark);
