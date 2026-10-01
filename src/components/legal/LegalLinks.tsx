@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-const LABELS = {
+export const LEGAL_LABELS = {
   fr: { mentions: 'Mentions légales', privacy: 'Confidentialité' },
   en: { mentions: 'Legal notice', privacy: 'Privacy' },
 };
@@ -9,8 +9,8 @@ const LABELS = {
 export default function LegalLinks({ lang = 'fr' }: { lang?: 'fr' | 'en' }) {
   return (
     <>
-      <Link href="/mentions-legales/">{LABELS[lang].mentions}</Link>
-      <Link href="/confidentialite/">{LABELS[lang].privacy}</Link>
+      <Link href="/mentions-legales/">{LEGAL_LABELS[lang].mentions}</Link>
+      <Link href="/confidentialite/">{LEGAL_LABELS[lang].privacy}</Link>
     </>
   );
 }
