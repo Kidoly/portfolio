@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getPostBySlug, getRelatedPosts } from '@/lib/blog/posts';
+import { getPostBySlug, getPostDescription, getRelatedPosts } from '@/lib/blog/posts';
 import { markdownToHtml, generateSeoTitle } from '@/lib/blog/markdown';
 import { ArrowUpRight } from 'lucide-react';
 import BlogNav from '@/components/blog/BlogNav';
@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const title = post.seoTitle || generateSeoTitle(post.title);
-  const description = post.seoDescription || post.description;
+  const description = getPostDescription(post);
 
   return {
     title,
@@ -85,6 +85,7 @@ export default async function BlogPostPage({ params }: Props) {
     notFound();
   }
 
+  const description = getPostDescription(post);
   const contentHtml = await markdownToHtml(post.content);
   const relatedPosts = getRelatedPosts(post, 2);
 
@@ -93,7 +94,7 @@ export default async function BlogPostPage({ params }: Props) {
     '@type': 'BlogPosting',
     '@id': `https://albanmary.com/blog/${post.slug}`,
     headline: post.title,
-    description: post.description,
+    description,
     author: {
       '@type': 'Person',
       '@id': 'https://albanmary.com/#person',
@@ -183,7 +184,7 @@ export default async function BlogPostPage({ params }: Props) {
                 <h1 className="m-0 font-extrabold tracking-[-0.045em]" style={{ fontSize: 'clamp(38px, 7vw, 80px)', lineHeight: 0.95 }}>
                   {post.title}
                 </h1>
-                <p className="m-0 text-[20px] leading-[1.55] text-[#9aa19c] max-w-[720px]">{post.description}</p>
+                <p className="m-0 text-[20px] leading-[1.55] text-[#9aa19c] max-w-[720px]">{description}</p>
                 <div className="flex flex-wrap gap-6 font-mono text-[13px] text-[#9aa19c] pt-3.5 border-t border-[#232825]">
                   <span className="text-[#e4e7e4]">{post.author}</span>
                   <span>{formatDate(post.publishedAt || post.updatedAt)}</span>

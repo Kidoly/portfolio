@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og';
-import { getPostBySlug } from '@/lib/blog/posts';
+import { getPostBySlug, getPostDescription } from '@/lib/blog/posts';
 
 export const runtime = 'nodejs';
 export const alt = 'Article du blog - Alban Mary';
@@ -60,7 +60,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
               overflow: 'hidden',
             }}
           >
-            {post.description}
+            {getPostDescription(post)}
           </div>
         </div>
 

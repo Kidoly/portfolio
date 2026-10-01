@@ -2,11 +2,11 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { BlogPost } from '@/lib/blog/types';
+import { BlogPostMeta } from '@/lib/blog/types';
 import BlogNav from '@/components/blog/BlogNav';
 
 interface Props {
-  posts: BlogPost[];
+  posts: BlogPostMeta[];
   tags: string[];
   categories: string[];
 }

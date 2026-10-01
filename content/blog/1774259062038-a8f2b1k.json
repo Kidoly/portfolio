@@ -2,7 +2,7 @@
   "id": "1774259062038-a8f2b1k",
   "slug": "watchtower-mise-a-jour-automatique-conteneurs-docker",
   "title": "Watchtower : Mettre à jour automatiquement vos conteneurs Docker",
-  "description": "Découvrez comment utiliser Watchtower pour automatiser la mise à jour de vos conteneurs Docker. Plus besoin de redéployer manuellement : Watchtower surveille vos images et recrée vos conteneurs dès qu'une nouvelle version est disponible.",
+  "description": "Utiliser Watchtower pour mettre à jour automatiquement ses conteneurs Docker dès qu'une nouvelle image est publiée.",
   "author": "Alban Mary",
   "tags": [
     "docker",

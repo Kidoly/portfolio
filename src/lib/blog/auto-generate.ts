@@ -6,6 +6,8 @@
  * 2. AI-powered (optional) - uses OpenAI API if OPENAI_API_KEY is configured
  */
 
+import { extractExcerpt } from './markdown';
+
 // ─── Known tech terms dictionary ───────────────────────────────────────────
 const TECH_TERMS: Record<string, string[]> = {
   // Virtualisation & Cloud
@@ -158,51 +160,8 @@ export function extractCategory(content: string, title: string): string {
   return sorted[0] && sorted[0][1] > 0 ? sorted[0][0] : 'General';
 }
 
-export function extractDescription(content: string, maxLength = 155): string {
-  // Find the first meaningful paragraph (not a heading, not code, not empty)
-  const lines = content.split('\n');
-  let description = '';
-
-  let inCodeBlock = false;
-  for (const line of lines) {
-    if (line.trim().startsWith('```')) {
-      inCodeBlock = !inCodeBlock;
-      continue;
-    }
-    if (inCodeBlock) continue;
-    if (line.startsWith('#')) continue;
-    if (line.startsWith('>')) continue;
-    if (line.startsWith('---')) continue;
-    if (line.startsWith('![')) continue;
-    if (line.trim().startsWith('{.is-')) continue;
-    if (line.trim().startsWith('<')) continue;
-
-    const cleaned = line
-      .replace(/\*\*(.*?)\*\*/g, '$1')
-      .replace(/\*(.*?)\*/g, '$1')
-      .replace(/`([^`]+)`/g, '$1')
-      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-      .trim();
-
-    if (cleaned.length > 20) {
-      description = cleaned;
-      break;
-    }
-  }
-
-  if (!description) {
-    // Fallback: use the first heading content
-    const firstHeading = content.match(/^#+\s+(.+)$/m);
-    if (firstHeading) {
-      description = firstHeading[1];
-    }
-  }
-
-  if (description.length > maxLength) {
-    description = description.substring(0, maxLength - 3).replace(/\s+\S*$/, '') + '...';
-  }
-
-  return description;
+export function extractDescription(content: string, maxLength = 160): string {
+  return extractExcerpt(content, maxLength);
 }
 
 export function generateSeoTitle(title: string): string {
@@ -217,7 +176,7 @@ export function generateSeoTitle(title: string): string {
 
 export function generateSeoDescription(content: string, title: string): string {
   // Create a search-engine-optimized description
-  const desc = extractDescription(content, 155);
+  const desc = extractDescription(content);
   if (desc) return desc;
   // Fallback
   const cleanTitle = title.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '').trim();

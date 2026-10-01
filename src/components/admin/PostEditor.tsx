@@ -301,7 +301,7 @@ export default function PostEditor({ post, onSave, saving, authorName }: Props) 
               className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             />
             <p className="text-xs text-gray-400 mt-1">
-              {description.length}/160 caractères
+              {description.length}/160 caractères · utilisée partout (liste, article, partage). Vide : premier paragraphe de l&apos;article.
             </p>
           </div>
 
@@ -409,7 +409,7 @@ export default function PostEditor({ post, onSave, saving, authorName }: Props) 
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1">
-                    Meta description (override)
+                    Meta description (si la description est vide)
                   </label>
                   <textarea
                     value={seoDescription}
@@ -447,7 +447,7 @@ export default function PostEditor({ post, onSave, saving, authorName }: Props) 
                     albanmary.com/blog/{slug || 'slug-de-larticle'}
                   </p>
                   <p className="text-gray-600 text-sm line-clamp-2 mt-0.5">
-                    {seoDescription || description || 'Description de l\'article...'}
+                    {description || seoDescription || 'Description de l\'article...'}
                   </p>
                 </div>
               </div>

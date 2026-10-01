@@ -1,6 +1,6 @@
 import { BlogPost, WikiPage, SyncResult } from './types';
 import { generateSlug, generateId, getAllPosts, savePost } from './posts';
-import { getReadingTime, extractDescription, extractFirstImage } from './markdown';
+import { getReadingTime, extractFirstImage } from './markdown';
 
 const WIKI_API_URL = process.env.WIKI_API_URL || 'http://localhost:3000';
 const WIKI_API_KEY = process.env.WIKI_API_KEY || '';
@@ -72,7 +72,8 @@ async function fetchWikiPageContent(pageId: number): Promise<string> {
 
 function wikiPageToBlogPost(page: WikiPage, content: string, existingPost?: BlogPost): BlogPost {
   const slug = existingPost?.slug || generateSlug(page.title);
-  const description = page.description || extractDescription(content);
+  // Keep a curated description; an empty one falls back to the first paragraph at render time.
+  const description = page.description?.trim() || existingPost?.description || '';
   const coverImage = existingPost?.coverImage || extractFirstImage(content);
 
   return {

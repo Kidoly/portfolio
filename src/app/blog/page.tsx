@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { getPublishedPosts, getAllTags, getAllCategories } from '@/lib/blog/posts';
+import { getPublishedPosts, getAllTags, getAllCategories, getPostSummary } from '@/lib/blog/posts';
 import BlogListClient from './BlogListClient';
 
 export const metadata: Metadata = {
@@ -72,7 +72,7 @@ const jsonLdBase = {
 export const dynamic = 'force-dynamic';
 
 export default function BlogPage() {
-  const posts = getPublishedPosts();
+  const posts = getPublishedPosts().map(getPostSummary);
   const tags = getAllTags();
   const categories = getAllCategories();
 

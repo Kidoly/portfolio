@@ -1,4 +1,4 @@
-import { getPublishedPosts } from '@/lib/blog/posts';
+import { getPublishedPosts, getPostDescription } from '@/lib/blog/posts';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,7 +23,7 @@ export function GET() {
       <title>${escapeXml(post.title)}</title>
       <link>${baseUrl}/blog/${post.slug}/</link>
       <guid isPermaLink="true">${baseUrl}/blog/${post.slug}/</guid>
-      <description>${escapeXml(post.description || '')}</description>
+      <description>${escapeXml(getPostDescription(post))}</description>
       <pubDate>${new Date(post.publishedAt || post.updatedAt).toUTCString()}</pubDate>
       <author>contact@albanmary.com (Alban Mary)</author>
       ${post.category ? `<category>${escapeXml(post.category)}</category>` : ''}

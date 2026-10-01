@@ -165,22 +165,56 @@ export function extractFirstImage(markdown: string): string | undefined {
   return match ? match[1] : undefined;
 }
 
-export function extractDescription(markdown: string, maxLength = 160): string {
-  // Remove markdown syntax to get plain text
-  const plain = markdown
-    .replace(/#{1,6}\s+/g, '') // headers
-    .replace(/!\[.*?\]\(.*?\)/g, '') // images
-    .replace(/\[([^\]]+)\]\(.*?\)/g, '$1') // links
-    .replace(/(\*{1,2}|_{1,2})(.*?)\1/g, '$2') // bold/italic
-    .replace(/`{1,3}[^`]*`{1,3}/g, '') // code
-    .replace(/^\s*[-*+]\s+/gm, '') // list items
-    .replace(/^\s*>\s+/gm, '') // blockquotes
-    .replace(/\n{2,}/g, ' ') // multiple newlines
-    .replace(/\n/g, ' ') // single newlines
-    .trim();
+type MdNode = { type: string; value?: string; children?: MdNode[] };
 
-  if (plain.length <= maxLength) return plain;
-  return plain.substring(0, maxLength - 3).replace(/\s+\S*$/, '') + '...';
+/** Wiki.js attribute annotations such as `{.is-info}` or `{.links-list}`. */
+const WIKI_CLASS_RE = /\{\.[a-z][\w-]*\}/gi;
+const LEADING_PICTOGRAPHS_RE = /^(?:[\p{Extended_Pictographic}\u{1F3FB}-\u{1F3FF}\u{200D}\u{FE0F}\u{20E3}]\s*)+/u;
+
+function mdText(node: MdNode): string {
+  if (node.type === 'text' || node.type === 'inlineCode') return node.value ?? '';
+  if (node.type === 'break') return ' ';
+  if (node.type === 'image' || node.type === 'html') return '';
+  return (node.children ?? []).map(mdText).join('');
+}
+
+/**
+ * Cut `text` to at most `maxLength` characters: on the last sentence end when
+ * one is close enough, otherwise on a word boundary with an ellipsis.
+ */
+export function truncateOnWord(text: string, maxLength = 160): string {
+  if (text.length <= maxLength) return text;
+  const head = `${text.slice(0, maxLength)} `;
+  const sentenceEnd = Math.max(head.lastIndexOf('. '), head.lastIndexOf('! '), head.lastIndexOf('? '));
+  if (sentenceEnd > maxLength * 0.6) return text.slice(0, sentenceEnd + 1);
+  const cut = text.slice(0, maxLength - 1);
+  const lastSpace = cut.lastIndexOf(' ');
+  const base = lastSpace > maxLength * 0.6 ? cut.slice(0, lastSpace) : cut;
+  return `${base.replace(/[\s,;:.\-–—]+$/, '')}…`;
+}
+
+/**
+ * Fallback summary: the first real paragraph of the article. Headings, tables,
+ * blockquotes, code and lists are skipped; the text is stripped of markdown and
+ * cut to ~`maxLength` characters on a word boundary.
+ */
+export function extractExcerpt(markdown: string, maxLength = 160): string {
+  const tree = unified().use(remarkParse).use(remarkGfm).parse(markdown) as MdNode;
+  const paragraphs = (tree.children ?? [])
+    .filter((node) => node.type === 'paragraph')
+    .map((node) =>
+      mdText(node).replace(WIKI_CLASS_RE, '').replace(/\s+/g, ' ').trim().replace(LEADING_PICTOGRAPHS_RE, '')
+    )
+    .filter(Boolean);
+  // Prefer a paragraph long enough to summarise (skips "Que fait cette commande ?")
+  const text = paragraphs.find((p) => p.length >= 40) ?? paragraphs[0] ?? '';
+  return truncateOnWord(text, maxLength);
+}
+
+/** False for empty values and for markdown leftovers of the old auto-excerpt (table row, heading, quote…). */
+export function isUsableDescription(text: string | undefined): text is string {
+  const value = text?.trim();
+  return !!value && !/^(\||#{1,6}\s|>|```|~~~|[-*+]\s|\{\.|<)/.test(value);
 }
 
 export function generateSeoTitle(title: string, siteName = 'Alban Mary'): string {

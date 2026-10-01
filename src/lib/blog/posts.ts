@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { BlogPost, BlogPostMeta } from './types';
+import { extractExcerpt, isUsableDescription } from './markdown';
 
 const POSTS_DIR = path.join(process.cwd(), 'content', 'blog');
 
@@ -72,6 +73,22 @@ export function generateId(): string {
 export function getPostMeta(post: BlogPost): BlogPostMeta {
   const { content, contentHtml, wikiPath, wikiId, seoTitle, seoDescription, canonicalUrl, ...meta } = post;
   return meta;
+}
+
+/**
+ * Summary used everywhere (lists, article hero, meta / OG / Twitter, RSS):
+ * the curated `description` first, then the SEO one, then the first real
+ * paragraph of the article.
+ */
+export function getPostDescription(post: Pick<BlogPost, 'description' | 'seoDescription' | 'content'>): string {
+  if (isUsableDescription(post.description)) return post.description.trim();
+  if (isUsableDescription(post.seoDescription)) return post.seoDescription.trim();
+  return extractExcerpt(post.content);
+}
+
+/** Post fields needed by list views, without the markdown body. */
+export function getPostSummary(post: BlogPost): BlogPostMeta {
+  return { ...getPostMeta(post), description: getPostDescription(post) };
 }
 
 export function getAllTags(): string[] {
