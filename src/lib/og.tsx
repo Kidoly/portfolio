@@ -54,3 +54,72 @@ export function OgBrand({ size }: { size: number }) {
     </div>
   );
 }
+
+function titleSize(title: string): number {
+  if (title.length <= 32) return 88;
+  if (title.length <= 48) return 76;
+  if (title.length <= 72) return 64;
+  return 54;
+}
+
+/** Share card of a page with a category tag and a title (articles, Proxmox page). */
+export function OgTitleCard({ category, title, url = 'albanmary.com/blog' }: { category: string; title: string; url?: string }) {
+  return (
+    <div
+      style={{
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        padding: '60px 72px',
+        background: OG_COLORS.bg,
+        color: OG_COLORS.text,
+        fontFamily: 'Archivo',
+      }}
+    >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+        <div style={{ display: 'flex' }}>
+          <span
+            style={{
+              fontFamily: 'JetBrains Mono',
+              fontSize: 24,
+              color: OG_COLORS.ok,
+              border: `1px solid ${OG_COLORS.rule2}`,
+              padding: '6px 14px',
+            }}
+          >
+            {category}
+          </span>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            fontWeight: 800,
+            fontSize: titleSize(title),
+            lineHeight: 0.98,
+            letterSpacing: '-0.045em',
+          }}
+        >
+          {title}
+        </div>
+      </div>
+
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-end',
+          borderTop: `1px solid ${OG_COLORS.rule}`,
+          paddingTop: 28,
+        }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <OgBrand size={44} />
+          <span style={{ fontSize: 24, fontWeight: 500, color: OG_COLORS.text2 }}>{OG_TAGLINE}</span>
+        </div>
+        <span style={{ fontFamily: 'JetBrains Mono', fontSize: 22, color: OG_COLORS.dim }}>{url}</span>
+      </div>
+    </div>
+  );
+}

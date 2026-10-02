@@ -22,6 +22,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'daily',
       priority: 0.9,
     },
+    {
+      url: `${baseUrl}/proxmox/`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
     ...['mentions-legales', 'confidentialite'].map((page) => ({
       url: `${baseUrl}/${page}/`,
       lastModified: new Date(LEGAL_UPDATED_AT),

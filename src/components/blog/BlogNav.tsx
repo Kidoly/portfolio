@@ -7,7 +7,7 @@ import { ArrowUpRight } from 'lucide-react';
  * Blog header row - designed to sit inside a dark (#0e100f) hero block.
  * Nav is simplified across the blog: logo · Portfolio · Articles (active) · RSS.
  */
-export default function BlogNav() {
+export default function BlogNav({ articlesActive = true }: { articlesActive?: boolean }) {
   return (
     <header className="mx-auto w-full max-w-[1280px] px-6 lg:px-14">
       <div className="grid grid-cols-2 lg:grid-cols-12 gap-5 items-center py-7 text-sm font-medium text-[#e4e7e4]">
@@ -18,7 +18,13 @@ export default function BlogNav() {
           <Link href="/" className="text-[#9aa19c] hover:text-white hover:no-underline transition-colors">
             Portfolio
           </Link>
-          <span className="border-b-2 border-[var(--accent-on-dark)] pb-0.5">Articles</span>
+          {articlesActive ? (
+            <span className="border-b-2 border-[var(--accent-on-dark)] pb-0.5">Articles</span>
+          ) : (
+            <Link href="/blog/" className="text-[#9aa19c] hover:text-white hover:no-underline transition-colors">
+              Articles
+            </Link>
+          )}
         </nav>
         <a
           href="/blog/feed.xml"

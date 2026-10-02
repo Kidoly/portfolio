@@ -12,7 +12,7 @@
     "navAnchors": ["about", "experience", "projects", "infra", "skills", "contact"],
     "hero": {
       "role": "Systems & network administrator, focused on cybersecurity.",
-      "pitch": "4th-year computer science student at EPSI Nantes, work-study at Epsight. I monitor, automate and secure infrastructure, at work and in my homelab.",
+      "pitch": "5th-year computer science student at EPSI Nantes, work-study at Epsight. I monitor, automate and secure infrastructure, at work and in my homelab.",
       "cta1": "See projects",
       "cta2": "Download CV",
       "cta3": "Read the blog"
@@ -72,6 +72,7 @@
     ],
     "infraTitle": "$ homelab status",
     "infraPath": "~/infra",
+    "infraCta": "My Proxmox experience",
     "up": "up",
     "infra": [
       { "name": "Proxmox", "role": "Virtualisation" },

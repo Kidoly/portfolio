@@ -283,6 +283,9 @@ function Infrastructure() {
                 </div>
               ))}
             </div>
+            <a href="/proxmox/" className="self-start font-bold border-b-2 border-[var(--accent-on-dark)] pb-1 hover:no-underline">
+              {p.infraCta} →
+            </a>
           </div>
         </div>
       </Container>
