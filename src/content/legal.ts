@@ -1,4 +1,4 @@
-import { CONTACT_EMAIL, HOSTING } from '@/config/legal';
+import { CONTACT_EMAIL } from '@/config/legal';
 
 /**
  * Legal notice and privacy policy, FR + EN. Inline links use the markdown
@@ -24,13 +24,16 @@ export type LegalDocId = 'mentions' | 'privacy';
 
 const MAIL = `[${CONTACT_EMAIL}](mailto:${CONTACT_EMAIL})`;
 
-const hostingFr = HOSTING
-  ? [`${HOSTING.name} - ${HOSTING.address}${HOSTING.phone ? ` - ${HOSTING.phone}` : ''}.`]
-  : ['À compléter : nom, adresse et téléphone de l’hébergeur.'];
+// Self-hosted by the publisher (non-professional site): the home address is not published.
+const hostingFr = [
+  'Le site est auto-hébergé par son éditeur, Alban Mary, sur un serveur personnel situé en France.',
+  `Contact : ${MAIL}`,
+];
 
-const hostingEn = HOSTING
-  ? [`${HOSTING.name} - ${HOSTING.address}${HOSTING.phone ? ` - ${HOSTING.phone}` : ''}.`]
-  : ['To be completed: name, address and phone number of the hosting provider.'];
+const hostingEn = [
+  'The website is self-hosted by its publisher, Alban Mary, on a personal server located in France.',
+  `Contact: ${MAIL}`,
+];
 
 export const LEGAL: Record<'fr' | 'en', Record<LegalDocId, LegalDoc>> = {
   fr: {
