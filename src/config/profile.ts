@@ -3,7 +3,6 @@
  * site: no hard-coded age, no striped placeholder in production.
  *
  * TODO(contenu) - textes à vérifier dans src/locales/{fr,en}.json (clé `portfolio`) :
- * - hero.pitch : « 4e année à l'EPSI Nantes » / « 4th-year » - à confirmer (possiblement 5e année).
  * - stats[2] : « 3 stages en entreprise » / « 3 internships » - la timeline (exp) montre
  *   2 stages (Troublanc, Kereis cybersécurité) + 1 CDD (Kereis webdesign).
  */
