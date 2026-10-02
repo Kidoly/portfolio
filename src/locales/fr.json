@@ -5,13 +5,13 @@
 
   "portfolio": {
     "meta": {
-      "title": "Alban Mary - Administrateur systèmes & réseaux, cybersécurité",
-      "description": "Portfolio d'Alban Mary, administrateur systèmes & réseaux orienté cybersécurité, en alternance à l'EPSI Nantes. Projets, homelab et articles techniques."
+      "title": "Alban Mary - Ingénieur systèmes & réseaux",
+      "description": "Portfolio d'Alban Mary, ingénieur systèmes & réseaux en alternance chez Epsight et à l'EPSI Nantes. Projets, homelab et articles techniques."
     },
     "nav": ["À propos", "Expérience", "Projets", "Infra", "Compétences", "Contact"],
     "navAnchors": ["about", "experience", "projects", "infra", "skills", "contact"],
     "hero": {
-      "role": "Administrateur systèmes & réseaux, orienté cybersécurité.",
+      "role": "Ingénieur systèmes & réseaux.",
       "pitch": "5e année à l'EPSI Nantes, en alternance chez Epsight. Je supervise, automatise et sécurise des infrastructures, au travail comme dans mon homelab.",
       "cta1": "Voir les projets",
       "cta2": "Télécharger le CV",
@@ -30,7 +30,7 @@
     "stats": [
       { "v": "4 ans", "l": "de projets et d'expérience" },
       { "v": "15+", "l": "projets réalisés" },
-      { "v": "3", "l": "stages en entreprise" },
+      { "v": "4", "l": "expériences en entreprise" },
       { "v": "99,99 %", "l": "d'uptime sur mon homelab" }
     ],
     "about": [
@@ -41,20 +41,20 @@
     "strengthsLabel": "Points forts",
     "strengths": "Résolution de problèmes · Travail d'équipe · Apprentissage rapide · Documentation",
     "exp": [
-      { "company": "Epsight", "role": "Administrateur systèmes & réseaux", "type": "Alternance", "dates": "Août 2024 - auj.",
-        "bullets": ["Supervision de serveurs et d'infrastructures clients, support N2/N3", "Scripts PowerShell & Ansible pour automatiser la maintenance", "Projets d'installation, de sauvegarde et de configuration"],
-        "tags": ["Linux", "Windows Server", "Proxmox", "VMware", "Ansible", "PowerShell", "Docker"] },
-      { "company": "Troublanc", "role": "Développeur fullstack", "type": "Stage", "dates": "Jan - Fév 2024",
+      { "company": "Epsight", "role": "Ingénieur systèmes & réseaux", "type": "Alternance", "dates": "Août 2024 - auj.",
+        "bullets": ["Support N2/N3 chez un hébergeur et infogéreur : environ 500 VM sur deux datacenters", "Cluster Exchange 2019 remis en service en moins de 2 h après une perte de quorum, pour plusieurs centaines d'utilisateurs", "Infrastructure as Code (GitLab CI, Vault, Ansible, Terraform) : une VM déployée en quelques minutes au lieu de plusieurs heures", "Conception (en cours) d'un portail de PRA multi-clients sur Veeam, avec VLAN de restauration isolé", "Étude RMM pour environ 500 VM, qui a abouti au déploiement de N-able N-central", "E-mails rétablis vers un grand FAI : reverse DNS délégué au RIPE, PTR/HELO alignés"],
+        "tags": ["Proxmox", "Ceph", "VMware", "Veeam", "FortiGate", "Windows Server", "Ansible", "Terraform"] },
+      { "company": "Troublanc", "role": "Développement web", "type": "Stage", "dates": "Jan - Fév 2024",
         "bullets": ["Refonte du site vitrine troublanc.com sous WordPress", "Application de monitoring pour Raspberry Pi"],
         "tags": ["WordPress", "PHP", "Rust", "Flutter", "Raspberry Pi"] },
-      { "company": "Kereis", "role": "Webdesigner", "type": "CDD", "dates": "Juil - Sept 2023",
-        "bullets": ["Site interne de partage de documents", "Refonte des documents clients"],
+      { "company": "Kereis", "role": "Support informatique et webdesign", "type": "CDD", "dates": "Juil - Sept 2023",
+        "bullets": ["Site interne de partage de documents", "Refonte des documents clients", "De retour en juillet 2024 : support utilisateurs et préparation de postes"],
         "tags": ["SharePoint", "Microsoft 365"] },
-      { "company": "Kereis", "role": "Ingénieur cybersécurité", "type": "Stage", "dates": "Mai - Juin 2023",
+      { "company": "Kereis", "role": "Cybersécurité", "type": "Stage", "dates": "Mai - Juin 2023",
         "bullets": ["Partage de fichiers chiffré de bout en bout", "Test d'intrusion et campagne de sensibilisation au phishing"],
         "tags": ["Pentest", "Chiffrement", "Azure AD Connect", "AWS"] },
-      { "company": "EPSI Nantes", "role": "Études en informatique", "type": "Formation", "dates": "2022 - 2027",
-        "bullets": ["Spécialisation réseaux après un tronc commun développement", "Membre du BDE"],
+      { "company": "EPSI Nantes", "role": "Expert en informatique et système d'information (Bac+5)", "type": "Formation", "dates": "2022 - 2027",
+        "bullets": ["Bac+3 Administrateur systèmes, réseaux et bases de données, obtenu en 2025", "Spécialisation réseaux après un tronc commun développement", "Membre du BDE"],
         "tags": ["Réseaux", "Symfony", "React", "Docker", "Git"] }
     ],
     "projects": [

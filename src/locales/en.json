@@ -5,13 +5,13 @@
 
   "portfolio": {
     "meta": {
-      "title": "Alban Mary - Systems & network administrator, cybersecurity",
-      "description": "Portfolio of Alban Mary, systems & network administrator focused on cybersecurity, work-study student at EPSI Nantes. Projects, homelab and technical articles."
+      "title": "Alban Mary - Systems & network engineer",
+      "description": "Portfolio of Alban Mary, systems & network engineer, work-study at Epsight and EPSI Nantes. Projects, homelab and technical articles."
     },
     "nav": ["About", "Experience", "Projects", "Infra", "Skills", "Contact"],
     "navAnchors": ["about", "experience", "projects", "infra", "skills", "contact"],
     "hero": {
-      "role": "Systems & network administrator, focused on cybersecurity.",
+      "role": "Systems & network engineer.",
       "pitch": "5th-year computer science student at EPSI Nantes, work-study at Epsight. I monitor, automate and secure infrastructure, at work and in my homelab.",
       "cta1": "See projects",
       "cta2": "Download CV",
@@ -30,7 +30,7 @@
     "stats": [
       { "v": "4 yrs", "l": "of projects and experience" },
       { "v": "15+", "l": "projects shipped" },
-      { "v": "3", "l": "internships" },
+      { "v": "4", "l": "jobs and internships" },
       { "v": "99.99%", "l": "homelab uptime" }
     ],
     "about": [
@@ -41,20 +41,20 @@
     "strengthsLabel": "Strengths",
     "strengths": "Problem solving · Teamwork · Fast learner · Documentation",
     "exp": [
-      { "company": "Epsight", "role": "Systems & network administrator", "type": "Work-study", "dates": "Aug 2024 - now",
-        "bullets": ["Server and client infrastructure monitoring, L2/L3 support", "PowerShell & Ansible scripts to automate maintenance", "Installation, backup and configuration projects"],
-        "tags": ["Linux", "Windows Server", "Proxmox", "VMware", "Ansible", "PowerShell", "Docker"] },
-      { "company": "Troublanc", "role": "Fullstack developer", "type": "Internship", "dates": "Jan - Feb 2024",
+      { "company": "Epsight", "role": "Systems & network engineer", "type": "Work-study", "dates": "Aug 2024 - now",
+        "bullets": ["L2/L3 support at a hosting and managed services provider: about 500 VMs across two data centres", "Brought an Exchange 2019 cluster back in under 2 hours after a quorum loss, for several hundred users", "Infrastructure as Code (GitLab CI, Vault, Ansible, Terraform): a VM deployed in minutes instead of hours", "Designing a multi-tenant disaster recovery portal on Veeam, with an isolated restore VLAN (ongoing)", "RMM study for about 500 VMs that led to deploying N-able N-central", "Restored email delivery to a major ISP: reverse DNS delegated by RIPE, aligned PTR/HELO"],
+        "tags": ["Proxmox", "Ceph", "VMware", "Veeam", "FortiGate", "Windows Server", "Ansible", "Terraform"] },
+      { "company": "Troublanc", "role": "Web development", "type": "Internship", "dates": "Jan - Feb 2024",
         "bullets": ["Rebuilt troublanc.com on WordPress", "Monitoring app for Raspberry Pi"],
         "tags": ["WordPress", "PHP", "Rust", "Flutter", "Raspberry Pi"] },
-      { "company": "Kereis", "role": "Web designer", "type": "Contract", "dates": "Jul - Sep 2023",
-        "bullets": ["Internal document-sharing site", "Redesign of client-facing documents"],
+      { "company": "Kereis", "role": "IT support & web design", "type": "Contract", "dates": "Jul - Sep 2023",
+        "bullets": ["Internal document-sharing site", "Redesign of client-facing documents", "Back in July 2024: user support and workstation setup"],
         "tags": ["SharePoint", "Microsoft 365"] },
-      { "company": "Kereis", "role": "Cybersecurity engineer", "type": "Internship", "dates": "May - Jun 2023",
+      { "company": "Kereis", "role": "Cybersecurity", "type": "Internship", "dates": "May - Jun 2023",
         "bullets": ["End-to-end encrypted file sharing", "Penetration test and phishing awareness campaign"],
         "tags": ["Pentest", "Encryption", "Azure AD Connect", "AWS"] },
-      { "company": "EPSI Nantes", "role": "Computer science studies", "type": "Education", "dates": "2022 - 2027",
-        "bullets": ["Network specialisation after a development core", "Student union member"],
+      { "company": "EPSI Nantes", "role": "IT & information systems expert (Master's level)", "type": "Education", "dates": "2022 - 2027",
+        "bullets": ["Bachelor's-level degree in systems, network and database administration, 2025", "Network specialisation after a development core", "Student union member"],
         "tags": ["Networking", "Symfony", "React", "Docker", "Git"] }
     ],
     "projects": [

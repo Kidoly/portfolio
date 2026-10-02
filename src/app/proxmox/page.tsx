@@ -8,9 +8,9 @@ import { formatPostDate } from '@/lib/blog/format';
 import { CONTACT_EMAIL } from '@/config/legal';
 
 const PAGE_URL = 'https://albanmary.com/proxmox';
-const TITLE = 'Administrateur Proxmox VE à Nantes : cluster, Ceph, HA';
+const TITLE = 'Ingénieur Proxmox VE à Nantes : cluster, Ceph, HA';
 const DESCRIPTION =
-  'Administration Proxmox VE par Alban Mary (Nantes) : cluster haute disponibilité, Ceph, SDN, sauvegardes PBS, templates Cloud-Init et Terraform.';
+  'Alban Mary, ingénieur systèmes et réseaux à Nantes : Proxmox VE en cluster haute disponibilité, Ceph, SDN, sauvegardes PBS, templates Cloud-Init et Terraform.';
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -54,17 +54,17 @@ const FIELD = [
   {
     where: 'Epsight',
     when: 'Alternance, depuis 2024',
-    text: 'Supervision et maintenance d’infrastructures clients sous Proxmox et VMware, support N2/N3, projets d’installation et de sauvegarde.',
+    text: 'Environ 500 VM hébergées sur deux datacenters, sous Proxmox VE avec Ceph étendu entre les sites et sous VMware : support N2/N3, Infrastructure as Code et portail de PRA Veeam.',
   },
   {
     where: 'Homelab',
     when: 'Auto-hébergé',
-    text: 'Administré seul : Proxmox pour la virtualisation, pare-feu OPNsense, GitLab CI/CD, Ansible + AWX et supervision.',
+    text: 'Administré seul : cluster Proxmox VE de 3 nœuds avec Ceph sur 10 GbE, Proxmox Backup Server, pare-feu OPNsense, GitLab CI/CD et Ansible.',
   },
   {
     where: 'Projet multi-sites',
     when: 'EPSI Nantes',
-    text: 'Architecture d’une quinzaine de VM sur un cluster Proxmox 3 nœuds (Ceph, SDN, HA), reliée en IPsec à trois autres sites, avec PRA.',
+    text: 'En équipe de 3 : architecture d’une quinzaine de VM sur un cluster Proxmox 3 nœuds (Ceph, SDN, HA), reliée en IPsec à trois autres sites, avec PRA.',
   },
 ];
 
@@ -120,7 +120,7 @@ export default function ProxmoxPage() {
                 </h1>
               </div>
               <p className="lg:col-span-4 m-0 text-[18px] leading-[1.55] text-[#9aa19c]">
-                Administrateur systèmes &amp; réseaux en alternance chez Epsight, je monte et j’exploite des
+                Ingénieur systèmes &amp; réseaux en alternance chez Epsight, je monte et j’exploite des
                 infrastructures virtualisées sous Proxmox VE, à Nantes.
               </p>
             </div>

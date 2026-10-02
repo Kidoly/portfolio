@@ -214,7 +214,7 @@ export default async function BlogPostPage({ params }: Props) {
               <div className="p-5 flex flex-col gap-3.5">
                 <span className="font-sans text-[22px] font-bold">Alban Mary</span>
                 <span className="font-sans text-[16px] leading-[1.55] text-[#9aa19c]">
-                  Administrateur systèmes &amp; réseaux, orienté cybersécurité. Étudiant à l&apos;EPSI Nantes. J&apos;écris ici ce que je mets en place.
+                  Ingénieur systèmes &amp; réseaux en alternance chez Epsight, étudiant à l&apos;EPSI Nantes. J&apos;écris ici ce que je mets en place.
                 </span>
                 <div className="flex flex-wrap gap-5">
                   <Link href="/" className="text-[var(--ok)] hover:no-underline">Portfolio →</Link>

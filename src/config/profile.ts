@@ -1,10 +1,6 @@
 /**
  * Home page personal data and media. Anything left `null` is hidden on the
  * site: no hard-coded age, no striped placeholder in production.
- *
- * TODO(contenu) - textes à vérifier dans src/locales/{fr,en}.json (clé `portfolio`) :
- * - stats[2] : « 3 stages en entreprise » / « 3 internships » - la timeline (exp) montre
- *   2 stages (Troublanc, Kereis cybersécurité) + 1 CDD (Kereis webdesign).
  */
 
 /** TODO(contenu) : date de naissance 'YYYY-MM-DD'. La ligne « Âge » du whoami est masquée tant que null. */

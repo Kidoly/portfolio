@@ -5,7 +5,7 @@ import { join } from 'node:path';
 
 export const OG_SIZE = { width: 1200, height: 630 };
 
-export const OG_TAGLINE = 'Administrateur systèmes & réseaux, orienté cybersécurité.';
+export const OG_TAGLINE = 'Ingénieur systèmes & réseaux.';
 
 // Satori does not parse oklch(): sRGB equivalents of the design tokens.
 export const OG_COLORS = {

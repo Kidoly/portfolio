@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og';
 import { loadOgFonts, OG_COLORS, OG_SIZE, OG_TAGLINE } from '@/lib/og';
 
 export const runtime = 'nodejs';
-export const alt = 'Alban Mary - Administrateur systèmes & réseaux, cybersécurité';
+export const alt = 'Alban Mary - Ingénieur systèmes & réseaux';
 export const size = OG_SIZE;
 export const contentType = 'image/png';
 

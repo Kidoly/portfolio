@@ -88,8 +88,8 @@ const personJsonLd = {
   name: 'Alban Mary',
   givenName: 'Alban',
   familyName: 'Mary',
-  jobTitle: 'Administrateur systèmes & réseaux',
-  description: 'Administrateur systèmes & réseaux orienté cybersécurité, en alternance chez Epsight, étudiant à l\'EPSI Nantes',
+  jobTitle: 'Ingénieur systèmes & réseaux',
+  description: 'Ingénieur systèmes & réseaux en alternance chez Epsight, étudiant à l\'EPSI Nantes',
   url: SITE_URL,
   sameAs: [
     'https://www.linkedin.com/in/alban-mary/',
