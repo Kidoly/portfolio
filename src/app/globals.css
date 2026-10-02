@@ -33,10 +33,7 @@
   --accent: oklch(0.53 0.2 30); /* on light backgrounds, button fills */
   --accent-on-dark: oklch(0.63 0.2 30); /* on the dark hero / panels */
   --ok: oklch(0.82 0.16 150);
-}
-
-html {
-  scroll-behavior: smooth;
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 body {
@@ -49,6 +46,127 @@ body {
 .dc-label {
   font-family: var(--font-ibm-plex), ui-monospace, monospace;
   font-size: 13px;
+}
+
+/* ========================================================
+   Motion: transform/opacity/clip-path only, all of it off
+   for visitors who ask for reduced motion. Scroll reveals
+   hide nothing until RevealObserver has run, and never the
+   LCP text of a hero.
+   ======================================================== */
+/* Text underline drawn from the left on hover (header navs) */
+.nav-link {
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1px;
+}
+.nav-link:hover,
+.nav-link:focus-visible {
+  background-size: 100% 1px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  .nav-link {
+    transition: background-size 0.3s var(--ease-out), color 0.15s;
+  }
+
+  /* Hero copy rising in on load, staggered with --d */
+  .rise {
+    animation: rise 0.8s var(--ease-out) var(--d, 0ms) both;
+  }
+
+  /* Terminal details: typed prompt (--steps = characters), printed lines, cursor, status light */
+  .typing {
+    display: inline-block;
+    animation: type 0.7s steps(var(--steps, 10), end) var(--d, 0.2s) both;
+  }
+  .boot {
+    animation: print 1ms linear both;
+    animation-delay: calc(var(--d, 0.9s) + var(--i, 0) * 140ms);
+  }
+  .cursor-blink {
+    animation: blink 0.9s steps(1, end) 1.2s 3; /* stops well before 5 s (WCAG 2.2.2) */
+  }
+  .pulse {
+    animation: pulse 1.6s ease-out 1s 3;
+  }
+
+  /* Scroll reveals: RevealObserver sets data-motion on <html>, then data-in on each element */
+  html[data-motion] [data-reveal] {
+    transition-property: opacity, transform, color, background-color, border-color;
+    transition-duration: 0.8s, 0.8s, 0.15s, 0.15s, 0.15s;
+    transition-timing-function: var(--ease-out);
+    transition-delay: calc(var(--i, 0) * 90ms), calc(var(--i, 0) * 90ms), 0s, 0s, 0s;
+  }
+  html[data-motion] [data-reveal]:not([data-in]) {
+    opacity: 0;
+    transform: translateY(36px);
+  }
+  html[data-motion] [data-reveal]:not([data-in]) :is(.term-line, .typing-on-reveal) {
+    opacity: 0;
+  }
+  html[data-motion] [data-reveal][data-in] .term-line {
+    animation: print 1ms linear both;
+    animation-delay: calc(0.6s + var(--i, 0) * 110ms);
+  }
+  html[data-motion] [data-reveal][data-in] .typing-on-reveal {
+    display: inline-block;
+    animation: type 0.8s steps(var(--steps, 12), end) 0.3s both;
+  }
+
+  /* Count-up: the number is drawn from data-shown; React's own text stays in place, transparent */
+  [data-counting] {
+    position: relative;
+    -webkit-text-fill-color: transparent;
+  }
+  [data-counting]::after {
+    content: attr(data-shown);
+    position: absolute;
+    inset: 0;
+    padding: inherit;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    -webkit-text-fill-color: currentColor;
+  }
+}
+
+@media print {
+  html[data-motion] [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+@keyframes type {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+@keyframes print {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes pulse {
+  from {
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--ok) 60%, transparent);
+  }
+  to {
+    box-shadow: 0 0 0 9px color-mix(in oklch, var(--ok) 0%, transparent);
+  }
 }
 
 /* ========================================================

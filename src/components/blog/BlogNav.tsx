@@ -15,23 +15,23 @@ export default function BlogNav({ articlesActive = true }: { articlesActive?: bo
           Alban Mary<span className="text-[var(--accent-on-dark)]">.</span>
         </Link>
         <nav className="hidden lg:flex lg:col-span-7 gap-7">
-          <Link href="/" className="text-[#9aa19c] hover:text-white hover:no-underline transition-colors">
+          <Link href="/" className="nav-link text-[#9aa19c] hover:text-white hover:no-underline transition-colors">
             Portfolio
           </Link>
           {articlesActive ? (
             <span className="border-b-2 border-[var(--accent-on-dark)] pb-0.5">Articles</span>
           ) : (
-            <Link href="/blog/" className="text-[#9aa19c] hover:text-white hover:no-underline transition-colors">
+            <Link href="/blog/" className="nav-link text-[#9aa19c] hover:text-white hover:no-underline transition-colors">
               Articles
             </Link>
           )}
         </nav>
         <a
           href="/blog/feed.xml"
-          className="lg:col-span-2 justify-self-end inline-flex items-center gap-1 font-mono text-[12px] border border-[#333a36] px-2.5 py-1.5 hover:border-[#e4e7e4] hover:no-underline transition-colors"
+          className="group lg:col-span-2 justify-self-end inline-flex items-center gap-1 font-mono text-[12px] border border-[#333a36] px-2.5 py-1.5 hover:border-[#e4e7e4] hover:no-underline transition-colors"
           title="Flux RSS"
         >
-          RSS <ArrowUpRight className="w-3.5 h-3.5" aria-hidden />
+          RSS <ArrowUpRight className="w-3.5 h-3.5 motion-safe:transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5" aria-hidden />
         </a>
       </div>
     </header>

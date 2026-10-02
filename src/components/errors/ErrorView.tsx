@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { LEGAL_LABELS } from '@/components/legal/LegalLinks';
 
@@ -46,15 +46,19 @@ export default function ErrorView({ lang, code, prompt, output, copy, action }: 
 
       <div className={`${CONTAINER} flex-1 flex flex-col justify-center gap-8 lg:gap-10 py-14`}>
         <div className="font-mono text-[13px] flex flex-col gap-1.5 break-all">
-          <span className="text-[#7d8580]">{prompt}</span>
-          <span className="text-[#9aa19c]">{output}</span>
+          <span className="text-[#7d8580] typing" style={{ '--steps': prompt.length } as CSSProperties}>
+            {prompt}
+          </span>
+          <span className="text-[#9aa19c] boot" style={{ '--d': '1s' } as CSSProperties}>
+            {output}
+          </span>
         </div>
         <h1
           className="m-0 font-extrabold leading-[0.84] tracking-[-0.055em]"
           style={{ fontSize: 'clamp(120px, 26vw, 280px)' }}
         >
           {code}
-          <span className="text-[var(--accent-on-dark)]">.</span>
+          <span className="text-[var(--accent-on-dark)] cursor-blink">.</span>
         </h1>
         <div className="flex flex-col gap-6 max-w-[620px]">
           <p className="m-0 font-medium tracking-[-0.015em]" style={{ fontSize: 'clamp(26px, 4vw, 38px)', lineHeight: 1.12 }}>

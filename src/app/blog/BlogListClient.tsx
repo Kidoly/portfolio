@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { BlogPostMeta } from '@/lib/blog/types';
 import BlogNav from '@/components/blog/BlogNav';
 import LegalLinks from '@/components/legal/LegalLinks';
+import RevealObserver from '@/components/motion/RevealObserver';
 import { formatPostDate } from '@/lib/blog/format';
 
 interface Props {
@@ -48,6 +49,7 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
 
   return (
     <main className="bg-[#f3f1ec] text-[#141414] font-sans min-h-screen">
+      <RevealObserver />
       {/* Dark hero */}
       <div className="bg-[#0e100f] text-[#e4e7e4] pb-20">
         <BlogNav />
@@ -55,9 +57,11 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
         <div className="mx-auto w-full max-w-[1280px] px-6 lg:px-14">
           <div className="grid lg:grid-cols-12 gap-5 pt-10 lg:pt-16 items-end">
             <div className="lg:col-span-8 flex flex-col gap-5">
-              <span className="font-mono text-[13px] text-[#7d8580]">$ ls ~/blog</span>
+              <span className="font-mono text-[13px] text-[#7d8580] typing" style={{ '--steps': 11 } as CSSProperties}>
+                $ ls ~/blog
+              </span>
               <h1 className="m-0 font-extrabold leading-[0.86] tracking-[-0.055em]" style={{ fontSize: 'clamp(56px, 13vw, 168px)' }}>
-                Notes<br />d&apos;infra<span className="text-[var(--accent-on-dark)]">.</span>
+                Notes<br />d&apos;infra<span className="text-[var(--accent-on-dark)] cursor-blink">.</span>
               </h1>
             </div>
             <p className="lg:col-span-4 m-0 text-[18px] leading-[1.55] text-[#9aa19c]">
@@ -134,7 +138,8 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
                 <Link
                   key={post.id}
                   href={`/blog/${post.slug}/`}
-                  className="grid grid-cols-1 sm:grid-cols-[130px_minmax(0,1fr)_110px] gap-x-6 gap-y-3 items-start py-7 -mx-5 px-5 border-t-2 border-[#141414] hover:bg-[#e9e6df] hover:no-underline transition-colors"
+                  data-reveal
+                  className="group grid grid-cols-1 sm:grid-cols-[130px_minmax(0,1fr)_110px] gap-x-6 gap-y-3 items-start py-7 -mx-5 px-5 border-t-2 border-[#141414] hover:bg-[#e9e6df] hover:no-underline transition-colors"
                 >
                   <div className="flex flex-col gap-2.5 pt-1.5">
                     <span className="font-plex text-[12px] text-[#68655f]">{formatPostDate(post.publishedAt || post.updatedAt)}</span>
@@ -145,7 +150,7 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
                     <span className="text-[16px] leading-[1.55] text-[#4a4a48] max-w-[620px]">{post.description}</span>
                   </div>
                   <span className="sm:justify-self-end pt-1.5 font-bold text-[15px] whitespace-nowrap border-b-2 border-[var(--accent)] pb-0.5 self-start">
-                    Lire →
+                    Lire <span className="inline-block motion-safe:transition-transform motion-safe:group-hover:translate-x-1">→</span>
                   </span>
                 </Link>
               ))
@@ -155,7 +160,7 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
 
         {/* Tags cloud */}
         {tags.length > 0 && (
-          <section className="grid lg:grid-cols-12 gap-5 pt-24 pb-20">
+          <section data-reveal className="grid lg:grid-cols-12 gap-5 pt-24 pb-20">
             <div className="font-plex text-[13px] lg:col-span-3">(Tags)</div>
             <div className="lg:col-span-9 flex flex-wrap gap-2">
               {tags.map((t) => {
