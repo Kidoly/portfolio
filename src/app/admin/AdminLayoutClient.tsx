@@ -1,169 +1,198 @@
 'use client';
 
-import { useState, useEffect, ReactNode } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import {
-  LayoutDashboard,
-  FileText,
-  MessageSquare,
-  RefreshCw,
-  LogOut,
-  Menu,
-  X,
-  User,
-} from 'lucide-react';
+import { ArrowUpRight, FileText, LayoutDashboard, LogOut, Menu, MessageSquare, RefreshCw, X } from 'lucide-react';
+import { Loading } from '@/components/admin/ui';
 
-interface UserInfo {
+export interface AdminUser {
   name: string;
   email?: string;
   provider: 'local' | 'authentik';
 }
 
+interface AdminSession {
+  /** null while the session is being checked */
+  authenticated: boolean | null;
+  user: AdminUser | null;
+  /** Re-reads the number of comments awaiting moderation, shown in the menu */
+  refreshPending: () => void;
+}
+
+const AdminContext = createContext<AdminSession>({ authenticated: null, user: null, refreshPending: () => {} });
+
+/** Session of the back office, checked once by the layout. */
+export const useAdmin = () => useContext(AdminContext);
+
+const NAV = [
+  { href: '/admin/', label: 'Tableau de bord', icon: LayoutDashboard },
+  { href: '/admin/posts/', label: 'Articles', icon: FileText },
+  { href: '/admin/comments/', label: 'Commentaires', icon: MessageSquare },
+  { href: '/admin/sync/', label: 'Wiki.js', icon: RefreshCw },
+];
+
+const trimSlash = (path: string) => path.replace(/\/+$/, '') || '/';
+
 export default function AdminLayoutClient({ children }: { children: ReactNode }) {
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
-  const [user, setUser] = useState<UserInfo | null>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const pathname = usePathname();
+  const [user, setUser] = useState<AdminUser | null>(null);
+  const [pending, setPending] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = trimSlash(usePathname() ?? '/admin');
   const router = useRouter();
+  const onLoginPage = pathname === '/admin';
 
   useEffect(() => {
     fetch('/api/admin/me/')
       .then(async (res) => {
-        if (res.ok) {
-          const data = await res.json();
-          setAuthenticated(true);
-          setUser({ name: data.name, email: data.email, provider: data.provider });
-        } else {
-          setAuthenticated(false);
-        }
+        if (!res.ok) return setAuthenticated(false);
+        const data = await res.json();
+        setUser({ name: data.name || data.username, email: data.email ?? undefined, provider: data.provider });
+        setAuthenticated(true);
       })
       .catch(() => setAuthenticated(false));
   }, []);
 
-  const handleLogout = async () => {
+  const refreshPending = useCallback(() => {
+    fetch('/api/admin/comments/')
+      .then((res) => (res.ok ? res.json() : []))
+      .then((comments: { status: string }[]) => setPending(comments.filter((c) => c.status === 'pending').length))
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (authenticated) refreshPending();
+  }, [authenticated, pathname, refreshPending]);
+
+  // Signed out on an inner page: back to the login form
+  useEffect(() => {
+    if (authenticated === false && !onLoginPage) router.replace('/admin/');
+  }, [authenticated, onLoginPage, router]);
+
+  const logout = async () => {
     await fetch('/api/admin/logout/', { method: 'POST' });
+    setUser(null);
     setAuthenticated(false);
-    router.push('/admin');
+    setMenuOpen(false);
   };
 
-  // Show login page if not authenticated
+  const session: AdminSession = { authenticated, user, refreshPending };
+
   if (authenticated === null) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen bg-[#0e100f]">
+        <Loading dark />
       </div>
     );
   }
 
   if (!authenticated) {
-    // If we're on the login page, show children (the login form)
-    if (pathname === '/admin' || pathname === '/admin/') {
-      return <>{children}</>;
-    }
-    // Otherwise redirect to login
-    router.push('/admin');
-    return null;
+    return <AdminContext.Provider value={session}>{onLoginPage ? children : null}</AdminContext.Provider>;
   }
 
-  const navItems = [
-    { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/admin/posts', label: 'Articles', icon: FileText },
-    { href: '/admin/comments', label: 'Commentaires', icon: MessageSquare },
-    { href: '/admin/sync', label: 'Wiki Sync', icon: RefreshCw },
-  ];
+  const closeMenu = () => setMenuOpen(false);
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Mobile header */}
-      <div className="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="text-gray-500 hover:text-gray-700"
-        >
-          {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
-        <span className="font-semibold text-gray-900">Blog Admin</span>
-        <button onClick={handleLogout} className="text-gray-500 hover:text-red-600">
-          <LogOut className="w-5 h-5" />
-        </button>
-      </div>
+    <AdminContext.Provider value={session}>
+      <div className="min-h-screen bg-[#f3f1ec] text-[#141414] lg:grid lg:grid-cols-[248px_minmax(0,1fr)]">
+        {/* Mobile bar */}
+        <div className="lg:hidden bg-[#0e100f] text-[#e4e7e4] flex items-center justify-between px-5 py-4">
+          <button
+            onClick={() => setMenuOpen(true)}
+            aria-label="Ouvrir le menu"
+            aria-expanded={menuOpen}
+            aria-controls="admin-menu"
+            className="cursor-pointer"
+          >
+            <Menu className="w-6 h-6" aria-hidden />
+          </button>
+          <span className="font-semibold">
+            Alban Mary<span className="text-[var(--accent-on-dark)]">.</span>{' '}
+            <span className="font-mono text-[12px] font-normal text-[#7d8580]">admin</span>
+          </span>
+          <button onClick={logout} aria-label="Se déconnecter" className="cursor-pointer text-[#9aa19c] hover:text-white">
+            <LogOut className="w-5 h-5" aria-hidden />
+          </button>
+        </div>
 
-      <div className="flex">
         {/* Sidebar */}
         <aside
-          className={`fixed inset-y-0 left-0 z-30 w-64 bg-slate-900 text-white transform transition-transform lg:translate-x-0 lg:static lg:inset-0 ${
-            sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          id="admin-menu"
+          className={`fixed inset-y-0 left-0 z-40 w-[248px] bg-[#0e100f] text-[#e4e7e4] flex flex-col transition-transform lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${
+            menuOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
-          <div className="p-6 border-b border-slate-800">
-            <Link href="/admin" className="text-xl font-bold">
-              📝 Blog Admin
-            </Link>
+          <div className="flex items-start justify-between px-6 pt-7 pb-8">
+            <div className="flex flex-col gap-1">
+              <Link href="/admin/" onClick={closeMenu} className="text-[17px] font-semibold hover:no-underline">
+                Alban Mary<span className="text-[var(--accent-on-dark)]">.</span>
+              </Link>
+              <span className="font-mono text-[12px] text-[#7d8580]">~/admin</span>
+            </div>
+            <button onClick={closeMenu} aria-label="Fermer le menu" className="lg:hidden cursor-pointer text-[#9aa19c] hover:text-white">
+              <X className="w-5 h-5" aria-hidden />
+            </button>
           </div>
-          <nav className="p-4 space-y-1">
-            {navItems.map((item) => {
-              const isActive =
-                pathname === item.href ||
-                (item.href !== '/admin' && pathname?.startsWith(item.href));
+
+          <nav aria-label="Backoffice" className="flex flex-col gap-0.5 px-3 text-[15px] font-medium">
+            {NAV.map(({ href, label, icon: Icon }) => {
+              const target = trimSlash(href);
+              const active = target === '/admin' ? pathname === '/admin' : pathname.startsWith(target);
               return (
                 <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition ${
-                    isActive
-                      ? 'bg-blue-600 text-white'
-                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  key={href}
+                  href={href}
+                  onClick={closeMenu}
+                  aria-current={active ? 'page' : undefined}
+                  className={`flex items-center gap-3 px-3 py-2.5 border-l-2 hover:no-underline transition-colors ${
+                    active
+                      ? 'border-[var(--accent-on-dark)] bg-[#161917] text-white'
+                      : 'border-transparent text-[#9aa19c] hover:text-white hover:bg-[#131614]'
                   }`}
                 >
-                  <item.icon className="w-5 h-5" />
-                  {item.label}
+                  <Icon className="w-[18px] h-[18px]" aria-hidden />
+                  <span className="flex-1">{label}</span>
+                  {href === '/admin/comments/' && pending > 0 && (
+                    <span className="font-mono text-[11px] bg-[var(--accent)] text-[#f3f1ec] px-1.5 py-0.5">
+                      {pending}
+                      <span className="sr-only"> en attente</span>
+                    </span>
+                  )}
                 </Link>
               );
             })}
           </nav>
-          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-800">
+
+          <div className="mt-auto px-6 py-6 border-t border-[#232825] flex flex-col gap-4 text-[14px]">
             {user && (
-              <div className="flex items-center gap-3 px-4 py-2.5 mb-2">
-                <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-bold">
-                  {user.name?.charAt(0).toUpperCase() || <User className="w-4 h-4" />}
-                </div>
-                <div className="overflow-hidden">
-                  <p className="text-sm font-medium text-white truncate">{user.name}</p>
-                  <p className="text-xs text-slate-400 truncate">
-                    {user.provider === 'authentik' ? 'via Authentik' : 'Local'}
-                  </p>
-                </div>
+              <div className="flex flex-col min-w-0">
+                <span className="font-semibold truncate">{user.name}</span>
+                <span className="font-mono text-[12px] text-[#7d8580]">
+                  {user.provider === 'authentik' ? 'via Authentik' : 'compte local'}
+                </span>
               </div>
             )}
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-red-600/20 hover:text-red-400 transition w-full"
-            >
-              <LogOut className="w-5 h-5" />
-              Déconnexion
-            </button>
-            <Link
-              href="/blog"
-              className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm text-slate-400 hover:text-white transition mt-2"
-            >
-              ← Voir le blog
-            </Link>
+            <div className="flex flex-col gap-2 text-[#9aa19c]">
+              <a href="/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:text-white hover:no-underline">
+                Voir le site <ArrowUpRight className="w-3.5 h-3.5" aria-hidden />
+              </a>
+              <a href="/blog/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:text-white hover:no-underline">
+                Voir le blog <ArrowUpRight className="w-3.5 h-3.5" aria-hidden />
+              </a>
+              <button onClick={logout} className="inline-flex items-center gap-2 text-left cursor-pointer hover:text-[var(--accent-on-dark)]">
+                <LogOut className="w-4 h-4" aria-hidden /> Déconnexion
+              </button>
+            </div>
           </div>
         </aside>
 
-        {/* Overlay for mobile */}
-        {sidebarOpen && (
-          <div
-            className="fixed inset-0 bg-black/50 z-20 lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
+        {menuOpen && <div className="fixed inset-0 z-30 bg-black/60 lg:hidden" onClick={closeMenu} aria-hidden="true" />}
 
-        {/* Main content */}
-        <main className="flex-1 p-6 lg:p-8 min-h-screen">{children}</main>
+        <main className="min-w-0 px-6 py-8 sm:px-8 lg:px-12 lg:py-12">
+          <div className="mx-auto max-w-[1180px]">{children}</div>
+        </main>
       </div>
-    </div>
+    </AdminContext.Provider>
   );
 }

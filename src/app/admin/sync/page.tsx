@@ -1,37 +1,50 @@
 'use client';
 
-import { useState } from 'react';
-import { RefreshCw, Check, AlertCircle, Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { RefreshCw } from 'lucide-react';
+import { BTN_PRIMARY, HINT, Notice, PageHeader, SectionLabel, Stat, readError } from '@/components/admin/ui';
+
+interface SyncResult {
+  synced: number;
+  created: number;
+  updated: number;
+  errors: string[];
+}
+
+interface SyncConfig {
+  configured: boolean;
+  host: string | null;
+}
+
+const STEPS = [
+  'Connexion au Wiki.js par son API GraphQL.',
+  'Lecture de chaque page du wiki, avec son contenu Markdown et ses tags.',
+  'Conversion en article : temps de lecture calculé, première image en couverture, catégorie tirée du chemin de la page.',
+  "Un article déjà importé garde sa description, sa catégorie, son SEO et son statut ; seuls le titre, le contenu et les tags suivent le wiki.",
+  'Les nouvelles pages arrivent en brouillon : à relire, puis à publier depuis Articles.',
+];
 
 export default function SyncPage() {
+  const [config, setConfig] = useState<SyncConfig | null>(null);
   const [syncing, setSyncing] = useState(false);
-  const [result, setResult] = useState<{
-    synced: number;
-    created: number;
-    updated: number;
-    errors: string[];
-  } | null>(null);
+  const [result, setResult] = useState<SyncResult | null>(null);
+
+  useEffect(() => {
+    fetch('/api/admin/sync/')
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
+      .then(setConfig)
+      .catch(() => setConfig({ configured: false, host: null }));
+  }, []);
 
   const handleSync = async () => {
     setSyncing(true);
     setResult(null);
-
     try {
       const res = await fetch('/api/admin/sync/', { method: 'POST' });
-      if (res.ok) {
-        const data = await res.json();
-        setResult(data);
-      } else {
-        const err = await res.json();
-        setResult({ synced: 0, created: 0, updated: 0, errors: [err.error || 'Erreur inconnue'] });
-      }
-    } catch (err) {
-      setResult({
-        synced: 0,
-        created: 0,
-        updated: 0,
-        errors: ['Erreur de connexion au serveur'],
-      });
+      if (res.ok) setResult(await res.json());
+      else setResult({ synced: 0, created: 0, updated: 0, errors: [await readError(res)] });
+    } catch {
+      setResult({ synced: 0, created: 0, updated: 0, errors: ['Erreur de connexion au serveur.'] });
     } finally {
       setSyncing(false);
     }
@@ -39,160 +52,75 @@ export default function SyncPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">
-        Synchronisation Wiki.js
-      </h1>
-      <p className="text-gray-500 mb-8">
-        Importez automatiquement les pages README de votre Wiki.js et
-        transformez-les en articles de blog optimisés pour le SEO.
+      <PageHeader prompt="$ wiki sync --to ~/blog" title="Wiki.js" />
+      <p className="m-0 max-w-[680px] text-[19px] leading-[1.5] text-[#4a4a48] pb-12">
+        Les pages du Wiki.js deviennent des articles du blog : les nouvelles arrivent en brouillon, celles déjà importées sont mises à jour.
       </p>
 
-      {/* Configuration info */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
-        <h2 className="font-semibold text-gray-900 mb-3">Configuration</h2>
-        <div className="space-y-2 text-sm">
-          <div className="flex items-center gap-2">
-            <span className="text-gray-500 w-32">Wiki.js URL:</span>
-            <code className="bg-gray-100 px-2 py-0.5 rounded text-gray-700">
-              {process.env.NEXT_PUBLIC_WIKI_URL || 'Non configuré'}
-            </code>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-gray-500 w-32">API Key:</span>
-            <code className="bg-gray-100 px-2 py-0.5 rounded text-gray-700">
-              {process.env.NEXT_PUBLIC_WIKI_API_KEY ? '••••••••' : 'Non configuré'}
-            </code>
-          </div>
-        </div>
-        <p className="text-xs text-gray-400 mt-3">
-          Configurez <code className="bg-gray-100 px-1 rounded">WIKI_API_URL</code> et{' '}
-          <code className="bg-gray-100 px-1 rounded">WIKI_API_KEY</code> dans votre fichier{' '}
-          <code className="bg-gray-100 px-1 rounded">.env.local</code>
-        </p>
-      </div>
-
-      {/* Sync button */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="font-semibold text-gray-900 mb-1">
-              Lancer la synchronisation
-            </h2>
-            <p className="text-sm text-gray-500">
-              Toutes les pages Wiki.js seront importées. Les articles existants
-              seront mis à jour, les nouveaux seront créés en brouillon.
+      <section className="pb-12">
+        <SectionLabel n="01">Connexion</SectionLabel>
+        <div className="border-t-2 border-[#141414] pt-4">
+          <span className="inline-flex items-center gap-2 font-mono text-[14px]" role="status">
+            <span
+              aria-hidden="true"
+              className={`size-2 rounded-full ${config?.configured ? 'bg-[oklch(0.62_0.15_150)]' : 'border border-[#68655f]'}`}
+            />
+            {config === null ? 'vérification…' : config.configured ? `connecté à ${config.host}` : 'non configuré'}
+          </span>
+          {config && !config.configured && (
+            <p className={HINT}>
+              Renseigner <code>WIKI_API_URL</code> et <code>WIKI_API_KEY</code> dans l&apos;environnement du serveur (.env.local en local,
+              variables du conteneur en production).
             </p>
-          </div>
-          <button
-            onClick={handleSync}
-            disabled={syncing}
-            className="inline-flex items-center gap-2 bg-cyan-600 text-white px-6 py-3 rounded-lg hover:bg-cyan-700 disabled:opacity-50 transition font-medium whitespace-nowrap"
-          >
-            {syncing ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                Synchronisation...
-              </>
-            ) : (
-              <>
-                <RefreshCw className="w-5 h-5" />
-                Synchroniser
-              </>
-            )}
+          )}
+        </div>
+      </section>
+
+      <section className="pb-12">
+        <SectionLabel n="02">Synchronisation</SectionLabel>
+        <div className="border-t-2 border-[#141414] pt-4 flex flex-wrap items-center justify-between gap-5">
+          <p className="m-0 max-w-[560px] text-[16px] leading-[1.55] text-[#4a4a48]">
+            Toutes les pages du wiki sont lues. Rien n&apos;est publié automatiquement.
+          </p>
+          <button onClick={handleSync} disabled={syncing || !config?.configured} className={BTN_PRIMARY}>
+            <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} aria-hidden />
+            {syncing ? 'Synchronisation…' : 'Synchroniser'}
           </button>
         </div>
-      </div>
 
-      {/* Results */}
-      {result && (
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h2 className="font-semibold text-gray-900 mb-4">Résultats</h2>
-
-          <div className="grid gap-4 md:grid-cols-3 mb-4">
-            <div className="bg-blue-50 rounded-lg p-4 text-center">
-              <p className="text-2xl font-bold text-blue-700">{result.synced}</p>
-              <p className="text-sm text-blue-600">Pages synchronisées</p>
+        {result && (
+          <div className="pt-10 flex flex-col gap-8">
+            <div className="grid grid-cols-3 gap-5">
+              <Stat value={result.synced} label="pages lues" />
+              <Stat value={result.created} label="articles créés" />
+              <Stat value={result.updated} label="articles mis à jour" />
             </div>
-            <div className="bg-green-50 rounded-lg p-4 text-center">
-              <p className="text-2xl font-bold text-green-700">{result.created}</p>
-              <p className="text-sm text-green-600">Nouveaux articles</p>
-            </div>
-            <div className="bg-yellow-50 rounded-lg p-4 text-center">
-              <p className="text-2xl font-bold text-yellow-700">{result.updated}</p>
-              <p className="text-sm text-yellow-600">Articles mis à jour</p>
-            </div>
+            {result.errors.length > 0 ? (
+              <Notice tone="error" title={`erreurs (${result.errors.length})`}>
+                <ul className="m-0 pl-5 list-disc">
+                  {result.errors.map((err, i) => (
+                    <li key={i}>{err}</li>
+                  ))}
+                </ul>
+              </Notice>
+            ) : (
+              <Notice tone="success">Synchronisation terminée.</Notice>
+            )}
           </div>
+        )}
+      </section>
 
-          {result.errors.length > 0 && (
-            <div className="bg-red-50 rounded-lg p-4">
-              <h3 className="font-medium text-red-800 mb-2 flex items-center gap-2">
-                <AlertCircle className="w-4 h-4" />
-                Erreurs ({result.errors.length})
-              </h3>
-              <ul className="space-y-1">
-                {result.errors.map((err, i) => (
-                  <li key={i} className="text-sm text-red-600">
-                    {err}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {result.errors.length === 0 && result.synced > 0 && (
-            <div className="bg-green-50 rounded-lg p-4 flex items-center gap-3">
-              <Check className="w-5 h-5 text-green-600" />
-              <p className="text-green-700 font-medium">
-                Synchronisation terminée avec succès !
-              </p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* How it works */}
-      <div className="mt-8 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <h2 className="font-semibold text-gray-900 mb-4">
-          Comment ça fonctionne
-        </h2>
-        <ol className="space-y-3 text-sm text-gray-600">
-          <li className="flex gap-3">
-            <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-xs font-bold">
-              1
-            </span>
-            <span>
-              Le système se connecte à votre Wiki.js via l&apos;API GraphQL
-            </span>
-          </li>
-          <li className="flex gap-3">
-            <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-xs font-bold">
-              2
-            </span>
-            <span>
-              Chaque page README est récupérée avec son contenu Markdown
-            </span>
-          </li>
-          <li className="flex gap-3">
-            <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-xs font-bold">
-              3
-            </span>
-            <span>
-              Le Markdown est transformé en article de blog avec métadonnées SEO
-              automatiques (titre, description, temps de lecture, balises
-              structurées)
-            </span>
-          </li>
-          <li className="flex gap-3">
-            <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-xs font-bold">
-              4
-            </span>
-            <span>
-              Les nouveaux articles sont créés en brouillon - publiez-les
-              manuellement après révision
-            </span>
-          </li>
+      <section>
+        <SectionLabel n="03">Fonctionnement</SectionLabel>
+        <ol className="m-0 p-0 list-none flex flex-col border-b-2 border-[#141414]">
+          {STEPS.map((step, i) => (
+            <li key={step} className="grid grid-cols-[48px_minmax(0,1fr)] gap-4 py-4 border-t border-[#c9c5bd] first:border-t-2 first:border-[#141414]">
+              <span className="font-plex text-[13px] text-[var(--accent)] pt-0.5">{String(i + 1).padStart(2, '0')}</span>
+              <span className="text-[16px] leading-[1.55]">{step}</span>
+            </li>
+          ))}
         </ol>
-      </div>
+      </section>
     </div>
   );
 }

@@ -1,31 +1,41 @@
 'use client';
 
-import { useState } from 'react';
-import { BlogPost } from '@/lib/blog/types';
-import {
-  Save,
-  Eye,
-  EyeOff,
-  Settings,
-  FileText,
-  X,
-  Plus,
-  ChevronDown,
-  ChevronUp,
-  Sparkles,
-  Loader2,
-  Cpu,
-  Zap,
-} from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Cpu, Plus, Sparkles, X } from 'lucide-react';
+import type { BlogPost } from '@/lib/blog/types';
+import { BTN_PRIMARY, BTN_SECONDARY, HINT, INPUT, LABEL, Notice, TAG } from './ui';
+
+/** Same list as the AI prompt (lib/blog/auto-generate.ts), offered as suggestions. */
+const CATEGORIES = [
+  'Virtualisation', 'Conteneurisation', 'Réseaux', 'Cybersécurité', 'DevOps', 'Développement',
+  'Administration Système', 'Cloud', 'Base de données', 'Monitoring', 'General',
+];
 
 interface Props {
   post?: BlogPost;
+  /** Saves the post; throws an Error with a readable message when it fails. */
   onSave: (data: Partial<BlogPost>) => Promise<void>;
-  saving: boolean;
   authorName?: string;
 }
 
-export default function PostEditor({ post, onSave, saving, authorName }: Props) {
+type SaveState = { kind: 'idle' } | { kind: 'saving' } | { kind: 'saved'; at: Date } | { kind: 'error'; message: string };
+type GenState =
+  | { kind: 'idle' }
+  | { kind: 'running' }
+  | { kind: 'done'; source: 'local' | 'ai'; askedAi: boolean }
+  | { kind: 'error'; message: string };
+
+const time = (date: Date) => date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+function Counter({ value, max }: { value: string; max: number }) {
+  return (
+    <span className={value.length > max ? 'text-[var(--accent)]' : undefined}>
+      {value.length}/{max}
+    </span>
+  );
+}
+
+export default function PostEditor({ post, onSave, authorName }: Props) {
   const [title, setTitle] = useState(post?.title || '');
   const [slug, setSlug] = useState(post?.slug || '');
   const [content, setContent] = useState(post?.content || '');
@@ -40,420 +50,424 @@ export default function PostEditor({ post, onSave, saving, authorName }: Props) 
   const [seoDescription, setSeoDescription] = useState(post?.seoDescription || '');
   const [canonicalUrl, setCanonicalUrl] = useState(post?.canonicalUrl || '');
   const [showSeo, setShowSeo] = useState(false);
-  const [activeTab, setActiveTab] = useState<'write' | 'preview'>('write');
-  const [previewHtml, setPreviewHtml] = useState('');
-  const [generating, setGenerating] = useState(false);
-  const [genSource, setGenSource] = useState<'local' | 'ai' | null>(null);
+  const [tab, setTab] = useState<'write' | 'preview'>('write');
+  const [preview, setPreview] = useState<{ html: string; error: string }>({ html: '', error: '' });
+  const [save, setSave] = useState<SaveState>({ kind: 'idle' });
+  const [gen, setGen] = useState<GenState>({ kind: 'idle' });
+  const [aiAvailable, setAiAvailable] = useState<boolean | null>(null);
 
-  const handleAddTag = () => {
-    const tag = tagInput.trim().toLowerCase();
-    if (tag && !tags.includes(tag)) {
-      setTags([...tags, tag]);
+  // Unsaved changes: the fields as last saved (or as loaded) against the current ones
+  const snapshot = JSON.stringify([title, slug, content, description, category, tags, coverImage, published, locale, seoTitle, seoDescription, canonicalUrl]);
+  const [savedSnapshot, setSavedSnapshot] = useState(snapshot);
+  const dirty = snapshot !== savedSnapshot;
+  const canSave = Boolean(title.trim() && content.trim()) && save.kind !== 'saving';
+
+  useEffect(() => {
+    fetch('/api/admin/generate/')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setAiAvailable(data?.ai === true))
+      .catch(() => setAiAvailable(false));
+  }, []);
+
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [dirty]);
+
+  const handleSave = async () => {
+    if (!canSave) return;
+    const sent = snapshot;
+    setSave({ kind: 'saving' });
+    try {
+      await onSave({
+        title,
+        slug: slug || undefined,
+        content,
+        description,
+        category,
+        tags,
+        coverImage: coverImage || undefined,
+        published,
+        locale,
+        seoTitle: seoTitle || undefined,
+        seoDescription: seoDescription || undefined,
+        canonicalUrl: canonicalUrl || undefined,
+        ...(authorName && !post ? { author: authorName } : {}),
+      });
+      setSavedSnapshot(sent);
+      setSave({ kind: 'saved', at: new Date() });
+    } catch (err) {
+      setSave({ kind: 'error', message: err instanceof Error ? err.message : 'erreur inconnue' });
     }
+  };
+
+  // Ctrl+S / Cmd+S saves, with the latest fields
+  const saveRef = useRef(handleSave);
+  useEffect(() => {
+    saveRef.current = handleSave;
+  });
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        saveRef.current();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  const addTags = () => {
+    const added = tagInput
+      .split(',')
+      .map((t) => t.trim().toLowerCase())
+      .filter((t) => t && !tags.includes(t));
+    if (added.length) setTags([...tags, ...new Set(added)]);
     setTagInput('');
   };
 
-  const handleRemoveTag = (tag: string) => {
-    setTags(tags.filter((t) => t !== tag));
-  };
-
-  const handlePreview = async () => {
-    setActiveTab('preview');
+  const showPreview = async () => {
+    setTab('preview');
+    setPreview({ html: '', error: '' });
     try {
       const res = await fetch('/api/admin/preview/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content }),
       });
-      if (res.ok) {
-        const data = await res.json();
-        setPreviewHtml(data.html);
-      } else {
-        setPreviewHtml('<p class="text-red-500">Erreur lors du rendu</p>');
-      }
+      if (!res.ok) throw new Error('rendu impossible');
+      const data = await res.json();
+      setPreview({ html: data.html, error: '' });
     } catch {
-      setPreviewHtml('<p class="text-red-500">Erreur de connexion</p>');
+      setPreview({ html: '', error: "L'aperçu n'a pas pu être généré." });
     }
   };
 
-  const handleSubmit = () => {
-    onSave({
-      title,
-      slug: slug || undefined,
-      content,
-      description,
-      category,
-      tags,
-      coverImage: coverImage || undefined,
-      published,
-      locale,
-      seoTitle: seoTitle || undefined,
-      seoDescription: seoDescription || undefined,
-      canonicalUrl: canonicalUrl || undefined,
-      ...(authorName && !post ? { author: authorName } : {}),
-    });
-  };
-
-  const handleGenerate = async (useAI: boolean) => {
+  const generate = async (useAI: boolean) => {
     if (!title || !content) return;
-    setGenerating(true);
-    setGenSource(null);
-
+    setGen({ kind: 'running' });
     try {
       const res = await fetch('/api/admin/generate/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content, title, locale, useAI }),
       });
-
-      if (res.ok) {
-        const data = await res.json();
-        setDescription(data.description || description);
-        setTags(data.tags?.length ? data.tags : tags);
-        setCategory(data.category || category);
-        setSeoTitle(data.seoTitle || seoTitle);
-        setSeoDescription(data.seoDescription || seoDescription);
-        setShowSeo(true);
-        setGenSource(data.source);
-      } else {
-        alert('Erreur lors de la génération');
-      }
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setDescription(data.description || description);
+      setTags(data.tags?.length ? data.tags : tags);
+      setCategory(data.category || category);
+      setSeoTitle(data.seoTitle || seoTitle);
+      setSeoDescription(data.seoDescription || seoDescription);
+      setShowSeo(true);
+      setGen({ kind: 'done', source: data.source === 'ai' ? 'ai' : 'local', askedAi: useAI });
     } catch {
-      alert('Erreur de connexion');
-    } finally {
-      setGenerating(false);
+      setGen({ kind: 'error', message: 'La génération a échoué.' });
     }
   };
 
+  const words = content.trim() ? content.trim().split(/\s+/).length : 0;
+  const saveText =
+    save.kind === 'saving'
+      ? 'enregistrement…'
+      : save.kind === 'error'
+        ? `échec : ${save.message}`
+        : dirty
+          ? 'modifications non enregistrées'
+          : save.kind === 'saved'
+            ? `enregistré à ${time(save.at)}`
+            : post
+              ? 'à jour'
+              : '';
+
   return (
-    <div className="space-y-6">
-      {/* Top actions bar */}
-      <div className="flex items-center justify-between bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-        <div className="flex items-center gap-3">
+    <div>
+      {/* Action bar */}
+      <div className="sticky top-0 z-10 bg-[#f3f1ec] border-y-2 border-[#141414] py-3 mb-8 flex flex-wrap items-center justify-between gap-x-5 gap-y-3">
+        <div className="flex flex-wrap items-center gap-5">
           <button
+            role="switch"
+            aria-checked={published}
             onClick={() => setPublished(!published)}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
-              published
-                ? 'bg-green-50 text-green-700 hover:bg-green-100'
-                : 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100'
-            }`}
+            className="inline-flex items-center gap-2.5 cursor-pointer text-[15px] font-semibold"
           >
-            {published ? (
-              <>
-                <Eye className="w-4 h-4" /> Publié
-              </>
-            ) : (
-              <>
-                <EyeOff className="w-4 h-4" /> Brouillon
-              </>
-            )}
-          </button>
-          <select
-            value={locale}
-            onChange={(e) => setLocale(e.target.value as 'fr' | 'en')}
-            className="px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 bg-white"
-          >
-            <option value="fr">🇫🇷 Français</option>
-            <option value="en">🇬🇧 English</option>
-          </select>
-        </div>
-        <div className="flex items-center gap-2">
-          {/* Auto-generate dropdown */}
-          <div className="relative group">
-            <button
-              disabled={generating || !title || !content}
-              onClick={() => handleGenerate(false)}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-violet-700 hover:to-purple-700 disabled:opacity-50 transition font-medium text-sm"
+            <span
+              aria-hidden="true"
+              className={`relative w-10 h-[22px] rounded-full transition-colors ${published ? 'bg-[oklch(0.62_0.15_150)]' : 'bg-[#c9c5bd]'}`}
             >
-              {generating ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Analyse...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-4 h-4" />
-                  Auto-générer
-                </>
-              )}
-            </button>
-            {/* Dropdown for AI option */}
-            {!generating && title && content && (
-              <div className="absolute right-0 top-full mt-1 w-56 bg-white rounded-xl shadow-lg border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20">
-                <div className="p-2">
-                  <button
-                    onClick={() => handleGenerate(false)}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-sm hover:bg-gray-50 transition"
-                  >
-                    <Cpu className="w-4 h-4 text-purple-600 shrink-0" />
-                    <div>
-                      <p className="font-medium text-gray-900">Analyse locale</p>
-                      <p className="text-xs text-gray-400">Détection auto, sans API</p>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => handleGenerate(true)}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-sm hover:bg-gray-50 transition"
-                  >
-                    <Zap className="w-4 h-4 text-amber-500 shrink-0" />
-                    <div>
-                      <p className="font-medium text-gray-900">IA (OpenAI)</p>
-                      <p className="text-xs text-gray-400">Meilleurs résultats</p>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            )}
+              <span
+                className={`absolute top-[3px] left-[3px] size-4 rounded-full bg-white transition-transform ${published ? 'translate-x-[18px]' : ''}`}
+              />
+            </span>
+            Publié
+          </button>
+          <div role="group" aria-label="Langue de l'article" className="inline-flex border border-[#141414] font-mono text-[12px]">
+            {(['fr', 'en'] as const).map((l) => (
+              <button
+                key={l}
+                onClick={() => setLocale(l)}
+                aria-pressed={locale === l}
+                className={`px-2.5 py-1 cursor-pointer transition-colors ${locale === l ? 'bg-[#141414] text-[#f3f1ec]' : 'hover:bg-[#e6e3dc]'}`}
+              >
+                {l.toUpperCase()}
+              </button>
+            ))}
           </div>
-          <button
-            onClick={handleSubmit}
-            disabled={saving || !title || !content}
-            className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition font-medium"
+        </div>
+        <div className="flex items-center gap-4">
+          <span
+            role="status"
+            className={`font-mono text-[12px] ${save.kind === 'error' ? 'text-[var(--accent)]' : 'text-[#68655f]'}`}
           >
-            <Save className="w-4 h-4" />
-            {saving ? 'Sauvegarde...' : 'Sauvegarder'}
+            {saveText}
+          </span>
+          <button onClick={handleSave} disabled={!canSave} className={BTN_PRIMARY} title="Ctrl+S">
+            {save.kind === 'saving' ? 'Enregistrement…' : 'Enregistrer'}
           </button>
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Main editor area */}
-        <div className="lg:col-span-2 space-y-4">
-          {/* Title */}
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Titre de l'article..."
-            className="w-full text-3xl font-bold text-gray-900 bg-transparent border-none outline-none placeholder:text-gray-300"
-          />
+      <div className="grid gap-x-10 gap-y-12 lg:grid-cols-[minmax(0,1fr)_340px]">
+        {/* Title + Markdown */}
+        <div className="flex flex-col gap-6 min-w-0">
+          <div>
+            <label htmlFor="post-title" className="sr-only">
+              Titre
+            </label>
+            <input
+              id="post-title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Titre de l'article"
+              className="w-full bg-transparent border-0 border-b-2 border-transparent focus:border-[#141414] outline-none pb-2 font-extrabold tracking-[-0.035em] leading-[1.05] placeholder:text-[#c9c5bd] transition-colors"
+              style={{ fontSize: 'clamp(30px, 4vw, 44px)' }}
+            />
+            <p className={HINT}>albanmary.com/blog/{slug || 'généré-depuis-le-titre'}/</p>
+          </div>
 
-          {/* Content tabs */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="flex border-b border-gray-100">
-              <button
-                onClick={() => setActiveTab('write')}
-                className={`flex items-center gap-2 px-6 py-3 text-sm font-medium transition border-b-2 ${
-                  activeTab === 'write'
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                <FileText className="w-4 h-4" />
-                Écrire
-              </button>
-              <button
-                onClick={handlePreview}
-                className={`flex items-center gap-2 px-6 py-3 text-sm font-medium transition border-b-2 ${
-                  activeTab === 'preview'
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                <Eye className="w-4 h-4" />
-                Aperçu
-              </button>
+          <div className="border border-[#141414] bg-white/70">
+            <div role="tablist" aria-label="Contenu" className="flex border-b border-[#141414] font-mono text-[13px]">
+              {(
+                [
+                  ['write', 'écrire', () => setTab('write')],
+                  ['preview', 'aperçu', showPreview],
+                ] as const
+              ).map(([key, label, onClick]) => (
+                <button
+                  key={key}
+                  role="tab"
+                  aria-selected={tab === key}
+                  onClick={onClick}
+                  className={`px-5 py-2.5 border-r border-[#141414] cursor-pointer transition-colors ${
+                    tab === key ? 'bg-[#141414] text-[#f3f1ec]' : 'hover:bg-[#e6e3dc]'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+              <span className="ml-auto self-center px-4 text-[#68655f] hidden sm:block">markdown · {words} mots</span>
             </div>
-
-            {activeTab === 'write' ? (
+            {tab === 'write' ? (
               <textarea
+                aria-label="Contenu en Markdown"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                placeholder="Écrivez votre article en Markdown..."
-                className="w-full min-h-[500px] p-6 text-gray-900 font-mono text-sm leading-relaxed resize-y outline-none"
+                placeholder="Écrivez l'article en Markdown…"
+                className="block w-full min-h-[560px] p-5 bg-transparent font-mono text-[14px] leading-[1.7] text-[#141414] outline-none resize-y placeholder:text-[#68655f]"
               />
             ) : (
-              <div
-                className="p-6 blog-content min-h-[500px]"
-                dangerouslySetInnerHTML={{ __html: previewHtml }}
-              />
-            )}
-          </div>
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-4">
-          {/* Slug */}
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Slug (URL)
-            </label>
-            <input
-              type="text"
-              value={slug}
-              onChange={(e) => setSlug(e.target.value)}
-              placeholder="auto-generated-from-title"
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <p className="text-xs text-gray-400 mt-1">/blog/{slug || 'auto-generated'}</p>
-          </div>
-
-          {/* Description */}
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Résumé court de l'article..."
-              rows={3}
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-            />
-            <p className="text-xs text-gray-400 mt-1">
-              {description.length}/160 caractères · utilisée partout (liste, article, partage). Vide : premier paragraphe de l&apos;article.
-            </p>
-          </div>
-
-          {/* Category */}
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Catégorie
-            </label>
-            <input
-              type="text"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              placeholder="Ex: DevOps, Cybersécurité..."
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* Tags */}
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
-            <div className="flex gap-2 mb-2">
-              <input
-                type="text"
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
-                placeholder="Ajouter un tag..."
-                className="flex-1 px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <button
-                onClick={handleAddTag}
-                className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
-              >
-                <Plus className="w-4 h-4 text-gray-600" />
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="inline-flex items-center gap-1 bg-cyan-50 text-cyan-700 px-2.5 py-1 rounded-full text-xs font-medium"
-                >
-                  #{tag}
-                  <button onClick={() => handleRemoveTag(tag)}>
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Cover Image */}
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Image de couverture
-            </label>
-            <input
-              type="url"
-              value={coverImage}
-              onChange={(e) => setCoverImage(e.target.value)}
-              placeholder="https://..."
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {/^https?:\/\//.test(coverImage) && (
-              <img
-                src={coverImage}
-                alt="Cover preview"
-                className="mt-2 rounded-lg w-full h-32 object-cover"
-              />
-            )}
-          </div>
-
-          {/* SEO Settings */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <button
-              onClick={() => setShowSeo(!showSeo)}
-              className="w-full flex items-center justify-between p-4 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
-            >
-              <span className="flex items-center gap-2">
-                <Settings className="w-4 h-4" />
-                SEO avancé
-              </span>
-              {showSeo ? (
-                <ChevronUp className="w-4 h-4" />
-              ) : (
-                <ChevronDown className="w-4 h-4" />
-              )}
-            </button>
-            {showSeo && (
-              <div className="p-4 pt-0 space-y-3">
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">
-                    Titre SEO (override)
-                  </label>
-                  <input
-                    type="text"
-                    value={seoTitle}
-                    onChange={(e) => setSeoTitle(e.target.value)}
-                    placeholder="Titre personnalisé pour les moteurs de recherche"
-                    className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <p className="text-xs text-gray-400 mt-1">
-                    {seoTitle.length}/60 caractères
-                  </p>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">
-                    Meta description (si la description est vide)
-                  </label>
-                  <textarea
-                    value={seoDescription}
-                    onChange={(e) => setSeoDescription(e.target.value)}
-                    placeholder="Description pour les moteurs de recherche"
-                    rows={2}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  />
-                  <p className="text-xs text-gray-400 mt-1">
-                    {seoDescription.length}/160 caractères
-                  </p>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">
-                    URL canonique
-                  </label>
-                  <input
-                    type="url"
-                    value={canonicalUrl}
-                    onChange={(e) => setCanonicalUrl(e.target.value)}
-                    placeholder="https://..."
-                    className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                {/* SEO Preview */}
-                <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                  <p className="text-xs text-gray-400 mb-2 font-medium">
-                    Aperçu Google
-                  </p>
-                  <p className="text-blue-800 text-base font-medium line-clamp-1">
-                    {seoTitle || title || 'Titre de l\'article'} | Alban Mary
-                  </p>
-                  <p className="text-green-700 text-xs">
-                    albanmary.com/blog/{slug || 'slug-de-larticle'}
-                  </p>
-                  <p className="text-gray-600 text-sm line-clamp-2 mt-0.5">
-                    {description || seoDescription || 'Description de l\'article...'}
-                  </p>
-                </div>
+              <div className="bg-[#f3f1ec] px-6 py-8 min-h-[560px]">
+                {preview.error ? (
+                  <Notice tone="error">{preview.error}</Notice>
+                ) : preview.html ? (
+                  <div className="blog-content max-w-[720px]" dangerouslySetInnerHTML={{ __html: preview.html }} />
+                ) : (
+                  <p className="m-0 font-mono text-[13px] text-[#68655f]">rendu en cours…</p>
+                )}
               </div>
             )}
           </div>
         </div>
+
+        {/* Metadata */}
+        <aside className="flex flex-col gap-7">
+          <section className="border-t-2 border-[#141414] pt-4 flex flex-col gap-3">
+            <h2 className="m-0 font-plex text-[13px] font-normal">Remplissage automatique</h2>
+            <p className="m-0 text-[14px] leading-[1.5] text-[#4a4a48]">
+              Description, tags, catégorie et SEO déduits du titre et du contenu.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => generate(false)}
+                disabled={gen.kind === 'running' || !title || !content}
+                className={BTN_SECONDARY}
+              >
+                <Cpu className="w-4 h-4" aria-hidden /> Analyse locale
+              </button>
+              <button
+                onClick={() => generate(true)}
+                disabled={gen.kind === 'running' || !title || !content || aiAvailable !== true}
+                className={BTN_SECONDARY}
+                title={aiAvailable === false ? 'OPENAI_API_KEY absent du serveur' : 'Via OpenAI'}
+              >
+                <Sparkles className="w-4 h-4" aria-hidden /> IA
+              </button>
+            </div>
+            <p role="status" className="m-0 font-mono text-[12px] text-[#68655f]">
+              {gen.kind === 'running' && 'analyse en cours…'}
+              {gen.kind === 'done' &&
+                (gen.askedAi && gen.source === 'local'
+                  ? "IA indisponible : champs remplis par l'analyse locale"
+                  : `champs remplis par ${gen.source === 'ai' ? "l'IA" : "l'analyse locale"}, à relire`)}
+              {gen.kind === 'error' && <span className="text-[var(--accent)]">{gen.message}</span>}
+              {gen.kind === 'idle' && aiAvailable === false && 'IA désactivée : OPENAI_API_KEY absent du serveur'}
+            </p>
+          </section>
+
+          <section className="border-t-2 border-[#141414] pt-4 flex flex-col gap-5">
+            <div>
+              <label htmlFor="post-slug" className={LABEL}>
+                Slug (URL)
+              </label>
+              <input id="post-slug" value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="généré depuis le titre" className={INPUT} />
+            </div>
+
+            <div>
+              <label htmlFor="post-description" className={LABEL}>
+                Description
+              </label>
+              <textarea
+                id="post-description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Résumé court de l'article"
+                rows={4}
+                className={`${INPUT} resize-y`}
+              />
+              <p className={HINT}>
+                <Counter value={description} max={160} /> · utilisée partout (liste, article, partage). Vide : premier paragraphe de l&apos;article.
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="post-category" className={LABEL}>
+                Catégorie
+              </label>
+              <input id="post-category" list="post-categories" value={category} onChange={(e) => setCategory(e.target.value)} className={INPUT} />
+              <datalist id="post-categories">
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c} />
+                ))}
+              </datalist>
+            </div>
+
+            <div>
+              <label htmlFor="post-tags" className={LABEL}>
+                Tags
+              </label>
+              <div className="flex gap-2">
+                <input
+                  id="post-tags"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addTags();
+                    }
+                  }}
+                  placeholder="proxmox, ceph…"
+                  className={INPUT}
+                />
+                <button onClick={addTags} aria-label="Ajouter le tag" className="shrink-0 w-11 border border-[#141414] inline-flex items-center justify-center cursor-pointer hover:bg-[#141414] hover:text-[#f3f1ec] transition-colors">
+                  <Plus className="w-4 h-4" aria-hidden />
+                </button>
+              </div>
+              {tags.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mt-2.5">
+                  {tags.map((tag) => (
+                    <span key={tag} className={TAG}>
+                      #{tag}
+                      <button
+                        onClick={() => setTags(tags.filter((t) => t !== tag))}
+                        aria-label={`Retirer le tag ${tag}`}
+                        className="cursor-pointer text-[#68655f] hover:text-[var(--accent)]"
+                      >
+                        <X className="w-3 h-3" aria-hidden />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="post-cover" className={LABEL}>
+                Image de couverture
+              </label>
+              <input id="post-cover" type="url" value={coverImage} onChange={(e) => setCoverImage(e.target.value)} placeholder="https://…" className={INPUT} />
+              {/^https?:\/\//.test(coverImage) && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={coverImage} alt="Aperçu de la couverture" className="mt-2.5 w-full h-36 object-cover border border-[#c9c5bd]" />
+              )}
+            </div>
+          </section>
+
+          <details open={showSeo} onToggle={(e) => setShowSeo(e.currentTarget.open)} className="border-t-2 border-[#141414] pt-4 group">
+            <summary className="cursor-pointer font-plex text-[13px] list-none flex justify-between items-center">
+              SEO avancé
+              <span aria-hidden="true" className="font-mono text-[#68655f] group-open:rotate-45 transition-transform">
+                +
+              </span>
+            </summary>
+            <div className="flex flex-col gap-5 pt-5">
+              <div>
+                <label htmlFor="post-seo-title" className={LABEL}>
+                  Titre SEO (remplace le titre dans Google)
+                </label>
+                <input id="post-seo-title" value={seoTitle} onChange={(e) => setSeoTitle(e.target.value)} className={INPUT} />
+                <p className={HINT}>
+                  <Counter value={seoTitle} max={60} />
+                </p>
+              </div>
+              <div>
+                <label htmlFor="post-seo-description" className={LABEL}>
+                  Meta description (si la description est vide)
+                </label>
+                <textarea
+                  id="post-seo-description"
+                  value={seoDescription}
+                  onChange={(e) => setSeoDescription(e.target.value)}
+                  rows={3}
+                  className={`${INPUT} resize-y`}
+                />
+                <p className={HINT}>
+                  <Counter value={seoDescription} max={160} />
+                </p>
+              </div>
+              <div>
+                <label htmlFor="post-canonical" className={LABEL}>
+                  URL canonique
+                </label>
+                <input id="post-canonical" type="url" value={canonicalUrl} onChange={(e) => setCanonicalUrl(e.target.value)} placeholder="https://…" className={INPUT} />
+              </div>
+
+              <div className="bg-white border border-[#c9c5bd] p-4 flex flex-col gap-0.5">
+                <span className="font-plex text-[12px] text-[#68655f] pb-2">Aperçu Google</span>
+                <span className="text-[13px] text-[#4d5156] truncate">albanmary.com › blog › {slug || 'slug'}</span>
+                <span className="text-[18px] leading-[1.3] text-[#1a0dab] line-clamp-1">{seoTitle || title || "Titre de l'article"} | Alban Mary</span>
+                <span className="text-[13px] leading-[1.5] text-[#4d5156] line-clamp-2">
+                  {description || seoDescription || "Description de l'article…"}
+                </span>
+              </div>
+            </div>
+          </details>
+        </aside>
       </div>
     </div>
   );

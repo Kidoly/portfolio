@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import AdminLayoutClient from './AdminLayoutClient';
 
 export const metadata: Metadata = {
-  title: 'Admin - Blog',
+  title: 'Backoffice',
   robots: 'noindex, nofollow',
 };
 

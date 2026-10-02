@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
-import { Check, X, Clock3, Trash2, ExternalLink } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ArrowUpRight, Check, Trash2, X } from 'lucide-react';
+import { BTN_DANGER, BTN_PRIMARY, BTN_SECONDARY, Loading, Notice, PageHeader, formatDate, pill, readError } from '@/components/admin/ui';
+import { useAdmin } from '../AdminLayoutClient';
 
 type CommentStatus = 'pending' | 'approved' | 'rejected';
 
@@ -16,168 +17,134 @@ interface AdminComment {
   createdAt: string;
 }
 
+const FILTERS: [CommentStatus | 'all', string][] = [
+  ['pending', 'En attente'],
+  ['approved', 'Approuvés'],
+  ['rejected', 'Rejetés'],
+  ['all', 'Tous'],
+];
+
+const STATUS: Record<CommentStatus, { label: string; dot: string }> = {
+  pending: { label: 'en attente', dot: 'border border-[#68655f]' },
+  approved: { label: 'approuvé', dot: 'bg-[oklch(0.62_0.15_150)]' },
+  rejected: { label: 'rejeté', dot: 'bg-[var(--accent)]' },
+};
+
 export default function AdminCommentsPage() {
+  const { refreshPending } = useAdmin();
   const [comments, setComments] = useState<AdminComment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [filter, setFilter] = useState<CommentStatus | 'all'>('pending');
 
-  const loadComments = async () => {
-    try {
-      const res = await fetch('/api/admin/comments/');
-      if (res.ok) {
-        const data = await res.json();
-        setComments(data);
-      }
-    } catch {
-      setComments([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadComments();
+    fetch('/api/admin/comments/')
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
+      .then(setComments)
+      .catch(() => setError('Impossible de charger les commentaires.'))
+      .finally(() => setLoading(false));
   }, []);
 
-  const updateStatus = async (id: string, status: CommentStatus) => {
-    const res = await fetch(`/api/admin/comments/${id}/`, {
+  const updateStatus = async (comment: AdminComment, status: CommentStatus) => {
+    setError('');
+    const res = await fetch(`/api/admin/comments/${comment.id}/`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status }),
-    });
-
-    if (res.ok) {
-      const updated = await res.json();
-      setComments((prev) => prev.map((c) => (c.id === id ? updated : c)));
-    }
+    }).catch(() => null);
+    if (!res?.ok) return setError(res ? await readError(res) : 'Erreur réseau.');
+    const updated: AdminComment = await res.json();
+    setComments((prev) => prev.map((c) => (c.id === comment.id ? updated : c)));
+    refreshPending();
   };
 
-  const removeComment = async (id: string) => {
-    if (!confirm('Supprimer ce commentaire ?')) return;
-
-    const res = await fetch(`/api/admin/comments/${id}/`, { method: 'DELETE' });
-    if (res.ok) {
-      setComments((prev) => prev.filter((c) => c.id !== id));
-    }
+  const remove = async (comment: AdminComment) => {
+    if (!confirm(`Supprimer le commentaire de ${comment.authorName} ?`)) return;
+    setError('');
+    const res = await fetch(`/api/admin/comments/${comment.id}/`, { method: 'DELETE' }).catch(() => null);
+    if (!res?.ok) return setError(res ? await readError(res) : 'Erreur réseau.');
+    setComments((prev) => prev.filter((c) => c.id !== comment.id));
+    refreshPending();
   };
 
-  const filtered = useMemo(() => {
-    if (filter === 'all') return comments;
-    return comments.filter((c) => c.status === filter);
-  }, [comments, filter]);
-
-  const countPending = comments.filter((c) => c.status === 'pending').length;
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
+  const count = (status: CommentStatus | 'all') =>
+    status === 'all' ? comments.length : comments.filter((c) => c.status === status).length;
+  const filtered = comments
+    .filter((c) => filter === 'all' || c.status === filter)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Modération des commentaires</h1>
-        <span className="text-sm bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
-          {countPending} en attente
-        </span>
-      </div>
+      <PageHeader prompt="$ tail -f comments.log" title="Commentaires" />
 
-      <div className="flex gap-2 mb-4">
-        {(['all', 'pending', 'approved', 'rejected'] as const).map((status) => (
-          <button
-            key={status}
-            onClick={() => setFilter(status)}
-            className={`px-3 py-1.5 rounded-lg text-sm ${
-              filter === status
-                ? 'bg-blue-600 text-white'
-                : 'bg-white border border-gray-200 text-gray-700'
-            }`}
-          >
-            {status === 'all'
-              ? 'Tous'
-              : status === 'pending'
-                ? 'En attente'
-                : status === 'approved'
-                  ? 'Approuvés'
-                  : 'Rejetés'}
+      <div className="flex flex-wrap gap-2 pb-6" role="group" aria-label="Filtrer par statut">
+        {FILTERS.map(([key, label]) => (
+          <button key={key} onClick={() => setFilter(key)} aria-pressed={filter === key} className={pill(filter === key)}>
+            {label} <span className="opacity-60">{count(key)}</span>
           </button>
         ))}
       </div>
 
-      <div className="space-y-3">
-        {filtered.length === 0 ? (
-          <div className="bg-white border border-gray-200 rounded-xl p-6 text-gray-500">
-            Aucun commentaire.
-          </div>
-        ) : (
-          filtered.map((comment) => (
-            <div key={comment.id} className="bg-white border border-gray-200 rounded-xl p-4">
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                <div>
-                  <p className="font-medium text-gray-900">{comment.authorName}</p>
-                  <p className="text-xs text-gray-500">
-                    {new Date(comment.createdAt).toLocaleString('fr-FR')}
-                  </p>
-                </div>
+      {error && (
+        <div className="pb-6">
+          <Notice tone="error">{error}</Notice>
+        </div>
+      )}
 
-                <div className="flex items-center gap-2">
-                  {comment.status === 'pending' && (
-                    <span className="inline-flex items-center gap-1 text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
-                      <Clock3 className="w-3 h-3" /> En attente
-                    </span>
-                  )}
-                  {comment.status === 'approved' && (
-                    <span className="inline-flex items-center gap-1 text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                      <Check className="w-3 h-3" /> Approuvé
-                    </span>
-                  )}
-                  {comment.status === 'rejected' && (
-                    <span className="inline-flex items-center gap-1 text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">
-                      <X className="w-3 h-3" /> Rejeté
-                    </span>
-                  )}
-                </div>
+      {loading ? (
+        <Loading />
+      ) : filtered.length === 0 ? (
+        <p className="m-0 border-y-2 border-[#141414] py-10 text-[20px] font-bold">
+          {filter === 'pending' ? 'Aucun commentaire en attente.' : 'Aucun commentaire.'}
+        </p>
+      ) : (
+        <div className="flex flex-col border-b-2 border-[#141414]">
+          {filtered.map((comment) => (
+            <article key={comment.id} className="border-t-2 border-[#141414] py-6 grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
+              <div className="flex flex-col gap-1 min-w-0">
+                <span className="text-[18px] font-bold leading-[1.25] break-words">{comment.authorName}</span>
+                {comment.authorEmail && (
+                  <a href={`mailto:${comment.authorEmail}`} className="font-mono text-[12px] text-[#4a4a48] break-all hover:text-[var(--accent)] hover:no-underline">
+                    {comment.authorEmail}
+                  </a>
+                )}
+                <span className="font-plex text-[12px] text-[#68655f]">{formatDate(comment.createdAt, true)}</span>
+                <span className="inline-flex items-center gap-1.5 font-mono text-[12px] pt-1.5">
+                  <span aria-hidden="true" className={`size-2 rounded-full ${STATUS[comment.status].dot}`} />
+                  {STATUS[comment.status].label}
+                </span>
               </div>
 
-              <p className="text-sm text-gray-700 whitespace-pre-wrap mb-3">{comment.content}</p>
-
-              <div className="flex flex-wrap items-center gap-2">
-                <Link
-                  href={`/blog/${comment.postSlug}`}
+              <div className="flex flex-col gap-4 min-w-0">
+                <a
+                  href={`/blog/${comment.postSlug}/`}
                   target="_blank"
-                  className="inline-flex items-center gap-1 text-sm text-blue-700 hover:text-blue-800"
+                  rel="noopener noreferrer"
+                  className="self-start inline-flex items-center gap-1 font-mono text-[12px] text-[#4a4a48] hover:text-[var(--accent)] hover:no-underline"
                 >
-                  <ExternalLink className="w-4 h-4" /> Voir l'article
-                </Link>
-
-                <div className="ml-auto flex items-center gap-2">
-                  <button
-                    onClick={() => updateStatus(comment.id, 'approved')}
-                    className="px-3 py-1.5 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700"
-                  >
-                    Approuver
-                  </button>
-                  <button
-                    onClick={() => updateStatus(comment.id, 'rejected')}
-                    className="px-3 py-1.5 text-sm bg-amber-600 text-white rounded-lg hover:bg-amber-700"
-                  >
-                    Rejeter
-                  </button>
-                  <button
-                    onClick={() => removeComment(comment.id)}
-                    className="px-3 py-1.5 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 inline-flex items-center gap-1"
-                  >
-                    <Trash2 className="w-4 h-4" /> Supprimer
+                  /blog/{comment.postSlug}/ <ArrowUpRight className="w-3.5 h-3.5" aria-hidden />
+                </a>
+                <p className="m-0 text-[16px] leading-[1.6] whitespace-pre-wrap break-words">{comment.content}</p>
+                <div className="flex flex-wrap gap-2">
+                  {comment.status !== 'approved' && (
+                    <button onClick={() => updateStatus(comment, 'approved')} className={BTN_PRIMARY}>
+                      <Check className="w-4 h-4" aria-hidden /> Approuver
+                    </button>
+                  )}
+                  {comment.status !== 'rejected' && (
+                    <button onClick={() => updateStatus(comment, 'rejected')} className={BTN_SECONDARY}>
+                      <X className="w-4 h-4" aria-hidden /> Rejeter
+                    </button>
+                  )}
+                  <button onClick={() => remove(comment)} className={BTN_DANGER}>
+                    <Trash2 className="w-4 h-4" aria-hidden /> Supprimer
                   </button>
                 </div>
               </div>
-            </div>
-          ))
-        )}
-      </div>
+            </article>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

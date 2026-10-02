@@ -1,239 +1,191 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import {
-  Plus,
-  Edit,
-  Trash2,
-  Eye,
-  EyeOff,
-  Calendar,
-  Search,
-  ExternalLink,
-} from 'lucide-react';
-import { BlogPost } from '@/lib/blog/types';
+import { ExternalLink, Pencil, Plus, Trash2 } from 'lucide-react';
+import type { BlogPost } from '@/lib/blog/types';
+import { BTN_PRIMARY, ICON_BTN, Loading, Notice, PageHeader, Status, TAG, formatDate, pill } from '@/components/admin/ui';
+
+type Filter = 'all' | 'published' | 'draft';
+
+const FILTERS: [Filter, string][] = [
+  ['all', 'Tous'],
+  ['published', 'Publiés'],
+  ['draft', 'Brouillons'],
+];
 
 export default function PostsListPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all');
-  const router = useRouter();
-
-  const fetchPosts = async () => {
-    try {
-      const res = await fetch('/api/admin/posts/');
-      if (res.ok) {
-        const data = await res.json();
-        setPosts(data);
-      }
-    } catch {
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [filter, setFilter] = useState<Filter>('all');
 
   useEffect(() => {
-    fetchPosts();
+    fetch('/api/admin/posts/')
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
+      .then(setPosts)
+      .catch(() => setError('Impossible de charger les articles.'))
+      .finally(() => setLoading(false));
   }, []);
 
-  const handleDelete = async (id: string, title: string) => {
-    if (!confirm(`Supprimer l'article "${title}" ?`)) return;
-
-    try {
-      const res = await fetch(`/api/admin/posts/${id}/`, { method: 'DELETE' });
-      if (res.ok) {
-        setPosts(posts.filter((p) => p.id !== id));
-      }
-    } catch {}
+  const handleDelete = async (post: BlogPost) => {
+    if (!confirm(`Supprimer l'article « ${post.title} » ?`)) return;
+    setError('');
+    const res = await fetch(`/api/admin/posts/${post.id}/`, { method: 'DELETE' }).catch(() => null);
+    if (res?.ok) setPosts((prev) => prev.filter((p) => p.id !== post.id));
+    else setError(`La suppression de « ${post.title} » a échoué.`);
   };
 
   const handleTogglePublish = async (post: BlogPost) => {
-    try {
-      const res = await fetch(`/api/admin/posts/${post.id}/`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ published: !post.published }),
-      });
-      if (res.ok) {
-        const updated = await res.json();
-        setPosts(posts.map((p) => (p.id === updated.id ? updated : p)));
-      }
-    } catch {}
+    setError('');
+    const res = await fetch(`/api/admin/posts/${post.id}/`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ published: !post.published }),
+    }).catch(() => null);
+    if (res?.ok) {
+      const updated: BlogPost = await res.json();
+      setPosts((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
+    } else {
+      setError(`Le changement de statut de « ${post.title} » a échoué.`);
+    }
   };
 
-  const filtered = posts.filter((post) => {
-    const matchSearch =
-      !search ||
-      post.title.toLowerCase().includes(search.toLowerCase()) ||
-      post.tags.some((t) => t.toLowerCase().includes(search.toLowerCase()));
-    const matchFilter =
-      filter === 'all' ||
-      (filter === 'published' && post.published) ||
-      (filter === 'draft' && !post.published);
-    return matchSearch && matchFilter;
-  });
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
+  const query = search.trim().toLowerCase();
+  const counts: Record<Filter, number> = {
+    all: posts.length,
+    published: posts.filter((p) => p.published).length,
+    draft: posts.filter((p) => !p.published).length,
+  };
+  const filtered = posts
+    .filter((post) => filter === 'all' || (filter === 'published') === post.published)
+    .filter((post) => !query || [post.title, post.description, post.category, ...post.tags].join(' ').toLowerCase().includes(query))
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Articles</h1>
-        <Link
-          href="/admin/posts/new"
-          className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-        >
-          <Plus className="w-4 h-4" />
-          Nouvel article
+      <PageHeader prompt="$ ls ~/blog/posts" title="Articles">
+        <Link href="/admin/posts/new/" className={BTN_PRIMARY}>
+          <Plus className="w-4 h-4" aria-hidden /> Nouvel article
         </Link>
-      </div>
+      </PageHeader>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-6">
+        <label className="flex-1 max-w-[520px] flex items-center gap-3 border border-[#141414] bg-white/70 px-4 font-mono text-[13px]">
+          <span className="text-[#68655f]">$ grep</span>
           <input
-            type="text"
-            placeholder="Rechercher..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 outline-none"
+            placeholder="titre, tag, catégorie…"
+            aria-label="Rechercher un article"
+            className="flex-1 min-w-0 bg-transparent outline-none py-3 text-[14px] placeholder:text-[#68655f]"
           />
-        </div>
-        <div className="flex gap-2">
-          {(['all', 'published', 'draft'] as const).map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                filter === f
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
-              }`}
-            >
-              {f === 'all' ? 'Tous' : f === 'published' ? 'Publiés' : 'Brouillons'}
+        </label>
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Filtrer par statut">
+          {FILTERS.map(([key, label]) => (
+            <button key={key} onClick={() => setFilter(key)} aria-pressed={filter === key} className={pill(filter === key)}>
+              {label} <span className="opacity-60">{counts[key]}</span>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Posts Table */}
-      {filtered.length === 0 ? (
-        <div className="bg-white rounded-xl p-12 text-center border border-gray-100">
-          <p className="text-gray-500">Aucun article trouvé</p>
+      {error && (
+        <div className="pb-6">
+          <Notice tone="error">{error}</Notice>
         </div>
+      )}
+
+      {loading ? (
+        <Loading />
+      ) : filtered.length === 0 ? (
+        <p className="m-0 border-y-2 border-[#141414] py-10 text-[20px] font-bold">
+          Aucun article{query ? ` pour « ${search.trim()} »` : ''}.
+        </p>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-100">
-                <tr>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Article
-                  </th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Statut
-                  </th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Catégorie
-                  </th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {filtered.map((post) => (
-                  <tr key={post.id} className="hover:bg-gray-50 transition">
-                    <td className="px-6 py-4">
-                      <div>
-                        <p className="font-medium text-gray-900 line-clamp-1">
-                          {post.title}
-                        </p>
-                        <p className="text-sm text-gray-500 line-clamp-1">
-                          {post.description}
-                        </p>
-                        {post.wikiId && (
-                          <span className="inline-block mt-1 text-xs bg-purple-50 text-purple-700 px-2 py-0.5 rounded">
-                            Wiki.js #{post.wikiId}
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[780px] border-collapse text-left">
+            <thead>
+              <tr className="font-plex text-[12px] text-[#68655f]">
+                <th scope="col" className="font-normal pb-3 pr-5">Article</th>
+                <th scope="col" className="font-normal pb-3 pr-5">Statut</th>
+                <th scope="col" className="font-normal pb-3 pr-5">Catégorie</th>
+                <th scope="col" className="font-normal pb-3 pr-5">Date</th>
+                <th scope="col" className="font-normal pb-3">
+                  <span className="sr-only">Actions</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="border-y-2 border-[#141414]">
+              {filtered.map((post) => (
+                <tr key={post.id} className="border-t border-[#c9c5bd] first:border-t-0 align-top">
+                  <td className="py-4 pr-5">
+                    <Link
+                      href={`/admin/posts/${post.id}/edit/`}
+                      className="text-[17px] font-semibold leading-[1.3] hover:text-[var(--accent)] hover:no-underline transition-colors"
+                    >
+                      {post.title}
+                    </Link>
+                    <p className="m-0 mt-1 text-[14px] leading-[1.5] text-[#4a4a48] line-clamp-2 max-w-[560px]">
+                      {post.description || <span className="italic text-[#68655f]">Sans description : l&apos;extrait de l&apos;article est utilisé.</span>}
+                    </p>
+                    {(post.tags.length > 0 || post.wikiId) && (
+                      <div className="flex flex-wrap gap-1.5 mt-2.5">
+                        {post.wikiId && <span className={TAG}>wiki #{post.wikiId}</span>}
+                        {post.tags.slice(0, 5).map((tag) => (
+                          <span key={tag} className="font-mono text-[12px] text-[#4a4a48]">
+                            #{tag}
                           </span>
-                        )}
+                        ))}
                       </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <button
-                        onClick={() => handleTogglePublish(post)}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition ${
-                          post.published
-                            ? 'bg-green-50 text-green-700 hover:bg-green-100'
-                            : 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100'
-                        }`}
+                    )}
+                  </td>
+                  <td className="py-4 pr-5">
+                    <button
+                      onClick={() => handleTogglePublish(post)}
+                      aria-label={`${post.published ? 'publié, repasser en brouillon' : 'brouillon, publier'} « ${post.title} »`}
+                      title={post.published ? 'Repasser en brouillon' : 'Publier'}
+                      className="cursor-pointer border-b border-dashed border-[#c9c5bd] pb-0.5 hover:border-[#141414] transition-colors"
+                    >
+                      <Status on={post.published} />
+                    </button>
+                  </td>
+                  <td className="py-4 pr-5">
+                    <span className={TAG}>{post.category}</span>
+                  </td>
+                  <td className="py-4 pr-5 font-plex text-[12px] text-[#68655f] whitespace-nowrap">
+                    {post.published ? `publié le ${formatDate(post.publishedAt)}` : `modifié le ${formatDate(post.updatedAt)}`}
+                  </td>
+                  <td className="py-3 text-right whitespace-nowrap">
+                    {post.published && (
+                      <a
+                        href={`/blog/${post.slug}/`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={ICON_BTN}
+                        aria-label={`Voir « ${post.title} » sur le blog`}
+                        title="Voir sur le blog"
                       >
-                        {post.published ? (
-                          <>
-                            <Eye className="w-3 h-3" /> Publié
-                          </>
-                        ) : (
-                          <>
-                            <EyeOff className="w-3 h-3" /> Brouillon
-                          </>
-                        )}
-                      </button>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-sm text-gray-600">{post.category}</span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-sm text-gray-500 flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5" />
-                        {new Date(post.updatedAt).toLocaleDateString('fr-FR')}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-end gap-2">
-                        {post.published && (
-                          <Link
-                            href={`/blog/${post.slug}`}
-                            target="_blank"
-                            className="p-2 text-gray-400 hover:text-blue-600 transition"
-                            title="Voir"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                          </Link>
-                        )}
-                        <Link
-                          href={`/admin/posts/${post.id}/edit`}
-                          className="p-2 text-gray-400 hover:text-blue-600 transition"
-                          title="Modifier"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Link>
-                        <button
-                          onClick={() => handleDelete(post.id, post.title)}
-                          className="p-2 text-gray-400 hover:text-red-600 transition"
-                          title="Supprimer"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                        <ExternalLink className="w-4 h-4" aria-hidden />
+                      </a>
+                    )}
+                    <Link href={`/admin/posts/${post.id}/edit/`} className={ICON_BTN} aria-label={`Modifier « ${post.title} »`} title="Modifier">
+                      <Pencil className="w-4 h-4" aria-hidden />
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(post)}
+                      className={`${ICON_BTN} hover:text-[var(--accent)]!`}
+                      aria-label={`Supprimer « ${post.title} »`}
+                      title="Supprimer"
+                    >
+                      <Trash2 className="w-4 h-4" aria-hidden />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

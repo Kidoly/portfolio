@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { authGuard } from '@/lib/blog/api-auth';
 import { analyzeContentLocally, analyzeContentWithAI } from '@/lib/blog/auto-generate';
 
+// GET /api/admin/generate - whether the AI option is available (OPENAI_API_KEY set)
+export async function GET(request: NextRequest) {
+  const authError = await authGuard(request);
+  if (authError) return authError;
+  return NextResponse.json({ ai: Boolean(process.env.OPENAI_API_KEY) });
+}
+
 // POST /api/admin/generate - auto-generate metadata from content
 export async function POST(request: NextRequest) {
   const authError = await authGuard(request);
