@@ -92,7 +92,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     return NextResponse.json(saved);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to update post' }, { status: 500 });
   }
 }

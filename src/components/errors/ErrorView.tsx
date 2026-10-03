@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-html-link-for-pages -- plain anchors on purpose: a full page load
+   recovers from the error, and global-error renders without the app router. */
 import type { CSSProperties, ReactNode } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { LEGAL_LABELS } from '@/components/legal/LegalLinks';

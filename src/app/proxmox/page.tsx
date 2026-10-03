@@ -212,9 +212,9 @@ export default function ProxmoxPage() {
                 >
                   {CONTACT_EMAIL}
                 </a>
-                <a href="/#contact" className="font-bold border-b-2 border-[#141414] pb-0.5 hover:no-underline">
+                <Link href="/#contact" className="font-bold border-b-2 border-[#141414] pb-0.5 hover:no-underline">
                   Formulaire de contact →
-                </a>
+                </Link>
               </div>
             </div>
           </section>

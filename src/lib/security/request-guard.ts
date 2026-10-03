@@ -83,7 +83,6 @@ export async function readJsonBody(
  */
 export function cleanText(value: unknown, maxLength: number, { singleLine = false } = {}): string | null {
   if (typeof value !== 'string') return null;
-  // eslint-disable-next-line no-control-regex
   let text = value.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, '');
   if (singleLine) text = text.replace(/[\r\n\t]+/g, ' ');
   text = text.trim();

@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(saved, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to create post' }, { status: 500 });
   }
 }

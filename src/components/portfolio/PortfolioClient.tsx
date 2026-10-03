@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type CSSProperties, type FormEvent, type ReactNode } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { useLanguage, useLocalizedDocument } from '@/contexts/LanguageContext';
 import { formatPostDate } from '@/lib/blog/format';
@@ -109,9 +110,9 @@ function Hero({ age }: { age: number | null }) {
                 <a href="/Alban_Mary_CV.pdf" data-umami-event="cv" className="border-2 border-[#e4e7e4] rounded-full px-5 py-3 hover:no-underline hover:bg-[#e4e7e4] hover:text-[#0e100f] transition-[color,background-color,transform] motion-safe:active:scale-[0.97]">
                   {p.hero.cta2}
                 </a>
-                <a href="/blog/" data-umami-event="cta" data-umami-event-target="blog" className="px-2.5 py-3 border-b-2 border-[var(--accent-on-dark)] hover:no-underline">
+                <Link href="/blog/" data-umami-event="cta" data-umami-event-target="blog" className="px-2.5 py-3 border-b-2 border-[var(--accent-on-dark)] hover:no-underline">
                   {p.hero.cta3}
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -372,9 +373,9 @@ function Blog({ posts }: { posts: BlogPreview[] }) {
               </a>
             ))}
           </div>
-          <a href="/blog/" data-reveal data-umami-event="cta" data-umami-event-target="blog-all" className="group self-start font-bold border-b-2 border-[var(--accent)] pb-1 hover:no-underline">
+          <Link href="/blog/" data-reveal data-umami-event="cta" data-umami-event-target="blog-all" className="group self-start font-bold border-b-2 border-[var(--accent)] pb-1 hover:no-underline">
             {p.blogCta} <span className="inline-block motion-safe:transition-transform motion-safe:group-hover:translate-x-1">→</span>
-          </a>
+          </Link>
         </div>
       </section>
     </Container>

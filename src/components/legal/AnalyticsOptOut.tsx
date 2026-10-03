@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { STATS_OPT_OUT_KEY } from '@/lib/track';
 
@@ -23,27 +23,39 @@ const TEXT = {
 
 type State = 'loading' | 'off' | 'counted' | 'excluded';
 
+const listeners = new Set<() => void>();
+
+function subscribe(onChange: () => void) {
+  listeners.add(onChange);
+  window.addEventListener('storage', onChange);
+  return () => {
+    listeners.delete(onChange);
+    window.removeEventListener('storage', onChange);
+  };
+}
+
+/** 'off' when the site serves no tracker, otherwise whether this browser opted out. */
+function readState(): State {
+  if (!document.querySelector('script[src="/stats/script.js"]')) return 'off';
+  try {
+    return localStorage.getItem(STATS_OPT_OUT_KEY) !== null ? 'excluded' : 'counted';
+  } catch {
+    return 'counted';
+  }
+}
+
 /** Opt-out of the audience stats for this browser, stored where the Umami tracker reads it. */
 export default function AnalyticsOptOut() {
   const { language } = useLanguage();
   const t = TEXT[language];
-  const [state, setState] = useState<State>('loading');
-
-  useEffect(() => {
-    const active = Boolean(document.querySelector('script[src="/stats/script.js"]'));
-    let excluded = false;
-    try {
-      excluded = localStorage.getItem(STATS_OPT_OUT_KEY) !== null;
-    } catch {}
-    setState(!active ? 'off' : excluded ? 'excluded' : 'counted');
-  }, []);
+  const state = useSyncExternalStore(subscribe, readState, () => 'loading' as State);
 
   const toggle = () => {
     try {
       if (state === 'excluded') localStorage.removeItem(STATS_OPT_OUT_KEY);
       else localStorage.setItem(STATS_OPT_OUT_KEY, '1');
-      setState(state === 'excluded' ? 'counted' : 'excluded');
     } catch {}
+    listeners.forEach((notify) => notify());
   };
 
   if (state === 'loading') return null;

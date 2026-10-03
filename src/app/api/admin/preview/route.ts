@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
 
     const html = await markdownToHtml(content);
     return NextResponse.json({ html });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to render markdown' }, { status: 500 });
   }
 }

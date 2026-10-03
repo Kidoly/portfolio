@@ -22,7 +22,11 @@ const DARK_INPUT =
 function LoginForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  // Error code sent back by the Authentik callback (the form only renders in the browser)
+  const [error, setError] = useState(() => {
+    const code = typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('error');
+    return code ? (OAUTH_ERRORS[code] ?? "Erreur d'authentification.") : '';
+  });
   const [loading, setLoading] = useState(false);
   const [authentikEnabled, setAuthentikEnabled] = useState(false);
 
@@ -31,10 +35,6 @@ function LoginForm() {
       .then((res) => res.json())
       .then((data) => setAuthentikEnabled(data.authentik === true))
       .catch(() => {});
-
-    // Error code sent back by the Authentik callback
-    const oauthError = new URLSearchParams(window.location.search).get('error');
-    if (oauthError) setError(OAUTH_ERRORS[oauthError] ?? "Erreur d'authentification.");
   }, []);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -62,12 +62,12 @@ function LoginForm() {
     <main className="min-h-screen bg-[#0e100f] text-[#e4e7e4] flex flex-col">
       <div className="mx-auto w-full max-w-[1280px] px-6 lg:px-14">
         <header className="flex justify-between items-center gap-5 py-7 text-sm font-medium">
-          <a href="/" className="text-base font-semibold hover:no-underline">
+          <Link href="/" className="text-base font-semibold hover:no-underline">
             Alban Mary<span className="text-[var(--accent-on-dark)]">.</span>
-          </a>
-          <a href="/" className="nav-link text-[#9aa19c] hover:text-white hover:no-underline transition-colors">
+          </Link>
+          <Link href="/" className="nav-link text-[#9aa19c] hover:text-white hover:no-underline transition-colors">
             Retour au site
-          </a>
+          </Link>
         </header>
       </div>
 
