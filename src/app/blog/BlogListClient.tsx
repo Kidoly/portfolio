@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useMemo, type CSSProperties } from 'react';
+import { useEffect, useState, useMemo, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { BlogPostMeta } from '@/lib/blog/types';
 import BlogNav from '@/components/blog/BlogNav';
 import LegalLinks from '@/components/legal/LegalLinks';
 import RevealObserver from '@/components/motion/RevealObserver';
+import { track } from '@/lib/track';
 import { formatPostDate } from '@/lib/blog/format';
 
 interface Props {
@@ -40,6 +41,13 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
       return matchCat && matchTag && matchSearch;
     });
   }, [posts, category, tag, query]);
+
+  // What readers look for, once they stop typing; never what looks like an email or a phone number
+  useEffect(() => {
+    if (query.length < 3 || /@|\d{6,}/.test(query)) return;
+    const timer = window.setTimeout(() => track('blog-search', { q: query.slice(0, 40), results: filtered.length }), 1500);
+    return () => window.clearTimeout(timer);
+  }, [query, filtered.length]);
 
   const clearFilters = () => {
     setQ('');
@@ -92,7 +100,10 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
                 return (
                   <button
                     key={c}
-                    onClick={() => setCategory(c)}
+                    onClick={() => {
+                      setCategory(c);
+                      track('blog-filter', { category: c });
+                    }}
                     className={`cursor-pointer rounded-full px-3.5 py-2 border transition-colors ${
                       on ? 'bg-[#e4e7e4] text-[#0e100f] border-[#e4e7e4]' : 'bg-transparent text-[#e4e7e4] border-[#333a36] hover:border-[#e4e7e4]'
                     }`}

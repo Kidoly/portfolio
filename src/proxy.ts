@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, type NextFetchEvent } from 'next/server';
 import { jwtVerify } from 'jose';
+import { sendServerEvent } from '@/lib/umami';
 
 /**
  * Resolve the JWT secret at request time. Returns null when it is not
@@ -72,7 +73,7 @@ function httpsUrl(request: NextRequest): URL {
   return new URL(`https://${host}${pathname}${search}`);
 }
 
-export async function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const { pathname } = request.nextUrl;
 
   // Opt-in (HTTPS_REDIRECT=true): only safe when the reverse proxy reports the
@@ -80,6 +81,9 @@ export async function proxy(request: NextRequest) {
   if (process.env.HTTPS_REDIRECT === 'true' && request.headers.get('x-forwarded-proto') === 'http') {
     return NextResponse.redirect(httpsUrl(request), 308);
   }
+
+  // The CV is a static PDF without tracker: its downloads are counted here, after the response
+  if (pathname === '/Alban_Mary_CV.pdf') event.waitUntil(sendServerEvent(request, 'cv-download'));
 
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
   const csp = buildCspHeader(nonce);

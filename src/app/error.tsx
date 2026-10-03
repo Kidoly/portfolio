@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useLanguage, useLocalizedDocument } from '@/contexts/LanguageContext';
 import ErrorView from '@/components/errors/ErrorView';
+import { track } from '@/lib/track';
 
 const COPY = {
   fr: {
@@ -28,6 +29,7 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
 
   useEffect(() => {
     console.error(error);
+    track('error', { path: window.location.pathname });
   }, [error]);
 
   return (

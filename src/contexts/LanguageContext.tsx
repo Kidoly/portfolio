@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import en from '@/locales/en.json';
 import fr from '@/locales/fr.json';
+import { track } from '@/lib/track';
 
 type Language = 'en' | 'fr';
 type Dict = typeof fr;
@@ -36,6 +37,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const handleSetLanguage = (lang: Language) => {
     setLanguage(lang);
     localStorage.setItem('language', lang);
+    track('language', { to: lang });
   };
 
   const t = (key: string): string => {

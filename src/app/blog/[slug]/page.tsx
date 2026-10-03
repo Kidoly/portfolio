@@ -9,6 +9,7 @@ import BlogNav from '@/components/blog/BlogNav';
 import TableOfContents from '@/components/blog/TableOfContents';
 import CommentsSection from '@/components/blog/CommentsSection';
 import CodeBlockCopyButtons from '@/components/blog/CodeBlockCopyButtons';
+import ArticleReadTracker from '@/components/analytics/ArticleReadTracker';
 import LegalLinks from '@/components/legal/LegalLinks';
 
 const CONTAINER = 'mx-auto w-full max-w-[1280px] px-6 lg:px-14';
@@ -188,6 +189,7 @@ export default async function BlogPostPage({ params }: Props) {
             <div className="lg:col-span-7 lg:col-start-4 min-w-0">
               <CodeBlockCopyButtons />
               <div className="blog-content" dangerouslySetInnerHTML={{ __html: contentHtml }} />
+              <ArticleReadTracker slug={post.slug} />
 
               {post.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 pt-8 mt-6 border-t-2 border-[#141414]">

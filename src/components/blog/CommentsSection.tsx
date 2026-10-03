@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { formatPostDate } from '@/lib/blog/format';
+import { track } from '@/lib/track';
 
 interface PublicComment {
   id: string;
@@ -66,6 +67,7 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
         setEmail('');
         setMessage('');
         setFeedback(data.message || 'Commentaire envoyé. Il sera visible après validation.');
+        track('comment', { slug });
       }
     } catch {
       setError('Erreur réseau. Merci de réessayer.');

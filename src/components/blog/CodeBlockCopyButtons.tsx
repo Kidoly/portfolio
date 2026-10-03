@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { track } from '@/lib/track';
 
 /**
  * Wires the server-rendered "copier" buttons of the article code blocks:
@@ -12,6 +13,9 @@ export default function CodeBlockCopyButtons() {
       const button = (event.target as Element | null)?.closest<HTMLButtonElement>('.cb-copy');
       const code = button?.closest('.cb')?.querySelector('code');
       if (!button || !code) return;
+
+      const lang = button.closest('.cb')?.querySelector('.cb-bar')?.firstElementChild?.textContent?.trim();
+      track('code-copy', { page: window.location.pathname, lang: lang || 'code' });
 
       const clone = code.cloneNode(true) as HTMLElement;
       clone.querySelectorAll('.cb-prompt').forEach((el) => el.remove());

@@ -85,9 +85,17 @@ export const LEGAL: Record<'fr' | 'en', Record<LegalDocId, LegalDoc>> = {
         {
           title: 'Mesure d’audience',
           blocks: [
-            'Le site compte ses visites avec Umami, un outil libre auto-hébergé par l’éditeur : pages vues, page de provenance, type d’appareil, navigateur, système, langue et pays.',
-            'Aucun cookie n’est déposé et votre adresse IP n’est pas conservée : elle sert seulement, au moment de la visite, à déduire le pays et à distinguer les visiteurs sous forme d’identifiant haché. Les statistiques restent agrégées, ne sont ni partagées ni croisées avec d’autres données et servent uniquement à savoir quels contenus sont lus. Cette mesure respecte les conditions de la CNIL pour être dispensée de consentement.',
-            'Les navigateurs qui envoient le signal « Do Not Track » ne sont pas comptés. Vous pouvez aussi désactiver la mesure sur ce navigateur :',
+            'Le site compte ses visites avec Umami, un outil libre auto-hébergé par l’éditeur : pages vues, page de provenance, type d’appareil, taille d’écran, navigateur, système, langue, pays et ville.',
+            {
+              list: [
+                'Lecture : sections de la page d’accueil vues, articles lus jusqu’au bout, temps passé sur chaque page.',
+                'Clics : liens vers d’autres sites, boutons principaux, adresse email, téléchargements (le CV est aussi compté par le serveur quand il est ouvert depuis un autre site), copies de code.',
+                'Blog : recherches et filtres utilisés (une recherche qui ressemble à un email ou à un numéro n’est jamais enregistrée).',
+                'Envois du formulaire de contact et des commentaires, sans leur contenu ; pages introuvables et erreurs ; temps de chargement mesurés pendant la visite.',
+              ],
+            },
+            'Aucun cookie n’est déposé et votre adresse IP n’est pas conservée : elle sert seulement, au moment de la visite, à déduire le pays et la ville et à distinguer les visiteurs sous forme d’identifiant haché. Les statistiques restent agrégées, ne sont ni partagées ni croisées avec d’autres données et servent uniquement à savoir quels contenus sont lus. Cette mesure respecte les conditions de la CNIL pour être dispensée de consentement.',
+            'Les navigateurs qui envoient le signal « Do Not Track » ne sont pas comptés (ni « Global Privacy Control » pour le CV). Vous pouvez aussi désactiver la mesure sur ce navigateur :',
             { optOut: true },
           ],
         },
@@ -177,9 +185,17 @@ export const LEGAL: Record<'fr' | 'en', Record<LegalDocId, LegalDoc>> = {
         {
           title: 'Audience measurement',
           blocks: [
-            'The site counts its visits with Umami, an open-source tool self-hosted by the publisher: pages viewed, referring page, device type, browser, operating system, language and country.',
-            'No cookie is set and your IP address is not kept: it is only used, at the time of the visit, to derive the country and to tell visitors apart as a hashed identifier. The statistics stay aggregated, are never shared or combined with other data, and are only used to know which content is read. This measurement meets the CNIL conditions for an exemption from consent.',
-            'Browsers that send the “Do Not Track” signal are not counted. You can also turn the measurement off for this browser:',
+            'The site counts its visits with Umami, an open-source tool self-hosted by the publisher: pages viewed, referring page, device type, screen size, browser, operating system, language, country and city.',
+            {
+              list: [
+                'Reading: home page sections viewed, articles read to the end, time spent on each page.',
+                'Clicks: links to other sites, main buttons, email address, downloads (the CV is also counted by the server when it is opened from another site), code copies.',
+                'Blog: searches and filters used (a search that looks like an email or a phone number is never recorded).',
+                'Contact form and comment submissions, without their content; missing pages and errors; loading times measured during the visit.',
+              ],
+            },
+            'No cookie is set and your IP address is not kept: it is only used, at the time of the visit, to derive the country and city and to tell visitors apart as a hashed identifier. The statistics stay aggregated, are never shared or combined with other data, and are only used to know which content is read. This measurement meets the CNIL conditions for an exemption from consent.',
+            'Browsers that send the “Do Not Track” signal are not counted (nor “Global Privacy Control” for the CV). You can also turn the measurement off for this browser:',
             { optOut: true },
           ],
         },

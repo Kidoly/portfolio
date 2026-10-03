@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type CSSProperties, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useState, type CSSProperties, type FormEvent, type ReactNode } from 'react';
 import Image from 'next/image';
 import { ArrowUpRight } from 'lucide-react';
 import { useLanguage, useLocalizedDocument } from '@/contexts/LanguageContext';
@@ -32,6 +32,27 @@ function Label({ n, children, dark = false }: { n: string; children: ReactNode; 
       <span className={dark ? 'text-[#e4e7e4]' : undefined}>{children}</span>
     </h2>
   );
+}
+
+/** « section » event the first time each section of the one-page portfolio reaches the upper half of the screen. */
+function useSectionViews() {
+  useEffect(() => {
+    const seen = new Set<string>();
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const id = entry.target.id;
+          if (!entry.isIntersecting || seen.has(id)) continue;
+          seen.add(id);
+          io.unobserve(entry.target);
+          track('section', { name: id });
+        }
+      },
+      { rootMargin: '0px 0px -50% 0px' }
+    );
+    document.querySelectorAll('main section[id]').forEach((section) => io.observe(section));
+    return () => io.disconnect();
+  }, []);
 }
 
 /** CSS custom properties read by the motion styles in globals.css (--i, --d, --steps). */
@@ -82,13 +103,13 @@ function Hero({ age }: { age: number | null }) {
               </p>
               <p className="m-0 text-[18px] leading-[1.55] text-[#9aa19c] max-w-[560px] rise" style={vars({ '--d': '200ms' })}>{p.hero.pitch}</p>
               <div className="flex flex-wrap gap-3 items-center text-[15px] font-bold pt-1 rise" style={vars({ '--d': '300ms' })}>
-                <a href="#projects" className="group bg-[#e4e7e4] text-[#0e100f] rounded-full px-6 py-3.5 hover:bg-[var(--accent)] hover:text-[#e4e7e4] hover:no-underline transition-[color,background-color,transform] motion-safe:active:scale-[0.97]">
+                <a href="#projects" data-umami-event="cta" data-umami-event-target="projects" className="group bg-[#e4e7e4] text-[#0e100f] rounded-full px-6 py-3.5 hover:bg-[var(--accent)] hover:text-[#e4e7e4] hover:no-underline transition-[color,background-color,transform] motion-safe:active:scale-[0.97]">
                   {p.hero.cta1} <span className="inline-block motion-safe:transition-transform motion-safe:group-hover:translate-y-0.5">↓</span>
                 </a>
                 <a href="/Alban_Mary_CV.pdf" data-umami-event="cv" className="border-2 border-[#e4e7e4] rounded-full px-5 py-3 hover:no-underline hover:bg-[#e4e7e4] hover:text-[#0e100f] transition-[color,background-color,transform] motion-safe:active:scale-[0.97]">
                   {p.hero.cta2}
                 </a>
-                <a href="/blog/" className="px-2.5 py-3 border-b-2 border-[var(--accent-on-dark)] hover:no-underline">
+                <a href="/blog/" data-umami-event="cta" data-umami-event-target="blog" className="px-2.5 py-3 border-b-2 border-[var(--accent-on-dark)] hover:no-underline">
                   {p.hero.cta3}
                 </a>
               </div>
@@ -289,7 +310,7 @@ function Infrastructure() {
                 </div>
               ))}
             </div>
-            <a href="/proxmox/" data-reveal className="group self-start font-bold border-b-2 border-[var(--accent-on-dark)] pb-1 hover:no-underline">
+            <a href="/proxmox/" data-reveal data-umami-event="cta" data-umami-event-target="proxmox" className="group self-start font-bold border-b-2 border-[var(--accent-on-dark)] pb-1 hover:no-underline">
               {p.infraCta} <span className="inline-block motion-safe:transition-transform motion-safe:group-hover:translate-x-1">→</span>
             </a>
           </div>
@@ -328,7 +349,7 @@ function Blog({ posts }: { posts: BlogPreview[] }) {
   const p = dict.portfolio;
   return (
     <Container className="mt-28 lg:mt-36">
-      <section className="grid lg:grid-cols-12 gap-5">
+      <section id="blog" className="grid lg:grid-cols-12 gap-5">
         <Label n="06">{p.labels.blog}</Label>
         <div className="lg:col-span-9 flex flex-col gap-6">
           <p data-reveal className="m-0 text-[28px] leading-[1.25] font-medium tracking-[-0.015em]">{p.blogIntro}</p>
@@ -351,7 +372,7 @@ function Blog({ posts }: { posts: BlogPreview[] }) {
               </a>
             ))}
           </div>
-          <a href="/blog/" data-reveal className="group self-start font-bold border-b-2 border-[var(--accent)] pb-1 hover:no-underline">
+          <a href="/blog/" data-reveal data-umami-event="cta" data-umami-event-target="blog-all" className="group self-start font-bold border-b-2 border-[var(--accent)] pb-1 hover:no-underline">
             {p.blogCta} <span className="inline-block motion-safe:transition-transform motion-safe:group-hover:translate-x-1">→</span>
           </a>
         </div>
@@ -396,6 +417,7 @@ function Contact() {
       setConsent(false);
     } catch {
       setStatus({ type: 'error', message: t('contact.error') });
+      track('contact-form-error');
     } finally {
       setSubmitting(false);
     }
@@ -512,6 +534,7 @@ function Footer() {
 export default function PortfolioClient({ posts, age }: { posts: BlogPreview[]; age: number | null }) {
   const { dict } = useLanguage();
   useLocalizedDocument(dict.portfolio.meta);
+  useSectionViews();
 
   return (
     <main className="bg-[#f3f1ec] text-[#141414] font-sans">

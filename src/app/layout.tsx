@@ -5,6 +5,7 @@ import Providers from './providers'
 import { fontVariables } from './fonts'
 import fr from '@/locales/fr.json'
 import { umamiConfig } from '@/lib/umami'
+import StatsListener from '@/components/analytics/StatsListener'
 
 const SITE_URL = 'https://albanmary.com';
 // FR by default; the EN version is applied client-side when the visitor switches language
@@ -163,6 +164,7 @@ export default async function RootLayout({
         <Providers>
           {children}
         </Providers>
+        {umami && <StatsListener />}
         {umami && (
           <script
             defer

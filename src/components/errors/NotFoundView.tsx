@@ -1,6 +1,8 @@
 'use client';
 
+import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import { track } from '@/lib/track';
 import { useLanguage, useLocalizedDocument } from '@/contexts/LanguageContext';
 import ErrorView from './ErrorView';
 
@@ -23,6 +25,10 @@ export default function NotFoundView() {
   const { language } = useLanguage();
   useLocalizedDocument();
   const pathname = usePathname() || '/';
+  // Broken links: the 404 path, with the referrer Umami records for the page view
+  useEffect(() => {
+    track('404', { path: pathname });
+  }, [pathname]);
   return (
     <ErrorView
       lang={language}
