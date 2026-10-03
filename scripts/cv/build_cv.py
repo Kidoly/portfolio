@@ -81,7 +81,7 @@ story = [
         link('mailto:alban.mary1@gmail.com', 'alban.mary1@gmail.com'),
     ]), contact_s),
     Paragraph(' · '.join([
-        link('https://albanmary.com', 'albanmary.com'),
+        link('https://albanmary.com/?utm_source=cv', 'albanmary.com'),
         link('https://www.linkedin.com/in/alban-mary/', 'linkedin.com/in/alban-mary'),
         link('https://github.com/Kidoly', 'github.com/Kidoly'),
     ]), links_s),
@@ -123,7 +123,7 @@ story = [
     Paragraph('Projets', section_s),
     row('Perso', [Paragraph(
         '<b>Homelab en service 24/7</b> : cluster Proxmox de 3 nœuds avec Ceph sur 10 GbE, Kubernetes, '
-        f'GitLab, Vault et Authentik. Il héberge mon blog technique ({link("https://albanmary.com/blog/", "albanmary.com")}).',
+        f'GitLab, Vault et Authentik. Il héberge mon blog technique ({link("https://albanmary.com/blog/?utm_source=cv", "albanmary.com")}).',
         text_s)], gap=6),
     row('EPSI', [Paragraph(
         '<b>Infrastructure multi-sites</b> : IPsec, Active Directory, RDS, supervision et PRA. En équipe de 3, '
