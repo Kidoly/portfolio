@@ -8,6 +8,7 @@ import { formatPostDate } from '@/lib/blog/format';
 import { PORTRAIT_SRC, PROJECT_IMAGES } from '@/config/profile';
 import LegalLinks from '@/components/legal/LegalLinks';
 import RevealObserver from '@/components/motion/RevealObserver';
+import { track } from '@/lib/track';
 
 export interface BlogPreview {
   title: string;
@@ -84,7 +85,7 @@ function Hero({ age }: { age: number | null }) {
                 <a href="#projects" className="group bg-[#e4e7e4] text-[#0e100f] rounded-full px-6 py-3.5 hover:bg-[var(--accent)] hover:text-[#e4e7e4] hover:no-underline transition-[color,background-color,transform] motion-safe:active:scale-[0.97]">
                   {p.hero.cta1} <span className="inline-block motion-safe:transition-transform motion-safe:group-hover:translate-y-0.5">↓</span>
                 </a>
-                <a href="/Alban_Mary_CV.pdf" className="border-2 border-[#e4e7e4] rounded-full px-5 py-3 hover:no-underline hover:bg-[#e4e7e4] hover:text-[#0e100f] transition-[color,background-color,transform] motion-safe:active:scale-[0.97]">
+                <a href="/Alban_Mary_CV.pdf" data-umami-event="cv" className="border-2 border-[#e4e7e4] rounded-full px-5 py-3 hover:no-underline hover:bg-[#e4e7e4] hover:text-[#0e100f] transition-[color,background-color,transform] motion-safe:active:scale-[0.97]">
                   {p.hero.cta2}
                 </a>
                 <a href="/blog/" className="px-2.5 py-3 border-b-2 border-[var(--accent-on-dark)] hover:no-underline">
@@ -390,6 +391,7 @@ function Contact() {
       if (!res.ok) throw new Error(result.error || 'failed');
 
       setStatus({ type: 'success', message: t('contact.success') });
+      track('contact-form');
       setForm({ name: '', email: '', subject: '', message: '' });
       setConsent(false);
     } catch {
@@ -413,12 +415,12 @@ function Contact() {
 
         <div data-reveal className="lg:col-span-5 flex flex-col gap-5 pt-6 lg:pt-10">
           <p className="m-0 text-[19px] leading-[1.5] text-[#4a4a48]">{p.contact.text}</p>
-          <a href="mailto:alban.mary1@gmail.com" className="text-[26px] font-bold border-b-[3px] border-[var(--accent)] self-start hover:no-underline break-all">
+          <a href="mailto:alban.mary1@gmail.com" data-umami-event="email" className="text-[26px] font-bold border-b-[3px] border-[var(--accent)] self-start hover:no-underline break-all">
             alban.mary1@gmail.com
           </a>
           <div className="flex gap-6 text-[15px] font-medium">
-            <a href="https://www.linkedin.com/in/alban-mary/" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-1">LinkedIn <ArrowUpRight className="w-4 h-4 motion-safe:transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5" aria-hidden /></a>
-            <a href="https://github.com/Kidoly" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-1">GitHub <ArrowUpRight className="w-4 h-4 motion-safe:transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5" aria-hidden /></a>
+            <a href="https://www.linkedin.com/in/alban-mary/" target="_blank" rel="noopener noreferrer" data-umami-event="linkedin" className="group inline-flex items-center gap-1">LinkedIn <ArrowUpRight className="w-4 h-4 motion-safe:transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5" aria-hidden /></a>
+            <a href="https://github.com/Kidoly" target="_blank" rel="noopener noreferrer" data-umami-event="github" className="group inline-flex items-center gap-1">GitHub <ArrowUpRight className="w-4 h-4 motion-safe:transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5" aria-hidden /></a>
           </div>
         </div>
 

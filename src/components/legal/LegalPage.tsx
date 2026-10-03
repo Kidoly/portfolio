@@ -8,6 +8,7 @@ import { LEGAL, type LegalBlock, type LegalDocId } from '@/content/legal';
 import { LEGAL_UPDATED_AT } from '@/config/legal';
 import { formatPostDate } from '@/lib/blog/format';
 import LegalLinks from './LegalLinks';
+import AnalyticsOptOut from './AnalyticsOptOut';
 
 const CONTAINER = 'mx-auto w-full max-w-[1280px] px-6 lg:px-14';
 
@@ -38,6 +39,7 @@ function inline(text: string): ReactNode[] {
 
 function Block({ block }: { block: LegalBlock }) {
   if (typeof block === 'string') return <p className="m-0">{inline(block)}</p>;
+  if ('optOut' in block) return <AnalyticsOptOut />;
   return (
     <ul className="m-0 pl-5 list-disc flex flex-col gap-2 marker:text-[#68655f]">
       {block.list.map((item) => (

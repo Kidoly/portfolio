@@ -207,6 +207,7 @@ export default function ProxmoxPage() {
               <div className="flex flex-wrap gap-x-8 gap-y-4 items-center">
                 <a
                   href={`mailto:${CONTACT_EMAIL}`}
+                  data-umami-event="email"
                   className="text-[22px] font-bold border-b-[3px] border-[var(--accent)] hover:no-underline break-all"
                 >
                   {CONTACT_EMAIL}

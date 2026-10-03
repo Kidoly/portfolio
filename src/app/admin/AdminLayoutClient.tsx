@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowUpRight, FileText, LayoutDashboard, LogOut, Menu, MessageSquare, RefreshCw, X } from 'lucide-react';
 import { Loading } from '@/components/admin/ui';
+import { STATS_OPT_OUT_KEY } from '@/lib/track';
 
 export interface AdminUser {
   name: string;
@@ -64,6 +65,14 @@ export default function AdminLayoutClient({ children }: { children: ReactNode })
   useEffect(() => {
     if (authenticated) refreshPending();
   }, [authenticated, pathname, refreshPending]);
+
+  // The owner's own visits stay out of the audience stats on this browser (undone from /confidentialite)
+  useEffect(() => {
+    if (!authenticated) return;
+    try {
+      localStorage.setItem(STATS_OPT_OUT_KEY, '1');
+    } catch {}
+  }, [authenticated]);
 
   // Signed out on an inner page: back to the login form
   useEffect(() => {

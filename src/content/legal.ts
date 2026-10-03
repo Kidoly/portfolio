@@ -5,7 +5,8 @@ import { CONTACT_EMAIL } from '@/config/legal';
  * form [label](href). Retention periods follow CNIL recommendations.
  */
 
-export type LegalBlock = string | { list: string[] };
+/** `optOut`: the audience measurement opt-out button (AnalyticsOptOut). */
+export type LegalBlock = string | { list: string[] } | { optOut: true };
 
 export interface LegalSection {
   title: string;
@@ -55,7 +56,7 @@ export const LEGAL: Record<'fr' | 'en', Record<LegalDocId, LegalDoc>> = {
         {
           title: 'Données personnelles',
           blocks: [
-            'Les données transmises via le formulaire de contact et les commentaires sont traitées comme décrit dans la [politique de confidentialité](/confidentialite/).',
+            'Les données transmises via le formulaire de contact et les commentaires, ainsi que la mesure d’audience, sont traitées comme décrit dans la [politique de confidentialité](/confidentialite/).',
           ],
         },
         { title: 'Contact', blocks: [`Pour toute question sur le site ou son contenu : ${MAIL}`] },
@@ -78,7 +79,16 @@ export const LEGAL: Record<'fr' | 'en', Record<LegalDocId, LegalDoc>> = {
                 'Anti-spam : l’adresse IP est gardée temporairement en mémoire pour limiter le nombre d’envois par visiteur.',
               ],
             },
-            'Aucun cookie de mesure d’audience ni publicitaire n’est utilisé. Votre choix de langue est mémorisé dans le stockage local de votre navigateur. Les polices sont servies par le site lui-même.',
+            'Aucun cookie de mesure d’audience ni publicitaire n’est utilisé. Votre choix de langue est mémorisé dans le stockage local de votre navigateur, comme votre éventuel refus de la mesure d’audience. Les polices sont servies par le site lui-même.',
+          ],
+        },
+        {
+          title: 'Mesure d’audience',
+          blocks: [
+            'Le site compte ses visites avec Umami, un outil libre auto-hébergé par l’éditeur : pages vues, page de provenance, type d’appareil, navigateur, système, langue et pays.',
+            'Aucun cookie n’est déposé et votre adresse IP n’est pas conservée : elle sert seulement, au moment de la visite, à déduire le pays et à distinguer les visiteurs sous forme d’identifiant haché. Les statistiques restent agrégées, ne sont ni partagées ni croisées avec d’autres données et servent uniquement à savoir quels contenus sont lus. Cette mesure respecte les conditions de la CNIL pour être dispensée de consentement.',
+            'Les navigateurs qui envoient le signal « Do Not Track » ne sont pas comptés. Vous pouvez aussi désactiver la mesure sur ce navigateur :',
+            { optOut: true },
           ],
         },
         {
@@ -89,6 +99,7 @@ export const LEGAL: Record<'fr' | 'en', Record<LegalDocId, LegalDoc>> = {
                 'Répondre à vos demandes de contact (base légale : votre consentement, donné via la case à cocher du formulaire).',
                 'Publier et modérer les commentaires (base légale : votre demande de publication).',
                 'Assurer la sécurité du site et lutter contre le spam (base légale : intérêt légitime).',
+                'Mesurer l’audience du site de façon anonyme et agrégée (base légale : intérêt légitime).',
               ],
             },
             'Vos données ne sont ni vendues, ni cédées, ni utilisées à des fins publicitaires. Seul Alban Mary y a accès ; les emails transitent par le serveur de messagerie utilisé pour leur envoi.',
@@ -102,6 +113,7 @@ export const LEGAL: Record<'fr' | 'en', Record<LegalDocId, LegalDoc>> = {
                 'Messages de contact : le temps de traiter la demande, puis 3 ans au plus après le dernier échange.',
                 'Commentaires, ainsi que l’email et l’adresse IP associés : jusqu’à leur suppression, possible à tout moment sur simple demande.',
                 'Données anti-spam en mémoire : 15 minutes au plus.',
+                'Statistiques d’audience : 25 mois au plus.',
               ],
             },
           ],
@@ -136,7 +148,7 @@ export const LEGAL: Record<'fr' | 'en', Record<LegalDocId, LegalDoc>> = {
         {
           title: 'Personal data',
           blocks: [
-            'Data sent through the contact form and the comments is processed as described in the [privacy policy](/confidentialite/).',
+            'Data sent through the contact form and the comments, as well as the audience measurement, is processed as described in the [privacy policy](/confidentialite/).',
           ],
         },
         { title: 'Contact', blocks: [`For any question about the website or its content: ${MAIL}`] },
@@ -159,7 +171,16 @@ export const LEGAL: Record<'fr' | 'en', Record<LegalDocId, LegalDoc>> = {
                 'Anti-spam: the IP address is kept temporarily in memory to limit the number of submissions per visitor.',
               ],
             },
-            'No analytics or advertising cookies are used. Your language choice is stored in your browser’s local storage. Fonts are served by the site itself.',
+            'No analytics or advertising cookies are used. Your language choice is stored in your browser’s local storage, as is your opt-out from the audience measurement if you choose it. Fonts are served by the site itself.',
+          ],
+        },
+        {
+          title: 'Audience measurement',
+          blocks: [
+            'The site counts its visits with Umami, an open-source tool self-hosted by the publisher: pages viewed, referring page, device type, browser, operating system, language and country.',
+            'No cookie is set and your IP address is not kept: it is only used, at the time of the visit, to derive the country and to tell visitors apart as a hashed identifier. The statistics stay aggregated, are never shared or combined with other data, and are only used to know which content is read. This measurement meets the CNIL conditions for an exemption from consent.',
+            'Browsers that send the “Do Not Track” signal are not counted. You can also turn the measurement off for this browser:',
+            { optOut: true },
           ],
         },
         {
@@ -170,6 +191,7 @@ export const LEGAL: Record<'fr' | 'en', Record<LegalDocId, LegalDoc>> = {
                 'Answering your contact requests (legal basis: your consent, given through the form checkbox).',
                 'Publishing and moderating comments (legal basis: your request to publish).',
                 'Keeping the site secure and fighting spam (legal basis: legitimate interest).',
+                'Measuring the site’s audience, anonymously and in aggregate (legal basis: legitimate interest).',
               ],
             },
             'Your data is never sold, shared or used for advertising. Only Alban Mary has access to it; emails go through the mail server used to send them.',
@@ -183,6 +205,7 @@ export const LEGAL: Record<'fr' | 'en', Record<LegalDocId, LegalDoc>> = {
                 'Contact messages: as long as needed to handle the request, then at most 3 years after the last exchange.',
                 'Comments, with the associated email and IP address: until they are deleted, which you can request at any time.',
                 'In-memory anti-spam data: 15 minutes at most.',
+                'Audience statistics: 25 months at most.',
               ],
             },
           ],

@@ -4,6 +4,7 @@ import './globals.css'
 import Providers from './providers'
 import { fontVariables } from './fonts'
 import fr from '@/locales/fr.json'
+import { umamiConfig } from '@/lib/umami'
 
 const SITE_URL = 'https://albanmary.com';
 // FR by default; the EN version is applied client-side when the visitor switches language
@@ -136,7 +137,14 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const nonce = (await headers()).get('x-nonce') ?? undefined
+  const requestHeaders = await headers()
+  const nonce = requestHeaders.get('x-nonce') ?? undefined
+  // Audience stats (Umami, no cookie): public pages only, counted on the site's own domain
+  const umami = requestHeaders.get('x-pathname')?.startsWith('/admin') ? null : umamiConfig()
+  let statsDomain: string | undefined
+  try {
+    statsDomain = process.env.SITE_URL ? new URL(process.env.SITE_URL).hostname : undefined
+  } catch {}
   return (
     <html lang="fr">
       <head>
@@ -155,6 +163,17 @@ export default async function RootLayout({
         <Providers>
           {children}
         </Providers>
+        {umami && (
+          <script
+            defer
+            src="/stats/script.js"
+            nonce={nonce}
+            data-website-id={umami.websiteId}
+            data-host-url="/stats"
+            data-domains={statsDomain}
+            data-do-not-track="true"
+          />
+        )}
       </body>
     </html>
   )
