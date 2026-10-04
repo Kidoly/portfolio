@@ -5,6 +5,7 @@ import { getReadingTime } from '@/lib/blog/markdown';
 import { authGuard, getRequestUser } from '@/lib/blog/api-auth';
 import { adminLog } from '@/lib/blog/auth';
 import { commitFile } from '@/lib/blog/github';
+import { notifyIndexNow } from '@/lib/indexnow';
 import { BlogPost } from '@/lib/blog/types';
 
 function sanitizeImageUrl(url: unknown): string | undefined {
@@ -76,6 +77,7 @@ export async function POST(request: NextRequest) {
         message: `blog: publish "${saved.title}"`,
         author: { name: user?.name || user?.username || 'Admin', email: user?.email || 'admin@portfolio' },
       });
+      notifyIndexNow([`/blog/${saved.slug}/`, '/blog/']);
     }
 
     return NextResponse.json(saved, { status: 201 });

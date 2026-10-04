@@ -122,8 +122,9 @@ function sameTitle(a: string, b: string): boolean {
 
 /**
  * Drops a leading H1 that repeats the article title (the page already renders
- * it), strips emojis at the start of H2/H3 and manual "1." prefixes on H3
- * (numbered 01, 02… by the stylesheet).
+ * it) and moves every heading down a level when the body has H1s left, so the
+ * title stays the page's only H1. Strips emojis at the start of H2/H3 and
+ * manual "1." prefixes on H3 (numbered 01, 02… by the stylesheet).
  */
 function remarkArticleHeadings(options: { title?: string } = {}) {
   return (tree: MdRoot) => {
@@ -131,8 +132,11 @@ function remarkArticleHeadings(options: { title?: string } = {}) {
     if (options.title && first?.type === 'heading' && first.depth === 1 && sameTitle(mdText(first), options.title)) {
       tree.children.shift();
     }
+    const shift = tree.children.some((node) => node.type === 'heading' && node.depth === 1) ? 1 : 0;
     walk<MdNodes>(tree, (node) => {
-      if (node.type !== 'heading' || node.depth < 2 || node.depth > 3) return;
+      if (node.type !== 'heading') return;
+      node.depth = Math.min(node.depth + shift, 6) as typeof node.depth;
+      if (node.depth < 2 || node.depth > 3) return;
       const head = node.children[0];
       if (head?.type !== 'text') return;
       head.value = head.value.replace(LEADING_PICTOGRAPHS_RE, '');
@@ -184,7 +188,7 @@ const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
     'div': ['role'],
     'input': ['type', 'checked', 'disabled', 'aria-hidden'],
     'a': ['href', 'title', 'target', 'rel'],
-    'img': ['src', 'alt', 'title', 'width', 'height', 'loading'],
+    'img': ['src', 'alt', 'title', 'width', 'height', 'loading', 'decoding'],
     'td': ['align', 'colspan', 'rowspan'],
     'th': ['align', 'colspan', 'rowspan'],
     'source': ['src', 'type', 'srcset', 'sizes'],
@@ -195,6 +199,8 @@ const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
   exclusiveFilter: (frame) => frame.tag === 'input' && frame.attribs.type !== 'checkbox',
   transformTags: {
     input: (tagName, attribs) => ({ tagName, attribs: { ...attribs, disabled: '', 'aria-hidden': 'true' } }),
+    // Article images sit below the hero: loaded when scrolled to, unless the markdown says otherwise
+    img: (tagName, attribs) => ({ tagName, attribs: { loading: 'lazy', decoding: 'async', ...attribs } }),
   },
 };
 

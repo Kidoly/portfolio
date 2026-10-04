@@ -11,6 +11,8 @@ import CommentsSection from '@/components/blog/CommentsSection';
 import CodeBlockCopyButtons from '@/components/blog/CodeBlockCopyButtons';
 import ArticleReadTracker from '@/components/analytics/ArticleReadTracker';
 import LegalLinks from '@/components/legal/LegalLinks';
+import { ogImage } from '@/lib/og';
+import { jsonLd } from '@/lib/structured-data';
 
 const CONTAINER = 'mx-auto w-full max-w-[1280px] px-6 lg:px-14';
 
@@ -33,16 +35,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title = getSeoTitle(post);
   const description = getPostDescription(post);
+  const url = `https://albanmary.com/blog/${post.slug}/`;
 
-  // og:image / twitter:image: the 4b card from ./opengraph-image.tsx
+  // twitter:* is filled from openGraph (see the root layout)
   return {
     title,
     description,
-    authors: [{ name: post.author, url: 'https://albanmary.com' }],
+    authors: [{ name: post.author, url: 'https://albanmary.com/' }],
     openGraph: {
       title,
       description,
-      url: `https://albanmary.com/blog/${post.slug}`,
+      url,
       type: 'article',
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt,
@@ -51,15 +54,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       section: post.category,
       siteName: 'Alban Mary',
       locale: post.locale === 'en' ? 'en_US' : 'fr_FR',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      creator: '@kidoly',
+      images: [ogImage(`/blog/${post.slug}/og.png`, post.title)],
     },
     alternates: {
-      canonical: post.canonicalUrl || `https://albanmary.com/blog/${post.slug}`,
+      canonical: post.canonicalUrl || url,
     },
   };
 }
@@ -75,32 +73,40 @@ export default async function BlogPostPage({ params }: Props) {
   const description = getPostDescription(post);
   const { html: contentHtml, toc } = await renderArticle(post.content, { title: post.title });
   const relatedPosts = getRelatedPosts(post, 2);
+  const url = `https://albanmary.com/blog/${post.slug}/`;
+  const isProxmox = post.tags.includes('proxmox');
 
-  const jsonLd = {
+  const postingJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
-    '@id': `https://albanmary.com/blog/${post.slug}`,
+    '@id': `${url}#article`,
+    url,
     headline: post.title,
     description,
     author: {
       '@type': 'Person',
       '@id': 'https://albanmary.com/#person',
       name: post.author,
-      url: 'https://albanmary.com',
+      url: 'https://albanmary.com/',
     },
     datePublished: post.publishedAt,
     dateModified: post.updatedAt,
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://albanmary.com/blog/${post.slug}`,
+      '@id': url,
     },
-    image: `https://albanmary.com/blog/${post.slug}/opengraph-image`,
-    thumbnailUrl: `https://albanmary.com/blog/${post.slug}/opengraph-image`,
+    image: {
+      '@type': 'ImageObject',
+      url: `${url}og.png`,
+      width: 1200,
+      height: 630,
+    },
+    thumbnailUrl: `${url}og.png`,
     publisher: {
       '@type': 'Person',
       '@id': 'https://albanmary.com/#person',
       name: 'Alban Mary',
-      url: 'https://albanmary.com',
+      url: 'https://albanmary.com/',
     },
     keywords: post.tags.join(', '),
     wordCount: post.content.split(/\s+/).length,
@@ -126,19 +132,19 @@ export default async function BlogPostPage({ params }: Props) {
         '@type': 'ListItem',
         position: 1,
         name: 'Accueil',
-        item: 'https://albanmary.com',
+        item: 'https://albanmary.com/',
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: 'Blog',
-        item: 'https://albanmary.com/blog',
+        item: 'https://albanmary.com/blog/',
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: post.title,
-        item: `https://albanmary.com/blog/${post.slug}`,
+        item: url,
       },
     ],
   };
@@ -147,11 +153,11 @@ export default async function BlogPostPage({ params }: Props) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(postingJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd).replace(/</g, '\\u003c') }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(breadcrumbJsonLd) }}
       />
       <main className="bg-[#f3f1ec] text-[#141414] font-sans min-h-screen">
         {/* Dark hero */}
@@ -174,7 +180,7 @@ export default async function BlogPostPage({ params }: Props) {
                 <p className="m-0 text-[20px] leading-[1.55] text-[#9aa19c] max-w-[720px]">{description}</p>
                 <div className="flex flex-wrap gap-6 font-mono text-[13px] text-[#9aa19c] pt-3.5 border-t border-[#232825]">
                   <span className="text-[#e4e7e4]">{post.author}</span>
-                  <span>{formatPostDate(post.publishedAt || post.updatedAt)}</span>
+                  <time dateTime={post.publishedAt || post.updatedAt}>{formatPostDate(post.publishedAt || post.updatedAt)}</time>
                   <span>{getReadingTime(post.content, post.locale)}</span>
                 </div>
               </div>
@@ -220,6 +226,9 @@ export default async function BlogPostPage({ params }: Props) {
                 </span>
                 <div className="flex flex-wrap gap-5">
                   <Link href="/" className="text-[var(--ok)] hover:no-underline">Portfolio →</Link>
+                  {isProxmox && (
+                    <Link href="/proxmox/" className="text-[var(--ok)] hover:no-underline">Expertise Proxmox →</Link>
+                  )}
                   <a href="https://github.com/Kidoly" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1">GitHub <ArrowUpRight className="w-3.5 h-3.5" aria-hidden /></a>
                   <a href="https://www.linkedin.com/in/alban-mary/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1">LinkedIn <ArrowUpRight className="w-3.5 h-3.5" aria-hidden /></a>
                 </div>
@@ -250,7 +259,7 @@ export default async function BlogPostPage({ params }: Props) {
                     href={`/blog/${rp.slug}/`}
                     className="grid grid-cols-[1fr_auto] lg:grid-cols-[130px_minmax(0,1fr)_150px_24px] gap-x-5 gap-y-2 items-baseline py-5 border-t-2 border-[#141414] hover:text-[var(--accent)] hover:no-underline transition-colors"
                   >
-                    <span className="font-plex text-[12px] text-[#68655f] order-1">{formatPostDate(rp.publishedAt || rp.updatedAt)}</span>
+                    <time dateTime={rp.publishedAt || rp.updatedAt} className="font-plex text-[12px] text-[#68655f] order-1">{formatPostDate(rp.publishedAt || rp.updatedAt)}</time>
                     <span className="text-[22px] font-bold tracking-[-0.015em] leading-[1.2] col-span-2 lg:col-span-1 order-3 lg:order-2">{rp.title}</span>
                     <span className="font-mono text-[12px] bg-[#e6e3dc] text-[#141414] px-2 py-1 justify-self-start order-2 lg:order-3">{rp.category}</span>
                     <span className="text-[var(--accent)] justify-self-end hidden lg:flex items-center order-4"><ArrowUpRight className="w-4 h-4" strokeWidth={2.5} aria-hidden /></span>

@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   title: doc.title,
   description: doc.description,
   alternates: { canonical: url },
+  // Kept out of the results (a name search should not list them), links still followed
+  robots: { index: false, follow: true },
   openGraph: {
     title: `${doc.title} - Alban Mary`,
     description: doc.description,

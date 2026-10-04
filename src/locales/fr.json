@@ -5,8 +5,8 @@
 
   "portfolio": {
     "meta": {
-      "title": "Alban Mary - Ingénieur systèmes & réseaux",
-      "description": "Portfolio d'Alban Mary, ingénieur systèmes & réseaux en alternance chez Epsight et à l'EPSI Nantes. Projets, homelab et articles techniques."
+      "title": "Alban Mary - Ingénieur systèmes & réseaux à Nantes",
+      "description": "Alban Mary, ingénieur systèmes & réseaux à Nantes (alternance Epsight, EPSI) : Proxmox, Linux, réseau, automatisation. Projets, homelab et articles."
     },
     "nav": ["À propos", "Expérience", "Projets", "Infra", "Compétences", "Contact"],
     "navAnchors": ["about", "experience", "projects", "infra", "skills", "contact"],

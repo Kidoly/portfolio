@@ -16,6 +16,7 @@ function sanitizeImageUrl(url: unknown): string | undefined {
 }
 import { adminLog } from '@/lib/blog/auth';
 import { commitFile, deleteFile } from '@/lib/blog/github';
+import { notifyIndexNow } from '@/lib/indexnow';
 
 // GET /api/admin/posts/[id]
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -44,6 +45,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
   try {
     const body = await request.json();
+    const before = { published: post.published, slug: post.slug };
 
     // Update fields
     if (body.title !== undefined) {
@@ -91,6 +93,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       });
     }
 
+    // Published, edited, unpublished or moved: the engines recrawl the old and new URLs
+    if (before.published || saved.published) {
+      notifyIndexNow([`/blog/${before.slug}/`, `/blog/${saved.slug}/`, '/blog/']);
+    }
+
     return NextResponse.json(saved);
   } catch {
     return NextResponse.json({ error: 'Failed to update post' }, { status: 500 });
@@ -110,6 +117,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   }
 
   revalidatePath('/blog');
+  if (post?.published) notifyIndexNow([`/blog/${post.slug}/`, '/blog/']);
 
   const user = await getRequestUser(request);
   adminLog('post.delete', user, { id, title: post?.title });

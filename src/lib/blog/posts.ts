@@ -140,9 +140,13 @@ export function getRelatedPosts(post: BlogPost, limit = 3): BlogPost[] {
     return { post: p, score };
   });
 
-  return scored
+  const related = scored
     .filter(s => s.score > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
     .map(s => s.post);
+
+  // Topped up with the latest posts: every article links to others, none is left orphaned
+  const latest = posts.filter(p => !related.includes(p));
+  return [...related, ...latest].slice(0, limit);
 }

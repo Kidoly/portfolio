@@ -1,9 +1,27 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import type { ReactElement } from 'react';
+import { ImageResponse } from 'next/og';
 
-/** Shared Open Graph image style (direction 4b "Hero sombre"). */
+/**
+ * Shared Open Graph image style (direction 4b "Hero sombre").
+ *
+ * Share cards are served by `og.png` route handlers rather than the
+ * opengraph-image convention: with trailingSlash its extension-less URLs answer
+ * a 308 to `/opengraph-image/`, one more hop for every crawler fetching them.
+ */
 
 export const OG_SIZE = { width: 1200, height: 630 };
+
+/** og:image entry (twitter:image is filled from it) for a card served at `url`. */
+export function ogImage(url: string, alt: string) {
+  return { url, alt, type: 'image/png', ...OG_SIZE };
+}
+
+/** PNG response of a share card. */
+export async function ogResponse(card: ReactElement): Promise<ImageResponse> {
+  return new ImageResponse(card, { ...OG_SIZE, fonts: await loadOgFonts() });
+}
 
 export const OG_TAGLINE = 'Ingénieur systèmes & réseaux.';
 

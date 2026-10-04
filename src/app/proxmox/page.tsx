@@ -8,8 +8,10 @@ import RevealObserver from '@/components/motion/RevealObserver';
 import { getPostSummary, getPostsByTag } from '@/lib/blog/posts';
 import { formatPostDate } from '@/lib/blog/format';
 import { CONTACT_EMAIL } from '@/config/legal';
+import { ogImage } from '@/lib/og';
+import { jsonLd } from '@/lib/structured-data';
 
-const PAGE_URL = 'https://albanmary.com/proxmox';
+const PAGE_URL = 'https://albanmary.com/proxmox/';
 const TITLE = 'Ingénieur Proxmox VE à Nantes : cluster, Ceph, HA';
 const DESCRIPTION =
   'Alban Mary, ingénieur systèmes et réseaux à Nantes : Proxmox VE en cluster haute disponibilité, Ceph, SDN, sauvegardes PBS, templates Cloud-Init et Terraform.';
@@ -25,8 +27,9 @@ export const metadata: Metadata = {
     type: 'profile',
     siteName: 'Alban Mary',
     locale: 'fr_FR',
+    images: [ogImage('/proxmox/og.png', 'Ingénieur Proxmox VE - Alban Mary')],
   },
-  twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION, creator: '@kidoly' },
+  // twitter:* is filled from openGraph (see the root layout)
 };
 
 export const dynamic = 'force-dynamic';
@@ -73,10 +76,10 @@ const FIELD = [
 export default function ProxmoxPage() {
   const posts = getPostsByTag('proxmox').map(getPostSummary);
 
-  const jsonLd = {
+  const pageJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
-    '@id': `${PAGE_URL}/#webpage`,
+    '@id': `${PAGE_URL}#webpage`,
     url: PAGE_URL,
     name: TITLE,
     description: DESCRIPTION,
@@ -92,7 +95,7 @@ export default function ProxmoxPage() {
     breadcrumb: {
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://albanmary.com' },
+        { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://albanmary.com/' },
         { '@type': 'ListItem', position: 2, name: 'Proxmox', item: PAGE_URL },
       ],
     },
@@ -102,7 +105,7 @@ export default function ProxmoxPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(pageJsonLd) }}
       />
       <main className="bg-[#f3f1ec] text-[#141414] font-sans min-h-screen">
         <RevealObserver />
@@ -181,9 +184,9 @@ export default function ProxmoxPage() {
                     data-reveal
                     className="group grid grid-cols-1 sm:grid-cols-[130px_minmax(0,1fr)_110px] gap-x-6 gap-y-3 items-start py-7 -mx-5 px-5 border-t-2 border-[#141414] hover:bg-[#e9e6df] hover:no-underline transition-colors"
                   >
-                    <span className="font-plex text-[12px] text-[#68655f] pt-1.5">
+                    <time dateTime={post.publishedAt || post.updatedAt} className="font-plex text-[12px] text-[#68655f] pt-1.5">
                       {formatPostDate(post.publishedAt || post.updatedAt)}
-                    </span>
+                    </time>
                     <div className="flex flex-col gap-2.5">
                       <h3 className="m-0 text-[24px] font-bold tracking-[-0.02em] leading-[1.15]">{post.title}</h3>
                       <span className="text-[16px] leading-[1.55] text-[#4a4a48] max-w-[620px]">{post.description}</span>

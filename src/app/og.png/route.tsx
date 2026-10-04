@@ -1,13 +1,10 @@
-import { ImageResponse } from 'next/og';
-import { loadOgFonts, OG_COLORS, OG_SIZE, OG_TAGLINE } from '@/lib/og';
+import { ogResponse, OG_COLORS, OG_TAGLINE } from '@/lib/og';
 
-export const runtime = 'nodejs';
-export const alt = 'Alban Mary - Ingénieur systèmes & réseaux';
-export const size = OG_SIZE;
-export const contentType = 'image/png';
+/** Share card of the home page, referenced by the root layout's metadata. */
+export const dynamic = 'force-static';
 
-export default async function Image() {
-  return new ImageResponse(
+export function GET() {
+  return ogResponse(
     (
       <div
         style={{
@@ -56,7 +53,6 @@ export default async function Image() {
           <span>albanmary.com</span>
         </div>
       </div>
-    ),
-    { ...size, fonts: await loadOgFonts() }
+    )
   );
 }

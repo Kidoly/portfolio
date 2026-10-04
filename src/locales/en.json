@@ -5,8 +5,8 @@
 
   "portfolio": {
     "meta": {
-      "title": "Alban Mary - Systems & network engineer",
-      "description": "Portfolio of Alban Mary, systems & network engineer, work-study at Epsight and EPSI Nantes. Projects, homelab and technical articles."
+      "title": "Alban Mary - Systems & network engineer in Nantes",
+      "description": "Alban Mary, systems & network engineer in Nantes (work-study at Epsight, EPSI): Proxmox, Linux, networking, automation. Projects, homelab and articles."
     },
     "nav": ["About", "Experience", "Projects", "Infra", "Skills", "Contact"],
     "navAnchors": ["about", "experience", "projects", "infra", "skills", "contact"],

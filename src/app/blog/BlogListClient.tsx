@@ -153,7 +153,7 @@ export default function BlogListClient({ posts, tags, categories }: Props) {
                   className="group grid grid-cols-1 sm:grid-cols-[130px_minmax(0,1fr)_110px] gap-x-6 gap-y-3 items-start py-7 -mx-5 px-5 border-t-2 border-[#141414] hover:bg-[#e9e6df] hover:no-underline transition-colors"
                 >
                   <div className="flex flex-col gap-2.5 pt-1.5">
-                    <span className="font-plex text-[12px] text-[#68655f]">{formatPostDate(post.publishedAt || post.updatedAt)}</span>
+                    <time dateTime={post.publishedAt || post.updatedAt} className="font-plex text-[12px] text-[#68655f]">{formatPostDate(post.publishedAt || post.updatedAt)}</time>
                     <span className="font-mono text-[12px] bg-[#e6e3dc] text-[#141414] px-2 py-1 self-start">{post.category}</span>
                   </div>
                   <div className="flex flex-col gap-2.5">

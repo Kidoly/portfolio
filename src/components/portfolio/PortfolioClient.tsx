@@ -362,7 +362,7 @@ function Blog({ posts }: { posts: BlogPreview[] }) {
                 data-reveal
                 className="group grid grid-cols-[1fr_auto] lg:grid-cols-[140px_minmax(0,1fr)_150px_24px] gap-x-5 gap-y-2 items-baseline py-5 border-t-2 border-[#141414] hover:text-[var(--accent)] hover:no-underline transition-colors"
               >
-                <span className="font-plex text-[12px] text-[#68655f] order-1">{formatPostDate(post.date, language)}</span>
+                <time dateTime={post.date} className="font-plex text-[12px] text-[#68655f] order-1">{formatPostDate(post.date, language)}</time>
                 <span className="text-[22px] font-bold tracking-[-0.015em] leading-[1.2] col-span-2 lg:col-span-1 order-3 lg:order-2 motion-safe:transition-transform motion-safe:group-hover:translate-x-1.5">
                   {post.title}
                 </span>

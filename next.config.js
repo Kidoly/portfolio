@@ -14,6 +14,11 @@ const nextConfig = {
   output: 'standalone',
   trailingSlash: true,
   poweredByHeader: false,
+  // Deploy date: sitemap lastmod and ProfilePage dateModified of the pages whose
+  // content only changes with a new build
+  env: {
+    BUILD_TIME: new Date().toISOString(),
+  },
   images: {
     remotePatterns: [
       {

@@ -6,8 +6,9 @@ import { fontVariables } from './fonts'
 import fr from '@/locales/fr.json'
 import { umamiConfig } from '@/lib/umami'
 import StatsListener from '@/components/analytics/StatsListener'
+import { ogImage } from '@/lib/og'
+import { jsonLd, PERSON, SITE_URL, WEBSITE } from '@/lib/structured-data'
 
-const SITE_URL = 'https://albanmary.com';
 // FR by default; the EN version is applied client-side when the visitor switches language
 const SITE_TITLE = fr.portfolio.meta.title;
 const SITE_DESCRIPTION = fr.portfolio.meta.description;
@@ -40,29 +41,21 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  // og:image and twitter:image both come from app/opengraph-image.tsx
   openGraph: {
     type: 'website',
     locale: 'fr_FR',
     alternateLocale: 'en_US',
-    url: SITE_URL,
+    url: '/',
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     siteName: 'Alban Mary',
+    images: [ogImage('/og.png', 'Alban Mary - Ingénieur systèmes & réseaux')],
   },
+  // Pages leave out `twitter`: Next fills its title, description and image
+  // from their own openGraph, never from the home page's
   twitter: {
     card: 'summary_large_image',
-    title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
     creator: '@kidoly',
-  },
-  alternates: {
-    canonical: SITE_URL,
-    types: {
-      'application/rss+xml': [
-        { url: '/blog/feed.xml', title: 'Blog Alban Mary - RSS Feed' },
-      ],
-    },
   },
   // ?v= busts the long browser cache of the previous blue icon
   icons: {
@@ -83,56 +76,6 @@ export const metadata: Metadata = {
   // },
 }
 
-const personJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Person',
-  '@id': `${SITE_URL}/#person`,
-  name: 'Alban Mary',
-  givenName: 'Alban',
-  familyName: 'Mary',
-  jobTitle: 'Ingénieur systèmes & réseaux',
-  description: 'Ingénieur systèmes & réseaux en alternance chez Epsight, étudiant à l\'EPSI Nantes',
-  url: SITE_URL,
-  sameAs: [
-    'https://www.linkedin.com/in/alban-mary/',
-    'https://github.com/Kidoly',
-  ],
-  worksFor: {
-    '@type': 'Organization',
-    name: 'Epsight',
-  },
-  alumniOf: {
-    '@type': 'EducationalOrganization',
-    name: 'EPSI Nantes',
-    url: 'https://www.epsi.fr/',
-  },
-  knowsAbout: [
-    'Administration systèmes', 'Réseaux', 'Cybersécurité', 'Linux', 'Windows Server',
-    'Active Directory', 'Proxmox', 'Docker', 'Ansible', 'Terraform', 'DevOps',
-    'Python', 'Rust', 'Bash', 'PowerShell',
-  ],
-  knowsLanguage: ['fr', 'en'],
-};
-
-const websiteJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  '@id': `${SITE_URL}/#website`,
-  name: 'Alban Mary',
-  url: SITE_URL,
-  description: 'Portfolio et blog d\'Alban Mary : administration systèmes & réseaux, homelab et cybersécurité',
-  author: { '@id': `${SITE_URL}/#person` },
-  inLanguage: ['fr', 'en'],
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: {
-      '@type': 'EntryPoint',
-      urlTemplate: `${SITE_URL}/blog?q={search_term_string}`,
-    },
-    'query-input': 'required name=search_term_string',
-  },
-};
-
 export default async function RootLayout({
   children,
 }: {
@@ -152,12 +95,12 @@ export default async function RootLayout({
         <script
           nonce={nonce}
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: jsonLd({ '@context': 'https://schema.org', ...PERSON }) }}
         />
         <script
           nonce={nonce}
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: jsonLd({ '@context': 'https://schema.org', ...WEBSITE }) }}
         />
       </head>
       <body className={`${fontVariables} font-sans`}>
