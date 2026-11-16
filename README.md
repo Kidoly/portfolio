@@ -24,6 +24,7 @@ Live at **[albanmary.com](https://albanmary.com)**
 - Markdown support with code blocks, Wiki.js callouts, images
 - SEO optimized (JSON-LD, Open Graph, dynamic sitemap)
 - Contact form with email sending
+- Live cards for the GitHub profile README (`/github/hero.svg`, `/github/activity.svg`, `/github/latest-post.svg`), refreshed every 5 minutes
 - Docker ready
 
 ## Getting started
@@ -49,6 +50,7 @@ ADMIN_USERNAME=admin
 ADMIN_PASSWORD_HASH=           # see .env.example for how to generate
 ADMIN_JWT_SECRET=some-random-string
 OPENAI_API_KEY=                # optional, for AI metadata generation
+GITHUB_STATS_TOKEN=            # GitHub token for the /github/*.svg cards (no scope needed; falls back to GITHUB_TOKEN)
 ```
 
 ## Admin panel
@@ -83,11 +85,13 @@ src/
 ├── app/
 │   ├── blog/           # Public blog pages
 │   ├── admin/          # Admin panel (login, posts, sync)
+│   ├── github/         # SVG cards of the GitHub profile README
 │   └── api/            # API routes (auth, posts, sync, preview, generate)
 ├── components/         # Portfolio + admin components
 ├── contexts/           # Language context (i18n)
 └── lib/
-    └── blog/           # Blog logic (posts, markdown, wiki-sync, auth, auto-generate)
+    ├── blog/           # Blog logic (posts, markdown, wiki-sync, auth, auto-generate)
+    └── github-cards/   # GitHub contributions data and the README cards
 content/
 └── blog/               # JSON storage for blog posts
 ```

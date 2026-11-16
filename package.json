@@ -29,6 +29,7 @@
     "remark-parse": "11.0.0",
     "remark-rehype": "11.1.2",
     "sanitize-html": "2.18.2",
+    "satori": "0.63.2",
     "unified": "11.0.5"
   },
   "devDependencies": {
@@ -52,6 +53,9 @@
     },
     "eslint-config-next": {
       "typescript-eslint": "8.73.0"
+    },
+    "satori": {
+      "fflate": "0.8.3"
     }
   },
   "description": "A modern, responsive portfolio website for Alban Mary, Network & System Engineer Apprentice.",
