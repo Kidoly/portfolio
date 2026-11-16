@@ -27,20 +27,19 @@ export default function CommentsSection({ slug }: CommentsSectionProps) {
   const [feedback, setFeedback] = useState('');
   const [error, setError] = useState('');
 
-  const loadComments = async () => {
-    try {
-      const res = await fetch(`/api/comments/${encodeURIComponent(slug)}/`);
-      if (res.ok) setComments(await res.json());
-    } catch {
-      setComments([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadComments();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const controller = new AbortController();
+    fetch(`/api/comments/${encodeURIComponent(slug)}/`, { signal: controller.signal })
+      .then(async (res) => {
+        if (res.ok) setComments(await res.json());
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setComments([]);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+    return () => controller.abort();
   }, [slug]);
 
   const handleSubmit = async (e: FormEvent) => {
