@@ -1,7 +1,6 @@
-import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
 import type { ReactElement } from 'react';
 import { ImageResponse } from 'next/og';
+import { IMAGE_COLORS, loadImageFonts } from '@/lib/image-theme';
 
 /**
  * Shared Open Graph image style (direction 4b "Hero sombre").
@@ -20,39 +19,10 @@ export function ogImage(url: string, alt: string) {
 
 /** PNG response of a share card. */
 export async function ogResponse(card: ReactElement): Promise<ImageResponse> {
-  return new ImageResponse(card, { ...OG_SIZE, fonts: await loadOgFonts() });
+  return new ImageResponse(card, { ...OG_SIZE, fonts: await loadImageFonts() });
 }
 
 export const OG_TAGLINE = 'Ingénieur systèmes & réseaux.';
-
-// Satori does not parse oklch(): sRGB equivalents of the design tokens.
-export const OG_COLORS = {
-  bg: '#0e100f',
-  text: '#e4e7e4',
-  text2: '#9aa19c',
-  dim: '#6c736e',
-  rule: '#232825',
-  rule2: '#2c322e',
-  accent: '#d73626', // oklch(0.58 0.2 30)
-  ok: '#6de18b', // oklch(0.82 0.16 150)
-};
-
-type OgFont = { name: string; data: Buffer; weight: 400 | 500 | 800; style: 'normal' };
-
-let fonts: Promise<OgFont[]> | undefined;
-
-/** Archivo 500/800 + JetBrains Mono (latin subset, WOFF: next/og cannot read WOFF2). */
-export function loadOgFonts(): Promise<OgFont[]> {
-  const read = (file: string) => readFile(join(process.cwd(), 'assets', 'fonts', file));
-  fonts ??= Promise.all([read('Archivo-800.woff'), read('Archivo-500.woff'), read('JetBrainsMono-400.woff')]).then(
-    ([archivo800, archivo500, mono]) => [
-      { name: 'Archivo', data: archivo800, weight: 800, style: 'normal' },
-      { name: 'Archivo', data: archivo500, weight: 500, style: 'normal' },
-      { name: 'JetBrains Mono', data: mono, weight: 400, style: 'normal' },
-    ]
-  );
-  return fonts;
-}
 
 /** "Alban Mary." with the dot in the accent colour. */
 export function OgBrand({ size }: { size: number }) {
@@ -65,10 +35,10 @@ export function OgBrand({ size }: { size: number }) {
         fontSize: size,
         lineHeight: 1,
         letterSpacing: '-0.045em',
-        color: OG_COLORS.text,
+        color: IMAGE_COLORS.text,
       }}
     >
-      Alban Mary<span style={{ color: OG_COLORS.accent }}>.</span>
+      Alban Mary<span style={{ color: IMAGE_COLORS.accent }}>.</span>
     </div>
   );
 }
@@ -91,8 +61,8 @@ export function OgTitleCard({ category, title, url = 'albanmary.com/blog' }: { c
         flexDirection: 'column',
         justifyContent: 'space-between',
         padding: '60px 72px',
-        background: OG_COLORS.bg,
-        color: OG_COLORS.text,
+        background: IMAGE_COLORS.bg,
+        color: IMAGE_COLORS.text,
         fontFamily: 'Archivo',
       }}
     >
@@ -102,8 +72,8 @@ export function OgTitleCard({ category, title, url = 'albanmary.com/blog' }: { c
             style={{
               fontFamily: 'JetBrains Mono',
               fontSize: 24,
-              color: OG_COLORS.ok,
-              border: `1px solid ${OG_COLORS.rule2}`,
+              color: IMAGE_COLORS.ok,
+              border: `1px solid ${IMAGE_COLORS.rule2}`,
               padding: '6px 14px',
             }}
           >
@@ -128,15 +98,15 @@ export function OgTitleCard({ category, title, url = 'albanmary.com/blog' }: { c
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'flex-end',
-          borderTop: `1px solid ${OG_COLORS.rule}`,
+          borderTop: `1px solid ${IMAGE_COLORS.rule}`,
           paddingTop: 28,
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <OgBrand size={44} />
-          <span style={{ fontSize: 24, fontWeight: 500, color: OG_COLORS.text2 }}>{OG_TAGLINE}</span>
+          <span style={{ fontSize: 24, fontWeight: 500, color: IMAGE_COLORS.text2 }}>{OG_TAGLINE}</span>
         </div>
-        <span style={{ fontFamily: 'JetBrains Mono', fontSize: 22, color: OG_COLORS.dim }}>{url}</span>
+        <span style={{ fontFamily: 'JetBrains Mono', fontSize: 22, color: IMAGE_COLORS.faint }}>{url}</span>
       </div>
     </div>
   );

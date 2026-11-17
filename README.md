@@ -24,7 +24,7 @@ Live at **[albanmary.com](https://albanmary.com)**
 - Markdown support with code blocks, Wiki.js callouts, images
 - SEO optimized (JSON-LD, Open Graph, dynamic sitemap)
 - Contact form with email sending
-- Live cards for the GitHub profile README (`/github/hero.svg`, `/github/activity.svg`, `/github/latest-post.svg`), refreshed every 5 minutes
+- Every card of the GitHub profile README (`/github/<name>.svg`, see `src/lib/github-cards/content.ts`), live ones refreshed every 5 minutes
 - Docker ready
 
 ## Getting started

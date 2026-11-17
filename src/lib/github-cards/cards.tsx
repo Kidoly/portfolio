@@ -1,45 +1,37 @@
 import type { CSSProperties, ReactNode } from 'react';
+import * as fontkit from 'fontkit';
 import satori from 'satori';
-import { loadOgFonts } from '@/lib/og';
-import { CARD_TTL_SECONDS, GITHUB_LOGIN, type GithubActivity, type LatestPost, type Streak } from './data';
+import type { SimpleIcon } from 'simple-icons';
+import { IMAGE_COLORS as C, imageFontFiles, loadImageFonts } from '@/lib/image-theme';
+import { SITE_URL } from '@/lib/structured-data';
+import { BANDS, BUTTONS, HERO, STACK, type Tool } from './content';
+import { CARD_TTL_SECONDS, githubActivity, GITHUB_LOGIN, latestPost, type GithubActivity, type LatestPost, type Streak } from './data';
 
 /**
- * Cards of the GitHub profile README (github.com/Kidoly), served as SVG by the
- * /github/*.svg routes. satori turns every glyph into a path: GitHub shows the
- * images through <img>, where web fonts never load. The static cards (stack, section
- * bands, buttons) are generated in the Kidoly/Kidoly repository itself.
+ * Cards of the GitHub profile README (github.com/Kidoly), all served by the site at
+ * /github/<name>.svg so that they follow its look. satori turns every glyph into a
+ * path: GitHub shows the images through <img>, where web fonts never load.
  */
 
 const W = 1000;
-
-// The site's dark tokens, in sRGB (satori does not parse oklch())
-const C = {
-  bg: '#0e100f',
-  rule: '#232825',
-  text: '#e4e7e4',
-  text2: '#9aa19c',
-  dim: '#7d8580',
-  accent: '#d73626',
-  accentOnDark: '#ea4f3b',
-  ok: '#6de18b',
-  // Heatmap: no contributions, then the accent at rising strength
-  heat: ['#1b1f1d', '#4a1f19', '#7a2a1f', '#a83024', '#d73626'],
-};
-
-const SITE = 'albanmary.com';
-const HERO = {
-  name: 'Alban Mary',
-  role: 'Systems & network engineer',
-  intro: 'Work-study at Epsight, a hosting and managed services provider, and 5th year at EPSI Nantes.',
-  status: 'open to a full-time role · Oct 2027',
-  place: 'Nantes, France · or remote',
-};
+const SITE = new URL(SITE_URL).host;
 
 // --- Rendering ----------------------------------------------------------------------
 
 async function toSvg(node: ReactNode, height: number, width = W): Promise<string> {
-  const fonts = await loadOgFonts();
-  return satori(node, { width, height, fonts });
+  return satori(node, { width, height, fonts: await loadImageFonts() });
+}
+
+let metrics: Promise<{ sans: fontkit.Font; mono: fontkit.Font }> | undefined;
+
+/** Advance width of `text` in px, as satori lays it out (wrapping is computed ahead). */
+async function measure(text: string, font: 'sans' | 'mono', size: number): Promise<number> {
+  metrics ??= imageFontFiles().then(({ archivo500, mono }) => ({
+    sans: fontkit.create(archivo500) as fontkit.Font,
+    mono: fontkit.create(mono) as fontkit.Font,
+  }));
+  const f = (await metrics)[font];
+  return (f.layout(text).advanceWidth / f.unitsPerEm) * size;
 }
 
 /** SVG response the README can show; GitHub's image proxy keeps it CARD_TTL_SECONDS. */
@@ -98,7 +90,7 @@ const days = (s: Streak) => (s.length === 1 ? 'day' : 'days');
 
 // --- Hero -----------------------------------------------------------------------------
 
-export function heroCard(gh: GithubActivity): Promise<string> {
+function heroCard(gh: GithubActivity): Promise<string> {
   return toSvg(
     <Card style={{ flexDirection: 'column', justifyContent: 'space-between', padding: '30px 44px 26px' }}>
       <Row style={{ justifyContent: 'space-between', alignItems: 'center' }}>
@@ -182,7 +174,7 @@ function Stat({ label, value, unit, sub, colour, first }: { label: string; value
   );
 }
 
-export function activityCard(gh: GithubActivity): Promise<string> {
+function activityCard(gh: GithubActivity): Promise<string> {
   const weeks = calendar(gh);
   const level = levels(weeks);
   const yearTotal = weeks.flat().reduce((s, d) => s + (d?.count ?? 0), 0);
@@ -248,7 +240,7 @@ export function activityCard(gh: GithubActivity): Promise<string> {
 
 // --- Latest post ----------------------------------------------------------------------
 
-export function latestPostCard(post: LatestPost | null): Promise<string> {
+function latestPostCard(post: LatestPost | null): Promise<string> {
   const title = post?.title ?? 'Notes d’infra, coming soon.';
   const size = title.length <= 46 ? 32 : title.length <= 70 ? 27 : 23;
   return toSvg(
@@ -268,4 +260,195 @@ export function latestPostCard(post: LatestPost | null): Promise<string> {
     </Card>,
     184
   );
+}
+
+// --- Section band ---------------------------------------------------------------------
+
+function bandCard({ number, title, desc }: (typeof BANDS)[keyof typeof BANDS], path: string): Promise<string> {
+  return toSvg(
+    <Card style={{ alignItems: 'flex-end', justifyContent: 'space-between', padding: '0 40px 20px 36px', borderLeft: `4px solid ${C.accent}` }}>
+      <Row style={{ alignItems: 'baseline', gap: 16 }}>
+        <Mono style={{ fontSize: 15, color: C.accentOnDark }}>{`${number} /`}</Mono>
+        <Row style={{ fontSize: 44, fontWeight: 800, letterSpacing: -1.6, lineHeight: 1 }}>{title}</Row>
+      </Row>
+      <Row style={{ flexDirection: 'column', alignItems: 'flex-end', gap: 6, maxWidth: 480 }}>
+        <Mono style={{ fontSize: 12 }}>{path}</Mono>
+        <Row style={{ fontSize: 16, fontWeight: 500, color: C.text2, textAlign: 'right' }}>{desc}</Row>
+      </Row>
+    </Card>,
+    92
+  );
+}
+
+// --- Logos ------------------------------------------------------------------------------
+
+const ICON = 16;
+
+function luminance(hex: string): number {
+  const [r, g, b] = [0, 2, 4].map((i) => {
+    const v = parseInt(hex.slice(i, i + 2), 16) / 255;
+    return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/** A simple-icons logo in its brand colour (the text colour when too dark for the panel). */
+const Logo = ({ icon, colour }: { icon: SimpleIcon; colour?: string }) => (
+  <svg width={ICON} height={ICON} viewBox="0 0 24 24">
+    <path d={icon.path} fill={colour ?? (luminance(icon.hex) < 0.08 ? C.text : `#${icon.hex}`)} />
+  </svg>
+);
+
+/** Framed letters, for tools without a usable logo. */
+const Monogram = ({ letters, colour }: { letters: string; colour?: string }) => (
+  <Row
+    style={{
+      width: ICON,
+      height: ICON,
+      alignItems: 'center',
+      justifyContent: 'center',
+      border: `1px solid ${colour ?? C.dim}`,
+      fontFamily: 'JetBrains Mono',
+      fontSize: 10,
+      lineHeight: 1,
+      color: colour ?? C.text2,
+    }}
+  >
+    {letters}
+  </Row>
+);
+
+// --- Stack row --------------------------------------------------------------------------
+
+const CHIP = { h: 36, padX: 13, gap: 10, iconGap: 9, font: 15 };
+
+/** Number of rows boxes of `widths` wrap into, the way flex-wrap does. */
+function wrappedRows(widths: number[], available: number, gap: number): number {
+  let count = 1;
+  let x = 0;
+  for (const w of widths) {
+    if (x > 0 && x + gap + w > available) {
+      count++;
+      x = w;
+    } else {
+      x += (x > 0 ? gap : 0) + w;
+    }
+  }
+  return count;
+}
+
+async function stackCard({ area, tools }: { area: string; tools: Tool[] }): Promise<string> {
+  const LEFT = 250;
+  const PAD = 22;
+  const widths = await Promise.all(
+    tools.map(async ([label]) => 2 + 2 * CHIP.padX + ICON + CHIP.iconGap + Math.ceil(await measure(label, 'sans', CHIP.font)))
+  );
+  const rows = wrappedRows(widths, W - 2 - LEFT - 1 - 2 * PAD, CHIP.gap);
+  const height = Math.max(2 * PAD + rows * CHIP.h + (rows - 1) * CHIP.gap, 112) + 2;
+
+  return toSvg(
+    <Card>
+      <Row
+        style={{
+          width: LEFT,
+          flexShrink: 0,
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          padding: `${PAD - 2}px 22px`,
+          background: C.panel2,
+          borderRight: `1px solid ${C.rule}`,
+        }}
+      >
+        <Mono style={{ fontSize: 12 }}>{`${String(tools.length).padStart(2, '0')} tools`}</Mono>
+        <Row style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.4, lineHeight: 1.15 }}>{area}</Row>
+      </Row>
+      <Row style={{ flexWrap: 'wrap', alignContent: 'center', gap: CHIP.gap, padding: PAD, flexGrow: 1 }}>
+        {tools.map(([label, icon]) => (
+          <Row
+            key={label}
+            style={{
+              height: CHIP.h,
+              alignItems: 'center',
+              gap: CHIP.iconGap,
+              padding: `0 ${CHIP.padX}px`,
+              border: `1px solid ${C.rule2}`,
+              background: C.panel,
+              fontSize: CHIP.font,
+              fontWeight: 500,
+            }}
+          >
+            {icon ? <Logo icon={icon} /> : <Monogram letters={label[0]} />}
+            {label}
+          </Row>
+        ))}
+      </Row>
+    </Card>,
+    height
+  );
+}
+
+// --- Contact button ---------------------------------------------------------------------
+
+async function buttonCard({ label, mark, primary }: (typeof BUTTONS)[string]): Promise<string> {
+  const ink = primary ? '#ffffff' : undefined;
+  const width = Math.ceil(2 + 2 * 16 + ICON + 10 + (await measure(label, 'mono', 14)));
+  return toSvg(
+    <Row
+      style={{
+        width: '100%',
+        height: '100%',
+        alignItems: 'center',
+        gap: 10,
+        padding: '0 16px',
+        background: primary ? C.accent : C.bg,
+        border: `1px solid ${primary ? C.accent : C.rule2}`,
+        color: ink ?? C.text,
+        fontFamily: 'JetBrains Mono',
+        fontSize: 14,
+      }}
+    >
+      {mark === null ? (
+        <Row style={{ width: ICON, height: ICON, alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: 8, height: 8, borderRadius: 8, background: ink ?? C.accent }} />
+        </Row>
+      ) : typeof mark === 'string' ? (
+        <Monogram letters={mark} colour={ink} />
+      ) : (
+        <Logo icon={mark} colour={ink} />
+      )}
+      {label}
+    </Row>,
+    44,
+    width
+  );
+}
+
+// --- Registry ---------------------------------------------------------------------------
+
+type CardDef = { render: () => Promise<string>; live: boolean };
+
+/** Every card by name (/github/<name>.svg); `live` ones read GitHub or the blog. */
+export const CARDS: Record<string, CardDef> = {
+  hero: { live: true, render: async () => heroCard(await githubActivity()) },
+  activity: { live: true, render: async () => activityCard(await githubActivity()) },
+  'latest-post': { live: true, render: () => latestPostCard(latestPost()) },
+  ...Object.fromEntries(Object.entries(BANDS).map(([key, band]) => [`band-${key}`, { live: false, render: () => bandCard(band, `~/${key}`) }])),
+  ...Object.fromEntries(Object.entries(STACK).map(([key, row]) => [`stack-${key}`, { live: false, render: () => stackCard(row) }])),
+  ...Object.fromEntries(Object.entries(BUTTONS).map(([key, button]) => [`btn-${key}`, { live: false, render: () => buttonCard(button) }])),
+};
+
+const rendered = new Map<string, Promise<string>>();
+
+/** SVG of a card; the static ones only change with a deploy, so they are drawn once. */
+export function renderCard(name: string): Promise<string> | null {
+  const card = Object.prototype.hasOwnProperty.call(CARDS, name) ? CARDS[name] : undefined;
+  if (!card) return null;
+  if (card.live) return card.render();
+  let svg = rendered.get(name);
+  if (!svg) {
+    svg = card.render();
+    svg.catch(() => rendered.delete(name));
+    rendered.set(name, svg);
+  }
+  return svg;
 }
